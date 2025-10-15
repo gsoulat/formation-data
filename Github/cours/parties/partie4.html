@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 4 : Issues et Gestion de Projet - Formation GitHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Partie 4 : Issues et Gestion de Projet</h1>
+            <p class="subtitle">Organisez votre travail avec Issues, Labels, Milestones et Projects</p>
+            <span class="duration">⏱️ Durée : 30 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html" class="active">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Créer et gérer des Issues efficacement</li>
+                    <li>Utiliser Labels et Milestones pour organiser</li>
+                    <li>Maîtriser GitHub Projects avec tableaux Kanban</li>
+                    <li>Lier Issues et Pull Requests automatiquement</li>
+                    <li>Automatiser la gestion de projet</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Les Issues GitHub</h2>
+
+                <p>
+                    Les <strong>Issues</strong> sont le système de tickets de GitHub. Elles servent à :
+                </p>
+
+                <ul>
+                    <li>📋 Suivre les bugs</li>
+                    <li>💡 Proposer de nouvelles fonctionnalités</li>
+                    <li>❓ Poser des questions</li>
+                    <li>📝 Documenter des tâches à faire</li>
+                    <li>💬 Discuter d'améliorations</li>
+                </ul>
+
+                <h3>Créer une Issue</h3>
+
+                <ol>
+                    <li>Allez dans l'onglet <strong>Issues</strong></li>
+                    <li>Cliquez sur <strong>New issue</strong></li>
+                    <li>Choisissez un template (si configuré) ou créez une issue vide</li>
+                </ol>
+
+                <h4>Exemple d'issue bien rédigée</h4>
+
+                <div class="card">
+                    <h4>🐛 Bug: Data pipeline fails with null timestamp</h4>
+
+                    <p><strong>Description</strong><br>
+                        Le pipeline ETL échoue quand un timestamp est null dans les données source.</p>
+
+                    <p><strong>Steps to reproduce</strong></p>
+                    <ol>
+                        <li>Lancer le pipeline avec <code>python run_etl.py</code></li>
+                        <li>Utiliser le fichier de test <code>data/test_null_timestamp.csv</code></li>
+                        <li>Observer l'erreur dans les logs</li>
+                    </ol>
+
+                    <p><strong>Expected behavior</strong><br>
+                        Le pipeline devrait ignorer ou remplacer les timestamps null avec une valeur par défaut.</p>
+
+                    <p><strong>Actual behavior</strong><br>
+                        Le pipeline crash avec l'erreur : <code>ValueError: cannot parse null timestamp</code></p>
+
+                    <p><strong>Environment</strong></p>
+                    <ul>
+                        <li>Python 3.11</li>
+                        <li>pandas 2.0.3</li>
+                        <li>OS: macOS</li>
+                    </ul>
+
+                    <p><strong>Additional context</strong><br>
+                        Cette erreur est apparue après le merge de la PR #45.</p>
+                </div>
+
+                <h3>Labels : Organiser les Issues</h3>
+
+                <p>Les <strong>labels</strong> permettent de catégoriser les issues :</p>
+
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Label</th>
+                            <th>Utilisation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>bug</td>
+                            <td>Quelque chose ne fonctionne pas</td>
+                        </tr>
+                        <tr>
+                            <td>enhancement</td>
+                            <td>Nouvelle fonctionnalité ou amélioration</td>
+                        </tr>
+                        <tr>
+                            <td>documentation</td>
+                            <td>Amélioration de la documentation</td>
+                        </tr>
+                        <tr>
+                            <td>good first issue</td>
+                            <td>Bon pour les nouveaux contributeurs</td>
+                        </tr>
+                        <tr>
+                            <td>help wanted</td>
+                            <td>Besoin d'aide de la communauté</td>
+                        </tr>
+                        <tr>
+                            <td>priority: high</td>
+                            <td>Urgent à traiter</td>
+                        </tr>
+                        <tr>
+                            <td>wontfix</td>
+                            <td>Ne sera pas corrigé</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Milestones : Planifier des versions</h3>
+
+                <p>
+                    Les <strong>Milestones</strong> regroupent des issues pour une release ou un objectif spécifique.
+                </p>
+
+                <div class="card">
+                    <h4>Exemple : Milestone "v2.0.0 - Production Ready"</h4>
+                    <ul>
+                        <li>Date cible : 31 décembre 2024</li>
+                        <li>Description : Première version prête pour la production</li>
+                        <li>Issues liées : 15 issues (10 fermées, 5 ouvertes)</li>
+                        <li>Progression : 67%</li>
+                    </ul>
+                </div>
+
+                <h3>GitHub Projects : Tableau Kanban</h3>
+
+                <p>
+                    <strong>GitHub Projects</strong> est un système de gestion de projet intégré, similaire à Jira ou
+                    Trello.
+                </p>
+
+                <h4>Créer un Project</h4>
+
+                <ol>
+                    <li>Allez dans l'onglet <strong>Projects</strong></li>
+                    <li>Cliquez sur <strong>New project</strong></li>
+                    <li>Choisissez un template : <strong>Board</strong> (Kanban), <strong>Table</strong>, ou
+                        <strong>Roadmap</strong>
+                    </li>
+                    <li>Donnez un nom : "Data Platform Q1 2025"</li>
+                </ol>
+
+                <h4>Colonnes typiques d'un Kanban</h4>
+
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────┬─────────────┬─────────────┬─────────────┬─────────────┐
+│   Backlog   │   To Do     │ In Progress │   Review    │    Done     │
+│             │             │             │             │             │
+│  Issue #45  │  Issue #52  │  Issue #48  │  PR #50     │  Issue #42  │
+│  Issue #46  │  Issue #53  │  Issue #49  │             │  Issue #43  │
+│             │             │             │             │  Issue #44  │
+└─────────────┴─────────────┴─────────────┴─────────────┴─────────────┘
+</pre>
+                </div>
+
+                <ul>
+                    <li><strong>Backlog</strong> : Idées et tâches futures</li>
+                    <li><strong>To Do</strong> : Prêt à être commencé</li>
+                    <li><strong>In Progress</strong> : En cours de développement</li>
+                    <li><strong>Review</strong> : En code review (PR ouverte)</li>
+                    <li><strong>Done</strong> : Terminé et mergé</li>
+                </ul>
+
+                <div class="alert alert-info">
+                    <h4>Automatisation</h4>
+                    <p>
+                        GitHub Projects peut automatiquement déplacer les issues et PR entre les colonnes
+                        (ex: passer en "Review" quand une PR est créée, en "Done" quand elle est mergée).
+                    </p>
+                </div>
+
+                <h3>Lier Issues et Pull Requests</h3>
+
+                <p>Utilisez des mots-clés dans vos PR pour fermer automatiquement des issues :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-markdown">## Description
+
+Correction du bug de parsing des timestamps null.
+
+## Closes
+
+Closes #45
+Fixes #46
+Resolves #47
+
+## Related
+
+See also #48</code></pre>
+                </div>
+
+                <p>Mots-clés reconnus : <code>closes</code>, <code>fixes</code>, <code>resolves</code></p>
+
+                <div class="alert alert-success">
+                    <h4>Avantage</h4>
+                    <p>
+                        Quand la PR est mergée, les issues liées sont automatiquement fermées.
+                        Cela maintient votre backlog à jour sans effort manuel.
+                    </p>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Les Issues sont le système de tickets central pour suivre bugs et features</li>
+                    <li>Utilisez Labels pour catégoriser et Milestones pour planifier les releases</li>
+                    <li>GitHub Projects offre des tableaux Kanban pour visualiser le travail</li>
+                    <li>Liez automatiquement Issues et PR avec closes/fixes/resolves</li>
+                    <li>L'automatisation réduit la gestion manuelle du projet</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vous savez maintenant organiser votre projet ! Passons à la <strong>Partie 5</strong> pour
+                    automatiser avec GitHub Actions.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie3.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 3 : Pull Requests
+                </a>
+                <a href="partie5.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 5 : GitHub Actions →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation GitHub pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercices Pratiques Git</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Exercices Pratiques</h1>
+            <p class="subtitle">Mettez en pratique vos connaissances Git avec des exercices guidés et des quiz</p>
+            <span class="duration">⏱️ Durée : 45 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">🏠 Accueil</a></li>
+                <li><a href="solutions.html">📖 Voir les solutions</a></li>
+                <li><a href="projet-fil-rouge.html">Projet fil rouge →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="alert alert-info">
+                <h4>📚 Comment utiliser cette page</h4>
+                <p>
+                    Essayez de résoudre les exercices par vous-même avant de consulter les solutions.
+                    Les solutions détaillées sont disponibles dans un fichier séparé pour vous encourager
+                    à chercher par vous-même d'abord !
+                </p>
+                <p style="margin-top: 15px;">
+                    <a href="solutions.html" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                        📖 Voir toutes les solutions
+                    </a>
+                </p>
+            </div>
+
+            <!-- EXERCICES PARTIE 1-2 -->
+            <section class="section">
+                <h2>📝 Exercices Partie 1-2 : Premiers pas</h2>
+
+                <div class="exercise">
+                    <h4>Exercice 1.1 : Configuration initiale</h4>
+                    <p><strong>Objectif :</strong> Configurer votre environnement Git</p>
+                    <ol>
+                        <li>Vérifiez que Git est installé sur votre machine</li>
+                        <li>Configurez votre nom et email</li>
+                        <li>Définissez votre éditeur par défaut</li>
+                        <li>Créez 3 alias utiles</li>
+                        <li>Affichez toute votre configuration</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-1-1" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercice 1.2 : Créer votre premier dépôt</h4>
+                    <p><strong>Objectif :</strong> Initialiser un dépôt et créer vos premiers commits</p>
+                    <ol>
+                        <li>Créez un dossier <code>mon-premier-projet</code></li>
+                        <li>Initialisez un dépôt Git</li>
+                        <li>Créez un fichier <code>README.md</code> avec une description</li>
+                        <li>Ajoutez-le à la staging area</li>
+                        <li>Créez votre premier commit</li>
+                        <li>Créez un fichier <code>script.py</code> avec du code Python</li>
+                        <li>Commitez ce nouveau fichier</li>
+                        <li>Consultez l'historique</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-1-2" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="quiz">
+                    <h4>📝 Quiz : Concepts fondamentaux</h4>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 1:</strong> Quelle commande permet de voir l'état actuel du dépôt ?</p>
+                        <ul class="quiz-options" data-answer="a">
+                            <li data-value="a">git status</li>
+                            <li data-value="b">git state</li>
+                            <li data-value="c">git info</li>
+                            <li data-value="d">git current</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 2:</strong> Quel est le rôle de la staging area ?</p>
+                        <ul class="quiz-options" data-answer="b">
+                            <li data-value="a">Stocker les fichiers définitivement</li>
+                            <li data-value="b">Préparer les fichiers avant le commit</li>
+                            <li data-value="c">Supprimer les fichiers modifiés</li>
+                            <li data-value="d">Synchroniser avec le remote</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 3:</strong> Que signifie un système de contrôle de version "distribué" ?</p>
+                        <ul class="quiz-options" data-answer="c">
+                            <li data-value="a">Le code est stocké sur plusieurs serveurs</li>
+                            <li data-value="b">Plusieurs personnes peuvent travailler en même temps</li>
+                            <li data-value="c">Chaque développeur possède une copie complète de l'historique</li>
+                            <li data-value="d">Le code est divisé en plusieurs parties</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXERCICES PARTIE 3-4 : BRANCHES -->
+            <section class="section">
+                <h2>🌿 Exercices Partie 3-4 : Branches et Merge</h2>
+
+                <div class="exercise">
+                    <h4>Exercice 2.1 : Travailler avec les branches</h4>
+                    <p><strong>Objectif :</strong> Créer et gérer des branches</p>
+                    <ol>
+                        <li>Dans votre dépôt, créez une branche <code>feature/add-database</code></li>
+                        <li>Basculez sur cette branche</li>
+                        <li>Créez un fichier <code>database.py</code> avec une fonction de connexion</li>
+                        <li>Commitez sur la branche feature</li>
+                        <li>Retournez sur <code>main</code></li>
+                        <li>Créez une autre branche <code>feature/add-api</code></li>
+                        <li>Créez un fichier <code>api.py</code></li>
+                        <li>Commitez sur cette branche</li>
+                        <li>Listez toutes les branches</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-2-1" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercice 2.2 : Merger les branches</h4>
+                    <p><strong>Objectif :</strong> Fusionner les branches dans main</p>
+                    <ol>
+                        <li>Retournez sur <code>main</code></li>
+                        <li>Mergez <code>feature/add-database</code></li>
+                        <li>Mergez <code>feature/add-api</code></li>
+                        <li>Vérifiez que les deux fichiers sont présents dans main</li>
+                        <li>Visualisez l'historique sous forme de graphe</li>
+                        <li>Supprimez les branches feature</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-2-2" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercice 2.3 : Résoudre un conflit de merge 🔥</h4>
+                    <p><strong>Objectif :</strong> Apprendre à gérer les conflits</p>
+                    <ol>
+                        <li>Sur <code>main</code>, modifiez <code>README.md</code> : ajoutez "Version 1.0" en bas</li>
+                        <li>Commitez : <code>git commit -am "docs: Add version to README"</code></li>
+                        <li>Créez une branche <code>feature/update-readme</code></li>
+                        <li>Sur cette branche, modifiez <code>README.md</code> : ajoutez "Beta Version" à la même ligne</li>
+                        <li>Commitez sur la branche feature</li>
+                        <li>Retournez sur main</li>
+                        <li>Tentez de merger : <code>git merge feature/update-readme</code></li>
+                        <li>CONFLIT ! Résolvez-le en gardant les deux informations</li>
+                        <li>Marquez comme résolu et finalisez le merge</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-2-3" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="quiz">
+                    <h4>📝 Quiz : Branches et Merge</h4>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 4:</strong> Quelle commande crée ET bascule sur une nouvelle branche ?</p>
+                        <ul class="quiz-options" data-answer="b">
+                            <li data-value="a">git branch -c nouvelle-branche</li>
+                            <li data-value="b">git checkout -b nouvelle-branche</li>
+                            <li data-value="c">git create nouvelle-branche</li>
+                            <li data-value="d">git new branch nouvelle-branche</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 5:</strong> Quand survient un conflit de merge ?</p>
+                        <ul class="quiz-options" data-answer="c">
+                            <li data-value="a">Quand on merge deux branches vides</li>
+                            <li data-value="b">Quand on crée trop de branches</li>
+                            <li data-value="c">Quand deux branches modifient la même ligne</li>
+                            <li data-value="d">Quand on oublie de commit</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 6:</strong> Quelle est la règle d'or du rebase ?</p>
+                        <ul class="quiz-options" data-answer="d">
+                            <li data-value="a">Toujours rebaser avant de merger</li>
+                            <li data-value="b">Ne jamais rebaser sur main</li>
+                            <li data-value="c">Rebaser tous les jours</li>
+                            <li data-value="d">Ne jamais rebaser des commits déjà pushés</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXERCICES PARTIE 5 : COLLABORATION -->
+            <section class="section">
+                <h2>🤝 Exercices Partie 5 : Collaboration avec GitHub</h2>
+
+                <div class="exercise">
+                    <h4>Exercice 3.1 : Créer un dépôt sur GitHub</h4>
+                    <p><strong>Objectif :</strong> Pousser votre projet local vers GitHub</p>
+                    <ol>
+                        <li>Créez un compte GitHub (si vous n'en avez pas)</li>
+                        <li>Créez un nouveau dépôt public <code>git-training</code></li>
+                        <li>Ajoutez le remote à votre dépôt local</li>
+                        <li>Poussez votre branche main vers GitHub</li>
+                        <li>Vérifiez sur GitHub que tout est bien présent</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-3-1" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Exercice 3.2 : Workflow Pull Request</h4>
+                    <p><strong>Objectif :</strong> Créer une Pull Request complète</p>
+                    <ol>
+                        <li>Créez une branche <code>feature/add-tests</code></li>
+                        <li>Créez un fichier <code>test_script.py</code> avec des tests</li>
+                        <li>Commitez et poussez la branche vers GitHub</li>
+                        <li>Sur GitHub, créez une Pull Request</li>
+                        <li>Ajoutez une description détaillée</li>
+                        <li>Simulez une review : ajoutez un commentaire</li>
+                        <li>Mergez la PR</li>
+                        <li>Mettez à jour votre branche main locale</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-3-2" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="quiz">
+                    <h4>📝 Quiz : Collaboration</h4>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 7:</strong> Quelle commande récupère ET fusionne les modifications du remote ?</p>
+                        <ul class="quiz-options" data-answer="b">
+                            <li data-value="a">git fetch</li>
+                            <li data-value="b">git pull</li>
+                            <li data-value="c">git merge</li>
+                            <li data-value="d">git sync</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 8:</strong> À quoi sert le flag -u dans git push -u origin main ?</p>
+                        <ul class="quiz-options" data-answer="c">
+                            <li data-value="a">À pousser plus rapidement</li>
+                            <li data-value="b">À pousser de manière urgente</li>
+                            <li data-value="c">À créer le lien de tracking entre branches locale et distante</li>
+                            <li data-value="d">À pousser en mode univers</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXERCICES AVANCÉS -->
+            <section class="section">
+                <h2>🔥 Défis avancés</h2>
+
+                <div class="exercise">
+                    <h4>Défi 1 : Récupérer un commit perdu</h4>
+                    <p><strong>Scénario :</strong> Vous avez fait un <code>git reset --hard</code> par erreur et perdu un commit important !</p>
+                    <ol>
+                        <li>Créez un commit avec un fichier important</li>
+                        <li>Notez son hash</li>
+                        <li>Faites <code>git reset --hard HEAD~1</code> (le commit disparaît !)</li>
+                        <li>Utilisez <code>git reflog</code> pour le retrouver</li>
+                        <li>Récupérez le commit perdu</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-defi-1" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Défi 2 : Cherry-pick intelligent</h4>
+                    <p><strong>Scénario :</strong> Vous devez appliquer un fix urgent d'une branche feature dans main</p>
+                    <ol>
+                        <li>Créez une branche <code>feature/big-feature</code> avec 3 commits</li>
+                        <li>Le 2ème commit contient un fix de bug important</li>
+                        <li>Sans merger toute la branche, appliquez UNIQUEMENT le fix dans main</li>
+                        <li>Vérifiez que main a le fix mais pas les autres changements</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-defi-2" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+
+                <div class="exercise">
+                    <h4>Défi 3 : Nettoyer l'historique avec rebase interactif</h4>
+                    <p><strong>Scénario :</strong> Vous avez fait plusieurs petits commits de debug à nettoyer</p>
+                    <ol>
+                        <li>Créez une branche avec 4 commits dont 2 sont des "WIP" ou "debug"</li>
+                        <li>Utilisez <code>git rebase -i HEAD~4</code> pour les fusionner</li>
+                        <li>Réécrivez l'historique proprement</li>
+                    </ol>
+
+                    <p style="margin-top: 20px;">
+                        <a href="solutions.html#solution-defi-3" style="display: inline-block; padding: 10px 20px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                            📖 Voir la solution
+                        </a>
+                    </p>
+                </div>
+            </section>
+
+            <!-- QUIZ FINAL -->
+            <section class="section">
+                <div class="key-points">
+                    <h3>🎓 Quiz final : Êtes-vous un Git Hero ?</h3>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 9:</strong> Quelle commande annule les modifications d'un fichier non stagé ?</p>
+                        <ul class="quiz-options" data-answer="c">
+                            <li data-value="a">git reset fichier.py</li>
+                            <li data-value="b">git undo fichier.py</li>
+                            <li data-value="c">git restore fichier.py</li>
+                            <li data-value="d">git revert fichier.py</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 10:</strong> En Data Engineering, faut-il versionner les fichiers .csv ?</p>
+                        <ul class="quiz-options" data-answer="b">
+                            <li data-value="a">Oui, toujours</li>
+                            <li data-value="b">Non, jamais (utiliser S3/GCS)</li>
+                            <li data-value="c">Oui, mais seulement avec Git LFS</li>
+                            <li data-value="d">Oui, si moins de 1GB</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 11:</strong> Comment nettoyer les outputs des Jupyter notebooks avant commit ?</p>
+                        <ul class="quiz-options" data-answer="d">
+                            <li data-value="a">Les supprimer manuellement dans le .ipynb</li>
+                            <li data-value="b">Ne jamais versionner les .ipynb</li>
+                            <li data-value="c">Utiliser git clean</li>
+                            <li data-value="d">Utiliser nbstripout</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <div class="quiz-question">
+                        <p><strong>Question 12:</strong> Quelle est la meilleure pratique pour les messages de commit ?</p>
+                        <ul class="quiz-options" data-answer="a">
+                            <li data-value="a">Utiliser Conventional Commits (feat:, fix:, etc.)</li>
+                            <li data-value="b">Écrire des messages très longs</li>
+                            <li data-value="c">Utiliser des emojis uniquement</li>
+                            <li data-value="d">Écrire "update" pour tout</li>
+                        </ul>
+                        <p class="quiz-feedback" style="display: none;"></p>
+                    </div>
+
+                    <button onclick="calculateScore()" style="margin-top: 30px; padding: 15px 40px; background: #4caf50; color: white; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: background 0.3s ease;">
+                        📊 Voir mon score
+                    </button>
+                    <p id="final-score" style="margin-top: 20px; font-size: 1.3em; font-weight: 600;"></p>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>🎉 Félicitations !</h4>
+                <p>
+                    Vous avez terminé tous les exercices ! Vous êtes maintenant prêt à appliquer vos connaissances
+                    sur un projet réel avec le <strong>Projet fil rouge : Pipeline ETL Sales Data</strong>.
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="projet-fil-rouge.html" style="display: inline-block; padding: 15px 30px; background: #ff9800; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        🚀 Démarrer le projet fil rouge
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <script>
+        // Quiz interactif
+        document.querySelectorAll('.quiz-options li').forEach(option => {
+            option.addEventListener('click', function() {
+                const options = this.parentElement;
+                const correctAnswer = options.dataset.answer;
+                const selectedAnswer = this.dataset.value;
+                const feedback = options.nextElementSibling;
+
+                // Reset styles
+                options.querySelectorAll('li').forEach(li => {
+                    li.classList.remove('correct', 'incorrect');
+                });
+
+                // Check answer
+                if (selectedAnswer === correctAnswer) {
+                    this.classList.add('correct');
+                    feedback.textContent = '✅ Correct !';
+                    feedback.style.color = '#4caf50';
+                } else {
+                    this.classList.add('incorrect');
+                    options.querySelector(`[data-value="${correctAnswer}"]`).classList.add('correct');
+                    feedback.textContent = '❌ Incorrect. La bonne réponse est surlignée en vert.';
+                    feedback.style.color = '#f44336';
+                }
+                feedback.style.display = 'block';
+                feedback.style.fontWeight = '600';
+                feedback.style.marginTop = '15px';
+            });
+        });
+
+        // Calculate final score
+        function calculateScore() {
+            const totalQuestions = 12;
+            let correctAnswers = 0;
+
+            document.querySelectorAll('.quiz-question').forEach(question => {
+                const correctOption = question.querySelector('.quiz-options li.correct');
+                if (correctOption) {
+                    correctAnswers++;
+                }
+            });
+
+            const scorePercent = Math.round((correctAnswers / totalQuestions) * 100);
+            const scoreElement = document.getElementById('final-score');
+
+            let message = '';
+            let color = '';
+
+            if (scorePercent === 100) {
+                message = `🏆 Parfait ! ${correctAnswers}/${totalQuestions} - Vous êtes un Git Master !`;
+                color = '#4caf50';
+            } else if (scorePercent >= 75) {
+                message = `🎉 Excellent ! ${correctAnswers}/${totalQuestions} (${scorePercent}%) - Très bon niveau !`;
+                color = '#4caf50';
+            } else if (scorePercent >= 50) {
+                message = `👍 Bien ! ${correctAnswers}/${totalQuestions} (${scorePercent}%) - Continuez à pratiquer !`;
+                color = '#ff9800';
+            } else {
+                message = `📚 ${correctAnswers}/${totalQuestions} (${scorePercent}%) - Relisez le cours et réessayez !`;
+                color = '#f44336';
+            }
+
+            scoreElement.textContent = message;
+            scoreElement.style.color = color;
+        }
+    </script>
+</body>
+</html>

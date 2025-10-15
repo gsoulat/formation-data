@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 7 : Concepts Avancés et Best Practices - Formation Docker</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Partie 7 : Concepts Avancés et Best Practices</h1>
+            <p class="subtitle">Optimisation, sécurité et maintenance</p>
+            <span class="duration">⏱️ Durée : 5 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html" class="active">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Optimiser la taille et les performances des images</li>
+                    <li>Appliquer les règles de sécurité essentielles</li>
+                    <li>Maintenir et nettoyer votre environnement Docker</li>
+                    <li>Découvrir les ressources pour aller plus loin</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>7.1 Optimisation des Images</h2>
+
+                <div class="comparison">
+                    <div class="comparison-item vm">
+                        <h4>❌ Mauvaise Pratique</h4>
+                        <div class="code-container">
+                            <pre><code class="language-dockerfile">FROM python:3.11
+COPY . .
+RUN pip install -r requirements.txt
+# Taille : ~900 MB</code></pre>
+                        </div>
+                    </div>
+                    <div class="comparison-item docker">
+                        <h4>✅ Bonne Pratique</h4>
+                        <div class="code-container">
+                            <pre><code class="language-dockerfile">FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY src/ ./src/
+# Taille : ~200 MB</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Techniques d'Optimisation</h3>
+                <ul>
+                    <li><strong>Utilisez des images de base slim ou alpine</strong> : Réduisez la taille de base</li>
+                    <li><strong>Multi-stage builds</strong> : Séparez la compilation de l'exécution</li>
+                    <li><strong>Ordonnez vos instructions</strong> : Placez ce qui change rarement en premier</li>
+                    <li><strong>Combinez les commandes RUN</strong> : Minimisez le nombre de couches</li>
+                    <li><strong>Nettoyez dans le même RUN</strong> : <code>rm -rf /var/lib/apt/lists/*</code></li>
+                    <li><strong>Utilisez .dockerignore</strong> : Ne copiez que ce qui est nécessaire</li>
+                </ul>
+
+                <h2>7.2 Sécurité</h2>
+
+                <div class="warning">
+                    <strong>🔒 Règles de Sécurité Essentielles :</strong>
+                    <ol>
+                        <li><strong>N'exécutez jamais en root</strong> - Créez un utilisateur non-root</li>
+                        <li><strong>Ne stockez jamais de secrets</strong> - Utilisez des variables d'environnement</li>
+                        <li><strong>Scannez les vulnérabilités</strong> - Utilisez Trivy : <code>trivy image
+                                mon-app:v1</code></li>
+                        <li><strong>Limitez les ressources</strong> - Utilisez <code>--memory</code> et
+                            <code>--cpus</code>
+                        </li>
+                        <li><strong>Mettez à jour régulièrement</strong> - Reconstruisez vos images fréquemment</li>
+                    </ol>
+                </div>
+
+                <div class="example">
+                    <h4>🔒 Exemple : Dockerfile Sécurisé</h4>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-dockerfile">FROM python:3.11-slim
+
+# Créer un utilisateur non-root
+RUN useradd -m -u 1000 appuser
+
+WORKDIR /app
+
+# Installer les dépendances en root
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copier le code
+COPY --chown=appuser:appuser src/ ./src/
+
+# Changer vers l'utilisateur non-root
+USER appuser
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD python -c "import sys; sys.exit(0)"
+
+CMD ["python", "src/main.py"]</code></pre>
+                    </div>
+                </div>
+
+                <h3>Scanner les Vulnérabilités</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installer Trivy
+brew install trivy  # macOS
+# ou
+sudo apt install trivy  # Linux
+
+# Scanner une image
+trivy image python:3.11-slim
+
+# Scanner une image locale
+trivy image mon-app:latest
+
+# Afficher seulement les vulnérabilités critiques
+trivy image --severity HIGH,CRITICAL mon-app:latest</code></pre>
+                </div>
+
+                <h2>7.3 Nettoyage et Maintenance</h2>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Nettoyer tous les éléments non utilisés
+docker system prune -a
+
+# Voir l'espace disque utilisé
+docker system df
+
+# Supprimer les images non taguées (dangling)
+docker image prune
+
+# Supprimer les conteneurs arrêtés
+docker container prune
+
+# Supprimer les volumes non utilisés
+docker volume prune
+
+# Supprimer les réseaux non utilisés
+docker network prune
+
+# Tout nettoyer d'un coup (avec confirmation)
+docker system prune -a --volumes</code></pre>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Planification :</strong> Exécutez <code>docker system prune</code> régulièrement pour
+                    libérer de l'espace disque. En développement, cela peut représenter plusieurs Go de libérés.
+                </div>
+
+                <h2>7.4 Limiter les Ressources</h2>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Limiter la mémoire
+docker run -m 512m mon-app
+
+# Limiter le CPU
+docker run --cpus=".5" mon-app
+
+# Limiter mémoire et CPU
+docker run -m 1g --cpus="1.5" mon-app
+
+# Avec Docker Compose
+services:
+  app:
+    image: mon-app
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1G</code></pre>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>🎯 Points Clés à Retenir</h3>
+                <ol>
+                    <li><strong>Docker résout "ça marche sur ma machine"</strong> en garantissant la reproductibilité
+                    </li>
+                    <li><strong>Images = Templates, Conteneurs = Instances</strong></li>
+                    <li><strong>Les conteneurs sont légers</strong> vs les VMs qui sont lourdes</li>
+                    <li><strong>Dockerfile</strong> décrit comment construire une image</li>
+                    <li><strong>Volumes</strong> persistent les données au-delà du conteneur</li>
+                    <li><strong>Réseaux</strong> permettent la communication inter-conteneurs</li>
+                    <li><strong>Docker Compose</strong> orchestre des applications multi-conteneurs</li>
+                    <li><strong>Sécurité</strong> : jamais en root, pas de secrets dans les images</li>
+                    <li><strong>Optimisation</strong> : images slim, cache, multi-stage builds</li>
+                    <li><strong>Data Engineering</strong> : essentiel pour les pipelines modernes</li>
+                </ol>
+            </div>
+
+            <section class="section">
+                <h2>📚 Ressources et Prochaines Étapes</h2>
+
+                <h3>Documentation Officielle</h3>
+                <ul>
+                    <li><a href="https://docs.docker.com/" target="_blank">Documentation Docker</a></li>
+                    <li><a href="https://docs.docker.com/compose/" target="_blank">Docker Compose Reference</a></li>
+                    <li><a href="https://hub.docker.com/" target="_blank">Docker Hub</a></li>
+                </ul>
+
+                <h3>Ressources Data Engineering</h3>
+                <ul>
+                    <li><a href="https://airflow.apache.org/docs/" target="_blank">Apache Airflow</a></li>
+                    <li><a href="https://spark.apache.org/docs/latest/" target="_blank">Apache Spark</a></li>
+                    <li><a href="https://docs.dagster.io/" target="_blank">Dagster</a></li>
+                </ul>
+
+                <h3>Aller Plus Loin</h3>
+                <ul>
+                    <li><strong>Docker Swarm</strong> : Orchestration native Docker</li>
+                    <li><strong>Kubernetes</strong> : Orchestration à grande échelle</li>
+                    <li><strong>CI/CD</strong> : GitHub Actions, GitLab CI, Jenkins</li>
+                    <li><strong>Monitoring</strong> : Prometheus, Grafana</li>
+                </ul>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>🎉 Félicitations !</h4>
+                <p>
+                    Vous avez terminé la formation Docker ! Vous maîtrisez maintenant :
+                </p>
+                <ul>
+                    <li>✅ Les concepts fondamentaux de Docker</li>
+                    <li>✅ La création et gestion d'images et conteneurs</li>
+                    <li>✅ L'écriture de Dockerfiles optimisés</li>
+                    <li>✅ Les volumes et réseaux pour la persistance et communication</li>
+                    <li>✅ Docker Compose pour l'orchestration</li>
+                    <li>✅ Les bonnes pratiques de sécurité et optimisation</li>
+                </ul>
+                <p style="margin-top: 15px;">
+                    Vous êtes maintenant prêt à conteneuriser vos applications Data Engineering ! 🚀
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie6.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 6 : Docker Compose
+                </a>
+                <a href="../index.html"
+                    style="display: inline-block; padding: 12px 24px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    🏠 Retour à l'accueil
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Docker pour Data Engineering - 2024</p>
+
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-docker.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 6 : Sécurité et bonnes pratiques - Formation GitHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🔒 Partie 6 : Sécurité et bonnes pratiques</h1>
+            <p class="subtitle">Sécurisez vos projets avec les outils GitHub</p>
+            <span class="duration">⏱️ Durée : 30 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html" class="active">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Activer et configurer Dependabot</li>
+                    <li>Utiliser Secret Scanning pour détecter les credentials</li>
+                    <li>Mettre en place Code Scanning avec CodeQL</li>
+                    <li>Protéger la branche main avec des règles</li>
+                    <li>Créer un README parfait pour un projet Data</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>GitHub Security Features</h2>
+
+                <h3>1. Dependabot</h3>
+
+                <p>
+                    <strong>Dependabot</strong> surveille vos dépendances et crée automatiquement des PR pour les
+                    mettre à jour.
+                </p>
+
+                <p>Activer Dependabot :</p>
+                <ol>
+                    <li>Allez dans <strong>Settings</strong> → <strong>Code security and analysis</strong></li>
+                    <li>Activez <strong>Dependabot alerts</strong></li>
+                    <li>Activez <strong>Dependabot security updates</strong></li>
+                    <li>Activez <strong>Dependabot version updates</strong></li>
+                </ol>
+
+                <p>Configurer avec <code>.github/dependabot.yml</code> :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"</code></pre>
+                </div>
+
+                <h3>2. Secret Scanning</h3>
+
+                <p>
+                    GitHub scanne automatiquement votre code pour détecter des secrets commités par erreur
+                    (API keys, tokens, passwords).
+                </p>
+
+                <div class="alert alert-danger">
+                    <h4>Si vous commitez un secret par erreur</h4>
+                    <ol>
+                        <li><strong>Révoquez-le immédiatement</strong> (changez l'API key, le password)</li>
+                        <li>Supprimez-le de l'historique Git avec <code>git filter-repo</code></li>
+                        <li>Ne faites PAS qu'un simple commit de suppression (il reste dans l'historique !)</li>
+                    </ol>
+                </div>
+
+                <h3>3. Code Scanning</h3>
+
+                <p>
+                    <strong>CodeQL</strong> analyse votre code pour détecter des vulnérabilités de sécurité.
+                </p>
+
+                <p>Activer Code Scanning :</p>
+                <ol>
+                    <li>Allez dans <strong>Security</strong> → <strong>Code scanning</strong></li>
+                    <li>Cliquez sur <strong>Set up code scanning</strong></li>
+                    <li>Choisissez <strong>CodeQL Analysis</strong></li>
+                    <li>Un fichier <code>.github/workflows/codeql.yml</code> est créé automatiquement</li>
+                </ol>
+
+                <h3>Protéger la branche main</h3>
+
+                <p>Empêchez les push directs sur main et forcez les PR avec review :</p>
+
+                <ol>
+                    <li>Allez dans <strong>Settings</strong> → <strong>Branches</strong></li>
+                    <li>Cliquez sur <strong>Add branch protection rule</strong></li>
+                    <li>Branch name pattern : <code>main</code></li>
+                    <li>Cochez les options :
+                        <ul>
+                            <li>✅ <strong>Require a pull request before merging</strong>
+                                <ul>
+                                    <li>✅ Require approvals (minimum 1)</li>
+                                    <li>✅ Dismiss stale reviews</li>
+                                </ul>
+                            </li>
+                            <li>✅ <strong>Require status checks to pass</strong>
+                                <ul>
+                                    <li>Sélectionnez vos workflows (tests, lint, etc.)</li>
+                                </ul>
+                            </li>
+                            <li>✅ <strong>Require conversation resolution before merging</strong></li>
+                            <li>✅ <strong>Include administrators</strong> (même vous !)</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <div class="alert alert-success">
+                    <h4>Résultat</h4>
+                    <p>
+                        Personne ne peut pusher directement sur main. Toutes les modifications passent par une PR
+                        avec au moins 1 approbation et tests qui passent.
+                    </p>
+                </div>
+
+                <h3>README parfait pour un projet Data</h3>
+
+                <p>Un bon README contient :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-markdown"># 📊 Nom du Projet
+
+![CI Status](https://github.com/user/repo/workflows/Tests/badge.svg)
+![Coverage](https://codecov.io/gh/user/repo/branch/main/graph/badge.svg)
+![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)
+
+Courte description du projet en une phrase.
+
+## 🎯 Objectif
+
+Description détaillée : quel problème résout ce projet ?
+
+## 🚀 Quick Start
+
+\`\`\`bash
+# Cloner le projet
+git clone https://github.com/user/repo.git
+cd repo
+
+# Installer les dépendances
+pip install -r requirements.txt
+
+# Lancer le pipeline
+python run_pipeline.py
+\`\`\`
+
+## 📁 Structure du projet
+
+\`\`\`
+project/
+├── src/              # Code source
+│   ├── extract.py
+│   ├── transform.py
+│   └── load.py
+├── tests/            # Tests unitaires
+├── data/             # Données (non versionné)
+├── docs/             # Documentation
+└── .github/          # CI/CD workflows
+\`\`\`
+
+## 🛠️ Technologies
+
+- Python 3.11
+- pandas, SQLAlchemy
+- PostgreSQL
+- Apache Airflow
+- Docker
+
+## 📖 Documentation
+
+[Lien vers la documentation complète](https://docs.example.com)
+
+## 🤝 Contributing
+
+Les contributions sont les bienvenues ! Voir [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 📄 License
+
+MIT License - voir [LICENSE](LICENSE)
+
+## 👥 Authors
+
+- [@username](https://github.com/username) - Initial work
+
+## 🙏 Acknowledgments
+
+- Inspiré par [projet-X](https://github.com/...)
+- Merci à [@contributor](https://github.com/contributor) pour l'aide
+</code></pre>
+                </div>
+
+                <h3>Badges pour votre README</h3>
+
+                <p>Ajoutez des badges pour montrer l'état de votre projet :</p>
+
+                <ul>
+                    <li><strong>CI Status</strong> :
+                        <code>![CI](https://github.com/user/repo/workflows/Tests/badge.svg)</code>
+                    </li>
+                    <li><strong>Coverage</strong> :
+                        <code>![Coverage](https://codecov.io/gh/user/repo/branch/main/graph/badge.svg)</code>
+                    </li>
+                    <li><strong>License</strong> : <code>![License](https://img.shields.io/badge/license-MIT-blue.svg)</code>
+                    </li>
+                    <li><strong>Version</strong> :
+                        <code>![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)</code>
+                    </li>
+                </ul>
+
+                <p>Créez des badges personnalisés sur <a href="https://shields.io" target="_blank">shields.io</a></p>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Dependabot maintient vos dépendances à jour automatiquement</li>
+                    <li>Secret Scanning détecte les credentials commités par erreur</li>
+                    <li>CodeQL analyse votre code pour trouver des vulnérabilités</li>
+                    <li>Protégez main avec des branch protection rules</li>
+                    <li>Un README complet facilite l'onboarding et la collaboration</li>
+                    <li>Les badges montrent l'état du projet en un coup d'œil</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vos projets sont maintenant sécurisés ! Découvrons les <strong>Partie 7</strong> sur les
+                    fonctionnalités avancées de GitHub.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie5.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 5 : GitHub Actions
+                </a>
+                <a href="partie7.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 7 : Fonctionnalités avancées →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation GitHub pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+
+</html>

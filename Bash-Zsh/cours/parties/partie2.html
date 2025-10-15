@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 2 - Navigation et Gestion de Fichiers</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📂 Partie 2</h1>
+            <p class="subtitle">Navigation et Gestion de Fichiers</p>
+            <span class="duration">⏱️ Durée : 30 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">← Partie 1</a></li>
+                <li><a href="partie3.html">Partie 3 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>2. Navigation et Gestion de Fichiers</h2>
+
+                <h3>Navigation dans le système de fichiers</h3>
+
+                <h4>Structure des répertoires Linux/Unix</h4>
+
+                <div class="workflow-diagram">
+                    <pre>
+/                    (root - racine du système)
+├── bin/            (binaires essentiels)
+├── etc/            (fichiers de configuration)
+├── home/           (répertoires utilisateurs)
+│   └── username/   (votre home directory)
+├── opt/            (logiciels optionnels)
+├── tmp/            (fichiers temporaires)
+├── usr/            (programmes utilisateur)
+├── var/            (données variables: logs, caches)
+└── data/           (souvent utilisé pour les données)</pre>
+                </div>
+
+                <h4>Commandes de navigation essentielles</h4>
+
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>pwd</code></td>
+                            <td>Print Working Directory - affiche le répertoire courant</td>
+                            <td><code>pwd</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>cd</code></td>
+                            <td>Change Directory - changer de répertoire</td>
+                            <td><code>cd /home/data</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>cd ~</code></td>
+                            <td>Aller au home directory</td>
+                            <td><code>cd ~</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>cd -</code></td>
+                            <td>Revenir au répertoire précédent</td>
+                            <td><code>cd -</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>cd ..</code></td>
+                            <td>Remonter d'un niveau</td>
+                            <td><code>cd ..</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ls</code></td>
+                            <td>Lister les fichiers et dossiers</td>
+                            <td><code>ls -lah</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Afficher le répertoire courant
+pwd
+# /home/guillaume/projects
+
+# Aller au home directory
+cd ~
+pwd
+# /home/guillaume
+
+# Aller dans un dossier spécifique
+cd /var/log
+
+# Remonter d'un niveau
+cd ..
+
+# Revenir au répertoire précédent
+cd -
+
+# Chemins relatifs vs absolus
+cd data/raw              # relatif (depuis le répertoire courant)
+cd /home/data/raw        # absolu (depuis la racine)</code></pre>
+                </div>
+
+                <h3>Lister les fichiers avec ls</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ls</code></td>
+                            <td>Liste simple</td>
+                            <td><code>ls</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ls -l</code></td>
+                            <td>Format long (détails)</td>
+                            <td><code>ls -l</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ls -a</code></td>
+                            <td>Afficher les fichiers cachés (commençant par .)</td>
+                            <td><code>ls -a</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ls -h</code></td>
+                            <td>Tailles lisibles (human-readable)</td>
+                            <td><code>ls -lh</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ls -t</code></td>
+                            <td>Trier par date de modification</td>
+                            <td><code>ls -lt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ls -S</code></td>
+                            <td>Trier par taille</td>
+                            <td><code>ls -lS</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ls -R</code></td>
+                            <td>Récursif (sous-dossiers)</td>
+                            <td><code>ls -R</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Liste complète avec détails et tailles lisibles
+ls -lah
+
+# Résultat :
+# drwxr-xr-x  5 user group  160B Jan 15 10:30 .
+# drwxr-xr-x  8 user group  256B Jan 15 09:00 ..
+# -rw-r--r--  1 user group  2.3M Jan 15 10:25 data.csv
+# -rw-r--r--  1 user group  156K Jan 15 10:20 config.json
+# drwxr-xr-x  3 user group   96B Jan 15 10:00 scripts
+
+# Lister les fichiers CSV uniquement
+ls *.csv
+
+# Lister les fichiers par taille décroissante
+ls -lhS
+
+# Afficher les 5 plus gros fichiers
+ls -lhS | head -6
+
+# Lister avec arborescence (nécessite tree)
+tree -L 2 -h</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Comprendre les permissions</h4>
+                    <p>Dans <code>ls -l</code>, la première colonne indique les permissions :</p>
+                    <pre>-rw-r--r--
+│││ │ │ │
+│││ │ │ └─ Others (autres)
+│││ │ └─── Group (groupe)
+│││ └───── Owner (propriétaire)
+││└─────── Type (- = fichier, d = dossier, l = lien)
+│└──────── r=read, w=write, x=execute</pre>
+                </div>
+
+                <h3>Créer des fichiers et dossiers</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un dossier
+mkdir data
+
+# Créer plusieurs dossiers d'un coup
+mkdir raw processed cleaned
+
+# Créer une arborescence complète
+mkdir -p data/raw/2024/01
+# -p crée les dossiers parents si nécessaire
+
+# Créer un fichier vide
+touch config.json
+
+# Créer plusieurs fichiers
+touch file1.txt file2.txt file3.txt
+
+# Exemple : structure d'un projet data
+mkdir -p project/{data/{raw,processed,cleaned},scripts,logs,config}
+tree project/
+# project/
+# ├── config
+# ├── data
+# │   ├── cleaned
+# │   ├── processed
+# │   └── raw
+# ├── logs
+# └── scripts</code></pre>
+                </div>
+
+                <h3>Copier et déplacer des fichiers</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Copier un fichier
+cp source.csv destination.csv
+
+# Copier avec confirmation
+cp -i source.csv destination.csv
+
+# Copier en préservant les métadonnées
+cp -p config.json config_backup.json
+
+# Copier un dossier entier (récursif)
+cp -r data/ data_backup/
+
+# Copier plusieurs fichiers vers un dossier
+cp file1.csv file2.csv file3.csv /data/raw/
+
+# Déplacer / renommer un fichier
+mv old_name.csv new_name.csv
+
+# Déplacer vers un autre dossier
+mv data.csv /data/processed/
+
+# Déplacer plusieurs fichiers
+mv *.csv /data/raw/
+
+# Renommer avec pattern
+for file in *.txt; do
+    mv "$file" "${file%.txt}_backup.txt"
+done</code></pre>
+                </div>
+
+                <h3>Supprimer des fichiers et dossiers</h3>
+
+                <div class="alert alert-warning">
+                    <h4>⚠️ Attention</h4>
+                    <p>
+                        La suppression avec <code>rm</code> est <strong>définitive</strong>. Il n'y a pas de corbeille en ligne de commande.
+                        Soyez toujours prudent avec <code>rm -rf</code> !
+                    </p>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Supprimer un fichier
+rm file.txt
+
+# Supprimer avec confirmation
+rm -i file.txt
+
+# Supprimer plusieurs fichiers
+rm file1.txt file2.txt file3.txt
+
+# Supprimer tous les CSV
+rm *.csv
+
+# Supprimer un dossier vide
+rmdir empty_folder
+
+# Supprimer un dossier et son contenu
+rm -r folder/
+
+# Forcer la suppression sans confirmation
+rm -rf folder/
+
+# DANGER : Ne jamais faire ça !
+# rm -rf /    # Détruit tout le système
+# rm -rf /*   # Détruit tout le système
+
+# Bonne pratique : vérifier avant de supprimer
+ls *.log
+rm *.log</code></pre>
+                </div>
+
+                <h3>Rechercher des fichiers avec find</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Trouver tous les fichiers CSV
+find . -name "*.csv"
+
+# Trouver tous les fichiers modifiés dans les dernières 24h
+find . -name "*.csv" -mtime -1
+
+# Trouver les fichiers de plus de 100MB
+find . -type f -size +100M
+
+# Trouver et supprimer les fichiers temporaires
+find . -name "*.tmp" -delete
+
+# Trouver les fichiers et exécuter une commande
+find . -name "*.csv" -exec wc -l {} \;
+
+# Trouver les dossiers vides
+find . -type d -empty
+
+# Exemple pratique : trouver les gros fichiers de logs
+find /var/log -name "*.log" -size +50M -ls
+
+# Trouver par date de modification
+find . -type f -mtime -7          # Modifiés il y a moins de 7 jours
+find . -type f -mtime +30         # Modifiés il y a plus de 30 jours
+
+# Combinaison de critères
+find . -name "*.csv" -size +10M -mtime -7</code></pre>
+                </div>
+
+                <h3>Rechercher avec locate (plus rapide)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Mettre à jour la base de données locate
+sudo updatedb
+
+# Rechercher un fichier
+locate data.csv
+
+# Rechercher avec limite de résultats
+locate -n 10 "*.csv"
+
+# Rechercher en ignorant la casse
+locate -i CONFIG.JSON
+
+# Note : locate est plus rapide que find car il utilise une base de données
+# mais elle doit être mise à jour régulièrement</code></pre>
+                </div>
+
+                <h3>Utilisation du disque : du et df</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># df : Disk Free - espace disque disponible
+df -h
+# Filesystem      Size   Used  Avail Capacity  Mounted on
+# /dev/disk1s1   466Gi  350Gi  100Gi    78%    /
+
+# Afficher uniquement les systèmes de fichiers locaux
+df -h --type=ext4
+
+# du : Disk Usage - utilisation de l'espace par répertoire
+du -h data/
+# 2.3G    data/raw
+# 1.8G    data/processed
+# 4.1G    data/
+
+# Taille totale d'un dossier
+du -sh data/
+# 4.1G    data/
+
+# Les 10 plus gros dossiers
+du -h . | sort -rh | head -10
+
+# Afficher la taille de chaque sous-dossier
+du -h --max-depth=1 . | sort -rh
+
+# Exemple pratique : trouver ce qui prend de la place
+du -h --max-depth=2 /var/log | sort -rh | head -20</code></pre>
+                </div>
+
+                <h3>Permissions et propriétaires</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>chmod</code></td>
+                            <td>Change les permissions</td>
+                            <td><code>chmod 755 script.sh</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>chown</code></td>
+                            <td>Change le propriétaire</td>
+                            <td><code>chown user:group file.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>chgrp</code></td>
+                            <td>Change le groupe</td>
+                            <td><code>chgrp dataeng file.csv</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Rendre un script exécutable
+chmod +x script.sh
+
+# Permissions en notation numérique
+chmod 644 file.txt    # rw-r--r--  (fichier)
+chmod 755 script.sh   # rwxr-xr-x  (exécutable)
+chmod 700 secret.key  # rwx------  (privé)
+chmod 777 shared/     # rwxrwxrwx  (tout le monde)
+
+# Notation numérique expliquée :
+# r = 4, w = 2, x = 1
+# 7 = 4+2+1 = rwx
+# 6 = 4+2   = rw-
+# 5 = 4+1   = r-x
+# 4 = 4     = r--
+
+# Permissions récursives
+chmod -R 755 scripts/
+
+# Changer le propriétaire
+sudo chown user:group file.csv
+
+# Changer récursivement
+sudo chown -R user:group data/
+
+# Exemples pratiques pour data engineering
+chmod 644 *.csv               # Fichiers de données lisibles
+chmod 755 *.sh                # Scripts exécutables
+chmod 700 ~/.ssh/id_rsa       # Clé SSH privée
+chmod 600 config/secrets.env  # Fichier de secrets</code></pre>
+                </div>
+
+                <h3>Wildcards et Globbing</h3>
+
+                <div class="key-points">
+                    <h3>💡 Patterns de glob</h3>
+                    <ul>
+                        <li><code>*</code> : Correspond à n'importe quelle chaîne de caractères</li>
+                        <li><code>?</code> : Correspond à un seul caractère</li>
+                        <li><code>[...]</code> : Correspond à un caractère dans la liste</li>
+                        <li><code>{...,...}</code> : Expansion d'accolades</li>
+                    </ul>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># * : n'importe quoi
+ls *.csv                    # Tous les fichiers CSV
+ls data*                    # Tous les fichiers commençant par "data"
+ls *2024*                   # Tous les fichiers contenant "2024"
+
+# ? : un seul caractère
+ls data?.csv                # data1.csv, data2.csv, dataA.csv
+ls report_202?-01.csv       # report_2020-01.csv, report_2024-01.csv
+
+# [...] : plage de caractères
+ls data[123].csv            # data1.csv, data2.csv, data3.csv
+ls file[a-z].txt            # filea.txt, fileb.txt, ...
+ls log[0-9][0-9].txt        # log00.txt, log01.txt, ..., log99.txt
+
+# {...} : expansion
+ls {data,logs,config}.csv   # data.csv, logs.csv, config.csv
+mkdir -p data/{raw,processed,cleaned}
+
+# Combinaisons avancées
+ls data_{2023,2024}_*.csv
+ls report_[0-9][0-9]_{jan,feb,mar}.csv
+
+# Exemples pratiques en data engineering
+# Copier tous les CSV d'une année
+cp data/raw/2024*.csv data/processed/
+
+# Supprimer tous les fichiers temporaires
+rm *.tmp *.temp *~
+
+# Archiver tous les logs par mois
+tar -czf logs_2024-01.tar.gz logs/2024/01/*.log
+
+# Compter les lignes de tous les CSV
+wc -l *.csv
+
+# Globbing avec find (plus puissant)
+find . -name "data_2024-*.csv"</code></pre>
+                </div>
+
+                <h3>Exemple pratique : Organisation d'un projet data</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer une structure de projet complète
+mkdir -p ~/data_project/{data/{raw,processed,cleaned,archive},scripts,logs,config,docs}
+
+# Créer des sous-dossiers par date
+mkdir -p ~/data_project/data/raw/$(date +%Y/%m/%d)
+
+# Copier des données brutes
+cp /source/*.csv ~/data_project/data/raw/$(date +%Y/%m/%d)/
+
+# Trouver tous les fichiers de données
+find ~/data_project/data -name "*.csv" -o -name "*.json" -o -name "*.parquet"
+
+# Vérifier l'espace utilisé par catégorie
+du -sh ~/data_project/data/*
+
+# Archiver les anciennes données (plus de 30 jours)
+find ~/data_project/data/raw -type f -mtime +30 -exec mv {} ~/data_project/data/archive/ \;
+
+# Rendre les scripts exécutables
+chmod +x ~/data_project/scripts/*.sh
+
+# Lister les fichiers triés par taille
+ls -lhS ~/data_project/data/raw/ | head -10
+
+# Nettoyer les fichiers temporaires
+find ~/data_project -name "*.tmp" -o -name "*.log" -mtime +7 -delete</code></pre>
+                </div>
+
+                <h3>Exercices pratiques</h3>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 1 : Navigation de base</h4>
+                    <ol>
+                        <li>Créez un dossier <code>data_training</code> dans votre home</li>
+                        <li>Créez la structure : <code>data_training/{raw,processed,scripts}</code></li>
+                        <li>Naviguez dans le dossier <code>raw</code></li>
+                        <li>Créez 3 fichiers vides : <code>data1.csv</code>, <code>data2.csv</code>, <code>data3.csv</code></li>
+                        <li>Listez les fichiers avec leurs détails</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash"># 1. Créer le dossier principal
+cd ~
+mkdir data_training
+
+# 2. Créer la structure
+mkdir -p data_training/{raw,processed,scripts}
+
+# 3. Naviguer dans raw
+cd data_training/raw
+
+# 4. Créer les fichiers
+touch data1.csv data2.csv data3.csv
+
+# 5. Lister avec détails
+ls -lh</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 2 : Copie et déplacement</h4>
+                    <ol>
+                        <li>Copiez tous les CSV de <code>raw/</code> vers <code>processed/</code></li>
+                        <li>Renommez les fichiers dans <code>processed/</code> en ajoutant le préfixe <code>clean_</code></li>
+                        <li>Trouvez la taille totale du dossier <code>data_training</code></li>
+                        <li>Listez tous les fichiers CSV dans toute l'arborescence</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash"># 1. Copier vers processed
+cd ~/data_training
+cp raw/*.csv processed/
+
+# 2. Renommer avec préfixe
+cd processed
+for file in *.csv; do
+    mv "$file" "clean_$file"
+done
+
+# 3. Taille totale
+cd ~/data_training
+du -sh .
+
+# 4. Lister tous les CSV
+find . -name "*.csv"</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 3 : Permissions et recherche</h4>
+                    <ol>
+                        <li>Créez un script <code>process.sh</code> dans <code>scripts/</code></li>
+                        <li>Rendez-le exécutable</li>
+                        <li>Trouvez tous les fichiers modifiés dans la dernière heure</li>
+                        <li>Calculez l'espace utilisé par chaque sous-dossier</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash"># 1. Créer le script
+cd ~/data_training/scripts
+touch process.sh
+
+# 2. Rendre exécutable
+chmod +x process.sh
+
+# 3. Fichiers récents
+cd ~/data_training
+find . -type f -mmin -60
+
+# 4. Espace par sous-dossier
+du -h --max-depth=1 .</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>💡 Points clés à retenir</h4>
+                    <ul>
+                        <li><code>cd</code>, <code>pwd</code>, <code>ls</code> : navigation de base</li>
+                        <li><code>mkdir -p</code> : créer des arborescences complètes</li>
+                        <li><code>cp -r</code>, <code>mv</code>, <code>rm -rf</code> : gestion de fichiers</li>
+                        <li><code>find</code> : recherche puissante avec critères multiples</li>
+                        <li><code>du -sh</code>, <code>df -h</code> : surveillance de l'espace disque</li>
+                        <li><code>chmod</code>, <code>chown</code> : gestion des permissions</li>
+                        <li>Wildcards <code>*</code>, <code>?</code>, <code>[]</code>, <code>{}</code> : patterns de fichiers</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 2 terminée !</h4>
+                <p>
+                    Vous maîtrisez maintenant la navigation et la gestion de fichiers. Ces commandes sont essentielles
+                    pour organiser et manipuler vos données. Passez à la Partie 3 pour apprendre à manipuler le contenu des fichiers.
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="partie3.html"
+                        style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 3 : Manipulation de Texte et Données →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Bash/Zsh pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

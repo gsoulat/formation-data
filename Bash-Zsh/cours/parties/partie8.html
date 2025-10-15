@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 8 - Installation Oh My Zsh et Powerlevel10k</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Partie 8</h1>
+            <p class="subtitle">Installation Oh My Zsh, Powerlevel10k et Plugins pour Data Engineers</p>
+            <span class="duration">⏱️ Durée : 45 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie7.html">← Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>Installation et Configuration Complète pour Data Engineers</h2>
+
+                <div class="alert alert-info">
+                    <h4>🎯 Objectifs de cette partie</h4>
+                    <p>
+                        Dans cette partie, vous allez transformer votre terminal en un environnement de travail
+                        moderne, efficace et adapté au Data Engineering. Vous installerez :
+                    </p>
+                    <ul>
+                        <li><strong>Oh My Zsh</strong> : Framework de configuration Zsh</li>
+                        <li><strong>Powerlevel10k</strong> : Le thème le plus rapide et personnalisable</li>
+                        <li><strong>Plugins essentiels</strong> : Pour Python, Docker, Git, autocomplétion, etc.</li>
+                    </ul>
+                </div>
+
+                <h3>Prérequis</h3>
+
+                <div class="alert alert-warning">
+                    <h4>⚠️ Avant de commencer</h4>
+                    <p>Assurez-vous d'avoir :</p>
+                    <ul>
+                        <li><strong>Zsh installé</strong> : Vérifiez avec <code>zsh --version</code></li>
+                        <li><strong>Git installé</strong> : Vérifiez avec <code>git --version</code></li>
+                        <li><strong>curl ou wget</strong> : Pour télécharger les scripts</li>
+                        <li><strong>Une police Nerd Font</strong> (on va l'installer ensemble)</li>
+                    </ul>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Vérifier que Zsh est installé
+zsh --version
+# Output attendu : zsh 5.8 ou supérieur
+
+# Si Zsh n'est pas installé :
+# macOS
+brew install zsh
+
+# Ubuntu/Debian
+sudo apt install zsh
+
+# Fedora/RHEL
+sudo dnf install zsh</code></pre>
+                </div>
+
+                <h2>🚀 Étape 1 : Installation de Oh My Zsh</h2>
+
+                <h3>Qu'est-ce que Oh My Zsh ?</h3>
+                <p>
+                    <strong>Oh My Zsh</strong> est un framework open-source pour gérer votre configuration Zsh.
+                    Il fournit des centaines de plugins, de thèmes et de fonctionnalités pour améliorer votre
+                    productivité.
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>✨ Avantages</h4>
+                        <ul>
+                            <li>300+ plugins inclus</li>
+                            <li>150+ thèmes disponibles</li>
+                            <li>Autocomplétion intelligente</li>
+                            <li>Communauté active</li>
+                            <li>Mises à jour régulières</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🎯 Pour Data Engineering</h4>
+                        <ul>
+                            <li>Support Python, Docker, K8s</li>
+                            <li>Plugins Git avancés</li>
+                            <li>Alias pour AWS, GCP, Azure</li>
+                            <li>Intégration avec Terraform</li>
+                            <li>Support pour Airflow, dbt</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Installation de Oh My Zsh</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installation via curl
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Ou via wget
+sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Le script va :
+# 1. Télécharger Oh My Zsh dans ~/.oh-my-zsh
+# 2. Sauvegarder votre .zshrc actuel en .zshrc.pre-oh-my-zsh
+# 3. Créer un nouveau .zshrc avec des paramètres par défaut
+# 4. Changer votre shell par défaut en Zsh (si ce n'est pas déjà fait)</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>✅ Vérification</h4>
+                    <p>
+                        Après l'installation, fermez et rouvrez votre terminal. Vous devriez voir un nouveau prompt
+                        coloré avec le thème "robbyrussell" par défaut.
+                    </p>
+                </div>
+
+                <h2>🎨 Étape 2 : Installation de Powerlevel10k</h2>
+
+                <h3>Pourquoi Powerlevel10k ?</h3>
+
+                <div class="key-points">
+                    <h3>💎 Powerlevel10k - Le meilleur thème Zsh</h3>
+                    <ul>
+                        <li><strong>Ultra-rapide</strong> : 100x plus rapide que Powerlevel9k</li>
+                        <li><strong>Configuration guidée</strong> : Assistant interactif de personnalisation</li>
+                        <li><strong>Informations riches</strong> : Git status, Python venv, Node version, etc.</li>
+                        <li><strong>Icônes Nerd Fonts</strong> : Support complet des polices avec icônes</li>
+                        <li><strong>Segments personnalisables</strong> : Affichage conditionnel selon le contexte</li>
+                        <li><strong>Compatible TTY</strong> : Fonctionne même sans polices spéciales</li>
+                    </ul>
+                </div>
+
+                <h3>Étape 2.1 : Installer une Nerd Font</h3>
+
+                <p>
+                    Powerlevel10k nécessite une <strong>Nerd Font</strong> pour afficher les icônes correctement.
+                    La police recommandée est <strong>MesloLGS NF</strong>.
+                </p>
+
+                <div class="alert alert-info">
+                    <h4>📥 Installation des polices MesloLGS NF</h4>
+                    <p><strong>macOS / Linux :</strong></p>
+                    <ol>
+                        <li>Téléchargez les 4 fichiers de police :
+                            <ul>
+                                <li><a
+                                        href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf">MesloLGS
+                                        NF Regular.ttf</a></li>
+                                <li><a
+                                        href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf">MesloLGS
+                                        NF Bold.ttf</a></li>
+                                <li><a
+                                        href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf">MesloLGS
+                                        NF Italic.ttf</a></li>
+                                <li><a
+                                        href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf">MesloLGS
+                                        NF Bold Italic.ttf</a></li>
+                            </ul>
+                        </li>
+                        <li>Double-cliquez sur chaque fichier et cliquez sur "Installer"</li>
+                        <li>Configurez votre terminal pour utiliser "MesloLGS NF"</li>
+                    </ol>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installation automatique via Homebrew (macOS)
+brew tap homebrew/cask-fonts
+brew install --cask font-meslo-lg-nerd-font
+
+# Vérifier l'installation
+fc-list | grep "MesloLGS"</code></pre>
+                </div>
+
+                <div class="workflow-diagram">
+                    <pre>
+Configuration de la police dans votre terminal :
+
+iTerm2 (macOS) :
+├─ Preferences → Profiles → Text
+└─ Font: MesloLGS NF, 13pt
+
+Terminal.app (macOS) :
+├─ Preferences → Profiles → Font
+└─ Change → MesloLGS NF, 13pt
+
+VS Code :
+├─ Settings (Cmd+,)
+└─ Terminal › Integrated: Font Family → 'MesloLGS NF'
+
+Windows Terminal :
+├─ Settings → Profiles → Defaults → Appearance
+└─ Font face → MesloLGS NF
+                    </pre>
+                </div>
+
+                <h3>Étape 2.2 : Installer Powerlevel10k</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Cloner Powerlevel10k dans le dossier des thèmes Oh My Zsh
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git \
+  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+# Éditer ~/.zshrc
+nano ~/.zshrc
+
+# Chercher la ligne ZSH_THEME et remplacer par :
+# ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Sauvegarder (Ctrl+O, Enter, Ctrl+X)
+
+# Recharger la configuration
+source ~/.zshrc</code></pre>
+                </div>
+
+                <h3>Étape 2.3 : Configuration Wizard de Powerlevel10k</h3>
+
+                <p>
+                    Au premier lancement, le <strong>Configuration Wizard</strong> de Powerlevel10k se lance
+                    automatiquement.
+                    Il vous posera une série de questions pour personnaliser votre prompt.
+                </p>
+
+                <div class="alert alert-info">
+                    <h4>🎨 Recommandations pour Data Engineers</h4>
+                    <p>Voici les réponses recommandées lors de la configuration :</p>
+                    <ol>
+                        <li><strong>Does this look like a diamond?</strong> → Yes</li>
+                        <li><strong>Does this look like a lock?</strong> → Yes</li>
+                        <li><strong>Does this look like a Debian logo?</strong> → Yes</li>
+                        <li><strong>Prompt Style</strong> → Rainbow (3)</li>
+                        <li><strong>Character Set</strong> → Unicode</li>
+                        <li><strong>Show current time?</strong> → 24-hour format</li>
+                        <li><strong>Prompt Separators</strong> → Angled</li>
+                        <li><strong>Prompt Heads</strong> → Sharp</li>
+                        <li><strong>Prompt Tails</strong> → Flat</li>
+                        <li><strong>Prompt Height</strong> → Two lines</li>
+                        <li><strong>Prompt Connection</strong> → Disconnected</li>
+                        <li><strong>Prompt Frame</strong> → Left</li>
+                        <li><strong>Connection Color</strong> → Dark</li>
+                        <li><strong>Prompt Spacing</strong> → Sparse</li>
+                        <li><strong>Icons</strong> → Many icons</li>
+                        <li><strong>Prompt Flow</strong> → Concise</li>
+                        <li><strong>Enable Transient Prompt?</strong> → Yes (recommandé)</li>
+                        <li><strong>Instant Prompt Mode</strong> → Verbose (recommandé pour debugging)</li>
+                    </ol>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Si vous voulez reconfigurer Powerlevel10k plus tard
+p10k configure
+
+# Éditer manuellement la configuration
+nano ~/.p10k.zsh</code></pre>
+                </div>
+
+                <h2>🔌 Étape 3 : Installation des Plugins Essentiels pour Data Engineers</h2>
+
+                <h3>3.1 : Plugins intégrés à Oh My Zsh</h3>
+
+                <p>
+                    Oh My Zsh inclut de nombreux plugins par défaut. Voici ceux essentiels pour le Data Engineering :
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Plugin</th>
+                            <th>Description</th>
+                            <th>Pourquoi l'utiliser ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>git</code></td>
+                            <td>Alias et autocomplétion Git</td>
+                            <td>Gain de temps énorme avec des alias comme <code>gst</code>, <code>gco</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>docker</code></td>
+                            <td>Autocomplétion Docker</td>
+                            <td>Autocomplete conteneurs, images, commandes</td>
+                        </tr>
+                        <tr>
+                            <td><code>docker-compose</code></td>
+                            <td>Autocomplétion docker-compose</td>
+                            <td>Essentiel pour gérer des stacks multi-services</td>
+                        </tr>
+                        <tr>
+                            <td><code>python</code></td>
+                            <td>Alias Python et venv</td>
+                            <td>Gestion des environnements virtuels</td>
+                        </tr>
+                        <tr>
+                            <td><code>pip</code></td>
+                            <td>Autocomplétion pip</td>
+                            <td>Installer des packages plus rapidement</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl</code></td>
+                            <td>Autocomplétion Kubernetes</td>
+                            <td>Indispensable si vous travaillez avec K8s</td>
+                        </tr>
+                        <tr>
+                            <td><code>terraform</code></td>
+                            <td>Autocomplétion Terraform</td>
+                            <td>Pour Infrastructure as Code</td>
+                        </tr>
+                        <tr>
+                            <td><code>aws</code></td>
+                            <td>Autocomplétion AWS CLI</td>
+                            <td>Gestion des services AWS</td>
+                        </tr>
+                        <tr>
+                            <td><code>gcloud</code></td>
+                            <td>Autocomplétion Google Cloud</td>
+                            <td>Pour travailler avec GCP</td>
+                        </tr>
+                        <tr>
+                            <td><code>z</code></td>
+                            <td>Navigation rapide (jump to directories)</td>
+                            <td>Sauter dans des dossiers fréquemment utilisés</td>
+                        </tr>
+                        <tr>
+                            <td><code>web-search</code></td>
+                            <td>Rechercher sur Google depuis le terminal</td>
+                            <td>Recherche rapide de documentation</td>
+                        </tr>
+                        <tr>
+                            <td><code>jsontools</code></td>
+                            <td>Formatage JSON</td>
+                            <td>Valider et formatter des JSON</td>
+                        </tr>
+                        <tr>
+                            <td><code>sudo</code></td>
+                            <td>Appuyer 2x ESC pour ajouter sudo</td>
+                            <td>Pratique quand vous oubliez sudo</td>
+                        </tr>
+                        <tr>
+                            <td><code>aliases</code></td>
+                            <td>Lister tous vos alias</td>
+                            <td>Retrouver rapidement vos alias</td>
+                        </tr>
+                        <tr>
+                            <td><code>common-aliases</code></td>
+                            <td>Alias communs utiles</td>
+                            <td>Alias pour ls, grep, etc.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3.2 : Plugins externes essentiels</h3>
+
+                <p>Ces plugins doivent être installés manuellement car ils ne sont pas inclus dans Oh My Zsh :</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Plugin</th>
+                            <th>Description</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>zsh-autosuggestions</code></td>
+                            <td>Suggestions basées sur l'historique</td>
+                            <td>⭐⭐⭐⭐⭐ Indispensable</td>
+                        </tr>
+                        <tr>
+                            <td><code>zsh-syntax-highlighting</code></td>
+                            <td>Coloration syntaxique en temps réel</td>
+                            <td>⭐⭐⭐⭐⭐ Indispensable</td>
+                        </tr>
+                        <tr>
+                            <td><code>zsh-completions</code></td>
+                            <td>Autocomplétion supplémentaire</td>
+                            <td>⭐⭐⭐⭐ Très utile</td>
+                        </tr>
+                        <tr>
+                            <td><code>fast-syntax-highlighting</code></td>
+                            <td>Alternative plus rapide à syntax-highlighting</td>
+                            <td>⭐⭐⭐⭐ Alternative</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Installation des plugins externes</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 1. zsh-autosuggestions (ESSENTIEL)
+git clone https://github.com/zsh-users/zsh-autosuggestions \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# 2. zsh-syntax-highlighting (ESSENTIEL)
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+  ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# 3. zsh-completions (recommandé)
+git clone https://github.com/zsh-users/zsh-completions \
+  ${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions
+
+# 4. fast-syntax-highlighting (alternative - choisir entre 2 et 4)
+git clone https://github.com/zdharma-continuum/fast-syntax-highlighting.git \
+  ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fast-syntax-highlighting</code></pre>
+                </div>
+
+                <h3>3.3 : Configuration du fichier .zshrc</h3>
+
+                <p>Maintenant, activez tous vos plugins dans <code>~/.zshrc</code> :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Éditer ~/.zshrc
+nano ~/.zshrc
+
+# Chercher la ligne "plugins=(git)" et remplacer par :
+plugins=(
+    # === Core ===
+    git
+    sudo
+    z
+    aliases
+    common-aliases
+
+    # === Data Engineering ===
+    docker
+    docker-compose
+    python
+    pip
+    kubectl
+    terraform
+    aws
+    gcloud
+
+    # === Utilities ===
+    web-search
+    jsontools
+    colored-man-pages
+    command-not-found
+
+    # === External plugins (à installer manuellement) ===
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    zsh-completions
+)
+
+# Sauvegarder et recharger
+source ~/.zshrc</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>⚠️ Ordre des plugins</h4>
+                    <p>
+                        <strong>IMPORTANT</strong> : <code>zsh-syntax-highlighting</code> doit être le
+                        <strong>dernier</strong>
+                        plugin de la liste pour fonctionner correctement.
+                    </p>
+                </div>
+
+                <h2>⚙️ Étape 4 : Configuration Avancée pour Data Engineers</h2>
+
+                <h3>4.1 : Alias personnalisés pour Data Engineering</h3>
+
+                <p>Ajoutez ces alias à la fin de votre <code>~/.zshrc</code> :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># ============================================
+# ALIAS PERSONNALISÉS POUR DATA ENGINEERING
+# ============================================
+
+# === Python & Virtual Environments ===
+alias py='python3'
+alias pip='pip3'
+alias venv='python3 -m venv'
+alias activate='source venv/bin/activate'
+alias deactivate='deactivate'
+alias pipr='pip install -r requirements.txt'
+alias pipf='pip freeze > requirements.txt'
+
+# === Docker ===
+alias d='docker'
+alias dc='docker-compose'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dimg='docker images'
+alias dexec='docker exec -it'
+alias dlogs='docker logs -f'
+alias dclean='docker system prune -af --volumes'
+alias dstop='docker stop $(docker ps -q)'
+
+# === Git (en plus de ceux fournis par le plugin) ===
+alias gs='git status'
+alias ga='git add'
+alias gaa='git add .'
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git pull'
+alias glog='git log --oneline --graph --all --decorate'
+alias gdiff='git diff'
+
+# === Kubernetes ===
+alias k='kubectl'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get services'
+alias kgd='kubectl get deployments'
+alias klogs='kubectl logs -f'
+alias kdesc='kubectl describe'
+
+# === Fichiers & Navigation ===
+alias ll='ls -alFh'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+
+# === Data Engineering spécifiques ===
+alias csvhead='head -n 20'  # Voir les 20 premières lignes d'un CSV
+alias csvcount='wc -l'      # Compter les lignes
+alias jsonpretty='python -m json.tool'  # Formater du JSON
+alias serve='python3 -m http.server'    # Serveur HTTP rapide
+
+# === Airflow (si utilisé) ===
+alias afl='airflow'
+alias afldb='airflow db init'
+alias aflweb='airflow webserver -p 8080'
+alias aflsch='airflow scheduler'
+
+# === Spark (si utilisé) ===
+alias pyspark='pyspark --master local[*]'
+alias spark-submit='spark-submit --master local[*]'
+
+# === Monitoring ===
+alias ports='netstat -tulanp'
+alias mem='free -h'
+alias cpu='top'</code></pre>
+                </div>
+
+                <h3>4.2 : Variables d'environnement</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># ============================================
+# VARIABLES D'ENVIRONNEMENT
+# ============================================
+
+# Python
+export PYTHONPATH="${PYTHONPATH}:${HOME}/projects"
+
+# Éditeur par défaut
+export EDITOR='nano'  # ou 'vim', 'code'
+
+# Spark (si installé)
+export SPARK_HOME=/usr/local/spark
+export PATH=$PATH:$SPARK_HOME/bin
+
+# Java (si nécessaire pour Spark, Kafka, etc.)
+export JAVA_HOME=$(/usr/libexec/java_home)  # macOS
+# export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64  # Linux
+
+# Airflow
+export AIRFLOW_HOME=~/airflow
+
+# Historique
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE=~/.zsh_history</code></pre>
+                </div>
+
+                <h2>🎯 Étape 4 : Configuration Finale et Optimisations</h2>
+
+                <h3>4.3 : Options Zsh recommandées</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># ============================================
+# OPTIONS ZSH
+# ============================================
+
+# Correction automatique des typos
+setopt CORRECT
+setopt CORRECT_ALL
+
+# Navigation
+setopt AUTO_CD              # cd automatique sans taper cd
+setopt AUTO_PUSHD           # Push automatique dans la pile
+setopt PUSHD_IGNORE_DUPS    # Ignorer les doublons dans la pile
+
+# Historique
+setopt HIST_IGNORE_DUPS     # Ignorer les doublons dans l'historique
+setopt HIST_IGNORE_SPACE    # Ignorer les commandes commençant par espace
+setopt HIST_VERIFY          # Vérifier avant d'exécuter une commande de l'historique
+setopt SHARE_HISTORY        # Partager l'historique entre sessions
+
+# Complétion
+setopt COMPLETE_IN_WORD     # Complétion au milieu d'un mot
+setopt ALWAYS_TO_END        # Curseur à la fin après complétion
+
+# Globbing
+setopt EXTENDED_GLOB        # Globbing étendu (patterns avancés)</code></pre>
+                </div>
+
+                <h3>4.4 : Personnalisation de zsh-autosuggestions</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Couleur des suggestions (gris plus visible)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+
+# Stratégie de suggestions (historique + completion)
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# Accepter une suggestion avec Ctrl+Space
+bindkey '^ ' autosuggest-accept</code></pre>
+                </div>
+
+                <h3>4.5 : Fichier .zshrc complet recommandé</h3>
+
+                <p>Voici un exemple de <code>~/.zshrc</code> complet et optimisé pour Data Engineers :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># ============================================
+# OH MY ZSH CONFIGURATION
+# ============================================
+
+# Path to oh-my-zsh installation
+export ZSH="$HOME/.oh-my-zsh"
+
+# Theme - Powerlevel10k
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Plugins
+plugins=(
+    # Core
+    git
+    sudo
+    z
+    aliases
+    common-aliases
+    colored-man-pages
+    command-not-found
+
+    # Data Engineering
+    docker
+    docker-compose
+    python
+    pip
+    kubectl
+    terraform
+    aws
+    gcloud
+
+    # Utilities
+    web-search
+    jsontools
+
+    # External (install manually)
+    zsh-autosuggestions
+    zsh-completions
+    zsh-syntax-highlighting  # MUST BE LAST
+)
+
+# Load Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# ============================================
+# POWERLEVEL10K INSTANT PROMPT
+# ============================================
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# ============================================
+# ZSH OPTIONS
+# ============================================
+setopt CORRECT
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_VERIFY
+setopt SHARE_HISTORY
+setopt COMPLETE_IN_WORD
+setopt ALWAYS_TO_END
+setopt EXTENDED_GLOB
+
+# ============================================
+# ENVIRONMENT VARIABLES
+# ============================================
+export EDITOR='nano'
+export PYTHONPATH="${PYTHONPATH}:${HOME}/projects"
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE=~/.zsh_history
+
+# ============================================
+# ALIASES - PYTHON & VENV
+# ============================================
+alias py='python3'
+alias pip='pip3'
+alias venv='python3 -m venv'
+alias activate='source venv/bin/activate'
+alias pipr='pip install -r requirements.txt'
+alias pipf='pip freeze > requirements.txt'
+
+# ============================================
+# ALIASES - DOCKER
+# ============================================
+alias d='docker'
+alias dc='docker-compose'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias dimg='docker images'
+alias dexec='docker exec -it'
+alias dlogs='docker logs -f'
+alias dclean='docker system prune -af --volumes'
+alias dstop='docker stop $(docker ps -q)'
+
+# ============================================
+# ALIASES - GIT
+# ============================================
+alias gs='git status'
+alias ga='git add'
+alias gaa='git add .'
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git pull'
+alias glog='git log --oneline --graph --all'
+
+# ============================================
+# ALIASES - KUBERNETES
+# ============================================
+alias k='kubectl'
+alias kgp='kubectl get pods'
+alias kgs='kubectl get services'
+alias klogs='kubectl logs -f'
+
+# ============================================
+# ALIASES - FILES & NAVIGATION
+# ============================================
+alias ll='ls -alFh'
+alias la='ls -A'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# ============================================
+# ALIASES - DATA ENGINEERING
+# ============================================
+alias csvhead='head -n 20'
+alias csvcount='wc -l'
+alias jsonpretty='python -m json.tool'
+alias serve='python3 -m http.server'
+
+# ============================================
+# ZSH-AUTOSUGGESTIONS CONFIG
+# ============================================
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=240'
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+bindkey '^ ' autosuggest-accept
+
+# ============================================
+# END OF CONFIGURATION
+# ============================================</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>✅ Application de la configuration</h4>
+                    <p>Après avoir modifié votre <code>~/.zshrc</code>, rechargez-le :</p>
+                    <div class="code-container">
+                        <pre><code class="language-bash">source ~/.zshrc</code></pre>
+                    </div>
+                </div>
+
+                <h2>🎓 Étape 5 : Vérification et Tests</h2>
+
+                <h3>5.1 : Checklist de vérification</h3>
+
+                <div class="exercise">
+                    <h4>✅ Vérifiez que tout fonctionne</h4>
+                    <ol>
+                        <li><strong>Powerlevel10k</strong> : Vous voyez un prompt coloré avec des icônes</li>
+                        <li><strong>Autosuggestions</strong> : Tapez <code>git</code> et voyez des suggestions grises
+                        </li>
+                        <li><strong>Syntax highlighting</strong> : Les commandes valides sont en vert, invalides en
+                            rouge</li>
+                        <li><strong>Plugins Git</strong> : Tapez <code>gst</code> (alias de git status)</li>
+                        <li><strong>Plugin Docker</strong> : Tapez <code>docker </code> puis Tab pour
+                            l'autocomplétion</li>
+                        <li><strong>Plugin z</strong> : Naviguez dans des dossiers, puis testez <code>z
+                                nom_du_dossier</code></li>
+                        <li><strong>Alias personnalisés</strong> : Testez <code>ll</code>, <code>py</code>,
+                            <code>d</code></li>
+                    </ol>
+                </div>
+
+                <h3>5.2 : Commandes de test</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Test 1: Vérifier les plugins chargés
+omz plugin list
+
+# Test 2: Vérifier les alias Git
+alias | grep git
+
+# Test 3: Tester l'autocomplétion Docker
+docker <Tab><Tab>
+
+# Test 4: Tester une fonction personnalisée
+csvinfo --help  # (si vous avez créé cette fonction)
+
+# Test 5: Vérifier le thème
+echo $ZSH_THEME
+# Output: powerlevel10k/powerlevel10k
+
+# Test 6: Naviguer avec z
+cd ~/Documents
+cd ~/Downloads
+cd ~/Desktop
+z Doc  # Devrait vous ramener dans ~/Documents</code></pre>
+                </div>
+
+                <h2>💡 Astuces et Conseils Avancés</h2>
+
+                <div class="key-points">
+                    <h3>🚀 Astuces de productivité</h3>
+                    <ul>
+                        <li><strong>Ctrl + R</strong> : Recherche inversée dans l'historique (puis tapez votre
+                            recherche)</li>
+                        <li><strong>!!</ strong> : Répète la dernière commande</li>
+                        <li><strong>!$</strong> : Utilise le dernier argument de la commande précédente</li>
+                        <li><strong>cd -</strong> : Retourne au dossier précédent</li>
+                        <li><strong>Ctrl + U</strong> : Efface toute la ligne</li>
+                        <li><strong>Ctrl + W</strong> : Efface le mot précédent</li>
+                        <li><strong>Ctrl + L</strong> : Efface l'écran (équivalent à <code>clear</code>)</li>
+                        <li><strong>ESC ESC</strong> : Ajoute <code>sudo</code> au début de la commande (plugin sudo)
+                        </li>
+                    </ul>
+                </div>
+
+                <h3>Maintenance et mises à jour</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Mettre à jour Oh My Zsh
+omz update
+
+# Mettre à jour Powerlevel10k
+git -C ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k pull
+
+# Mettre à jour les plugins externes
+cd ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions && git pull
+cd ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting && git pull
+cd ~/.oh-my-zsh/custom/plugins/zsh-completions && git pull
+
+# Ou créer un alias pour tout mettre à jour
+alias update-zsh='omz update && \
+  git -C ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k pull && \
+  git -C ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions pull && \
+  git -C ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting pull'</code></pre>
+                </div>
+
+                <h2>📚 Ressources Complémentaires</h2>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Documentation officielle</h4>
+                        <ul>
+                            <li><a href="https://ohmyz.sh/" target="_blank">Oh My Zsh</a></li>
+                            <li><a href="https://github.com/romkatv/powerlevel10k" target="_blank">Powerlevel10k</a>
+                            </li>
+                            <li><a href="https://github.com/zsh-users/zsh-autosuggestions"
+                                    target="_blank">zsh-autosuggestions</a></li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Plugins intéressants</h4>
+                        <ul>
+                            <li><a href="https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins"
+                                    target="_blank">Liste des plugins Oh My Zsh</a></li>
+                            <li><a href="https://github.com/unixorn/awesome-zsh-plugins" target="_blank">Awesome Zsh
+                                    Plugins</a></li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Polices et thèmes</h4>
+                        <ul>
+                            <li><a href="https://www.nerdfonts.com/" target="_blank">Nerd Fonts</a></li>
+                            <li><a href="https://github.com/ohmyzsh/ohmyzsh/wiki/Themes" target="_blank">Thèmes Oh My
+                                    Zsh</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 8 terminée ! 🎉</h4>
+                <p>
+                    Félicitations ! Vous avez maintenant un terminal professionnel, moderne et optimisé pour le Data
+                    Engineering avec :
+                </p>
+                <ul>
+                    <li>✅ Oh My Zsh installé et configuré</li>
+                    <li>✅ Powerlevel10k comme thème</li>
+                    <li>✅ Plugins essentiels pour Data Engineering</li>
+                    <li>✅ Alias et fonctions personnalisés</li>
+                    <li>✅ Configuration optimisée</li>
+                </ul>
+                <p style="margin-top: 20px;">
+                    Votre terminal est maintenant <strong>10x plus productif</strong> ! 🚀
+                </p>
+                <p style="margin-top: 15px;">
+                    <a href="../index.html"
+                        style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        ← Retour à l'accueil
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Bash/Zsh pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

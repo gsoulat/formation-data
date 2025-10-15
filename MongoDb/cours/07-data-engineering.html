@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7: MongoDB en Data Engineering - Formation MongoDB</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Module 7: MongoDB en Data Engineering</h1>
+            <p class="subtitle">Pipelines ETL, Change Streams, Transactions et Backups</p>
+            <span class="duration">Duree: 10 minutes</span>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="01-introduction.html">M1: Introduction</a></li>
+                <li><a href="02-installation.html">M2: Installation</a></li>
+                <li><a href="03-crud.html">M3: CRUD</a></li>
+                <li><a href="04-aggregation.html">M4: Agregation</a></li>
+                <li><a href="05-index-performance.html">M5: Index</a></li>
+                <li><a href="06-modelisation.html">M6: Modelisation</a></li>
+                <li><a href="07-data-engineering.html" class="active">M7: Data Engineering</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs du module</h2>
+                <ul>
+                    <li>Creer des pipelines ETL avec Python</li>
+                    <li>Utiliser Change Streams pour le temps reel</li>
+                    <li>Implementer des transactions ACID</li>
+                    <li>Configurer des backups automatises</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Cas d'usage courants</h2>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Data Lake / Staging</h4>
+                        <p>Stocker des donnees brutes semi-structurees avant transformation (JSON logs, API responses)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Analytics Real-time</h4>
+                        <p>Agregations rapides sur des donnees en temps reel avec le framework d'agregation</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>API Backend</h4>
+                        <p>Base de donnees pour des APIs REST ou GraphQL avec donnees flexibles</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>IoT & Sensors</h4>
+                        <p>Stocker des millions de mesures de capteurs avec le bucket pattern</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Search & Catalog</h4>
+                        <p>Moteur de recherche avec full-text search et Atlas Search</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Content Management</h4>
+                        <p>CMS avec schema flexible pour differents types de contenu</p>
+                    </div>
+                </div>
+
+                <h3>Pipeline ETL avec MongoDB</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">"""
+ETL Pipeline: Extract from API -> Transform -> Load to MongoDB
+"""
+from pymongo import MongoClient
+import requests
+from datetime import datetime
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+class MongoDBPipeline:
+    def __init__(self, connection_string, database_name):
+        self.client = MongoClient(connection_string)
+        self.db = self.client[database_name]
+        logger.info(f"Connecte a MongoDB: {database_name}")
+
+    def extract_from_api(self, api_url):
+        """Extract data from REST API"""
+        logger.info(f"Extraction depuis {api_url}")
+        response = requests.get(api_url)
+        data = response.json()
+        logger.info(f"{len(data)} enregistrements extraits")
+        return data
+
+    def transform_data(self, raw_data):
+        """Transform and clean data"""
+        logger.info("Transformation des donnees")
+        transformed = []
+
+        for item in raw_data:
+            # Nettoyage et enrichissement
+            cleaned = {
+                "name": item.get("name", "").strip(),
+                "email": item.get("email", "").lower(),
+                "age": int(item.get("age", 0)),
+                "status": "active",
+                "created_at": datetime.utcnow(),
+                "metadata": {
+                    "source": "api",
+                    "version": "1.0"
+                }
+            }
+            transformed.append(cleaned)
+
+        logger.info(f"{len(transformed)} enregistrements transformes")
+        return transformed
+
+    def load_to_mongodb(self, data, collection_name):
+        """Load data into MongoDB collection"""
+        logger.info(f"Chargement dans la collection {collection_name}")
+        collection = self.db[collection_name]
+
+        # Bulk insert
+        if data:
+            result = collection.insert_many(data)
+            logger.info(f"{len(result.inserted_ids)} documents inseres")
+            return result.inserted_ids
+        else:
+            logger.warning("Aucune donnee a charger")
+            return []
+
+    def run_pipeline(self, api_url, collection_name):
+        """Execute full ETL pipeline"""
+        logger.info("Demarrage du pipeline ETL")
+
+        try:
+            # Extract
+            raw_data = self.extract_from_api(api_url)
+
+            # Transform
+            transformed_data = self.transform_data(raw_data)
+
+            # Load
+            self.load_to_mongodb(transformed_data, collection_name)
+
+            logger.info("Pipeline ETL termine avec succes")
+
+        except Exception as e:
+            logger.error(f"Erreur dans le pipeline: {e}")
+            raise
+
+        finally:
+            self.client.close()
+
+
+# Utilisation
+if __name__ == "__main__":
+    pipeline = MongoDBPipeline(
+        connection_string="mongodb://localhost:27017/",
+        database_name="data_engineering"
+    )
+
+    pipeline.run_pipeline(
+        api_url="https://jsonplaceholder.typicode.com/users",
+        collection_name="users"
+    )</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Change Streams : Donnees en temps reel</h2>
+
+                <p>
+                    Les <strong>Change Streams</strong> permettent de surveiller les modifications sur une collection
+                    en temps reel (inserts, updates, deletes).
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['mydb']
+collection = db['users']
+
+# Ouvrir un change stream
+with collection.watch() as stream:
+    print("Surveillance des changements...")
+    for change in stream:
+        print(f"Changement detecte: {change['operationType']}")
+        print(f"Document: {change.get('fullDocument')}")
+
+        # Traiter le changement
+        if change['operationType'] == 'insert':
+            print("Nouveau document insere")
+        elif change['operationType'] == 'update':
+            print("Document mis a jour")
+        elif change['operationType'] == 'delete':
+            print("Document supprime")</code></pre>
+                </div>
+
+                <p><strong>Cas d'usage :</strong> Synchronisation temps reel, notifications, audit logs, replication</p>
+
+                <div class="alert alert-info">
+                    <h4>Prerequis pour Change Streams</h4>
+                    <p>
+                        Les Change Streams necessitent un replica set MongoDB (disponible par defaut sur MongoDB Atlas).
+                        Pour un usage local, configurez un replica set ou utilisez MongoDB 4.2+ en mode standalone avec replication.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Transactions ACID</h2>
+
+                <p>
+                    Depuis MongoDB 4.0, les <strong>transactions multi-documents</strong> sont supportees pour garantir
+                    la coherence des donnees (ACID : Atomicity, Consistency, Isolation, Durability).
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['mydb']
+
+# Demarrer une session
+with client.start_session() as session:
+    # Demarrer une transaction
+    with session.start_transaction():
+        try:
+            # Operation 1 : Debiter le compte A
+            db.accounts.update_one(
+                {"account_id": "A"},
+                {"$inc": {"balance": -100}},
+                session=session
+            )
+
+            # Operation 2 : Crediter le compte B
+            db.accounts.update_one(
+                {"account_id": "B"},
+                {"$inc": {"balance": 100}},
+                session=session
+            )
+
+            # Tout s'est bien passe, commit
+            print("Transaction reussie")
+
+        except Exception as e:
+            # En cas d'erreur, rollback automatique
+            print(f"Transaction echouee: {e}")
+            raise</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Quand utiliser les transactions ?</h4>
+                    <ul>
+                        <li>Operations critiques necessitant l'atomicite (virements bancaires, commandes)</li>
+                        <li>Modifications sur plusieurs collections qui doivent reussir ou echouer ensemble</li>
+                        <li>Pas besoin si vous utilisez embedded documents (atomicite par defaut)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Backup et Restore</h2>
+
+                <h3>mongodump et mongorestore</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Backup d'une base de donnees
+mongodump --uri="mongodb://localhost:27017/mydb" --out=/backup/
+
+# Backup avec compression
+mongodump --uri="mongodb://localhost:27017/mydb" --gzip --out=/backup/
+
+# Backup d'une collection specifique
+mongodump --db=mydb --collection=users --out=/backup/
+
+# Restore
+mongorestore --uri="mongodb://localhost:27017/" /backup/
+
+# Restore avec drop des collections existantes
+mongorestore --uri="mongodb://localhost:27017/" --drop /backup/</code></pre>
+                </div>
+
+                <h3>Backup automatise avec Python</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">import subprocess
+from datetime import datetime
+import os
+
+def backup_mongodb(database_name, backup_dir):
+    """Backup automatique de MongoDB"""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_dir = os.path.join(backup_dir, f"backup_{timestamp}")
+
+    command = [
+        "mongodump",
+        f"--uri=mongodb://localhost:27017/{database_name}",
+        f"--out={output_dir}",
+        "--gzip"
+    ]
+
+    try:
+        subprocess.run(command, check=True)
+        print(f"Backup reussi: {output_dir}")
+        return output_dir
+    except subprocess.CalledProcessError as e:
+        print(f"Erreur backup: {e}")
+        raise
+
+# Utilisation
+backup_mongodb("mydb", "/backups/mongodb")</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Bonnes pratiques de backup</h4>
+                    <ul>
+                        <li>Backups reguliers automatises (cron, scheduler)</li>
+                        <li>Stockage des backups sur un systeme distant (S3, etc.)</li>
+                        <li>Tester regulierement la restauration</li>
+                        <li>Conserver plusieurs versions de backups</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Integration avec l'ecosysteme Data</h2>
+
+                <h3>MongoDB avec Apache Airflow</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+from pymongo import MongoClient
+
+def extract_and_load():
+    client = MongoClient('mongodb://localhost:27017/')
+    db = client['analytics']
+    collection = db['daily_stats']
+    
+    # Votre logique ETL ici
+    data = {"date": datetime.utcnow(), "total": 1000}
+    collection.insert_one(data)
+    
+    client.close()
+
+dag = DAG(
+    'mongodb_etl',
+    start_date=datetime(2024, 1, 1),
+    schedule_interval='@daily'
+)
+
+task = PythonOperator(
+    task_id='extract_load',
+    python_callable=extract_and_load,
+    dag=dag
+)</code></pre>
+                </div>
+
+                <h3>MongoDB avec Pandas</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">import pandas as pd
+from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['mydb']
+collection = db['users']
+
+# MongoDB vers DataFrame
+cursor = collection.find({"age": {"$gt": 25}})
+df = pd.DataFrame(list(cursor))
+
+# Analyse avec Pandas
+print(df.describe())
+print(df.groupby('department')['age'].mean())
+
+# DataFrame vers MongoDB
+new_data = pd.DataFrame({
+    "name": ["Alice", "Bob"],
+    "age": [28, 32]
+})
+
+collection.insert_many(new_data.to_dict('records'))</code></pre>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Best Practices Data Engineering avec MongoDB</h3>
+                <ul>
+                    <li>Utilisez des index adaptes pour vos requetes frequentes</li>
+                    <li>Privilegiez l'agregation pipeline pour l'analytics</li>
+                    <li>Implementez des Change Streams pour la synchronisation temps reel</li>
+                    <li>Mettez en place des backups automatiques reguliers</li>
+                    <li>Surveillez les performances avec MongoDB Atlas ou Ops Manager</li>
+                    <li>Utilisez le bucket pattern pour les time-series data</li>
+                    <li>Configurez la replication pour la haute disponibilite</li>
+                    <li>Documentez votre schema meme s'il est flexible</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="06-modelisation.html" class="nav-button prev">Module 6: Modelisation</a>
+                <a href="index.html" class="nav-button next">Retour a l'accueil</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Module 7/7 - Formation MongoDB pour Data Engineering - 2024</p>
+            <p><strong>Felicitations ! Vous avez termine la formation MongoDB !</strong></p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>

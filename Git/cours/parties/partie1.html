@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 1 - Introduction à Git</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 1</h1>
+            <p class="subtitle">Introduction à Git et au versionnage</p>
+            <span class="duration">⏱️ Durée : 20 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie2.html">Partie 2 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>1. Introduction à Git et au versionnage</h2>
+
+                <h3>Qu'est-ce que Git ?</h3>
+                <p>
+                    <strong>Git</strong> est un système de contrôle de version distribué créé par Linus Torvalds en 2005.
+                    C'est l'outil le plus utilisé au monde pour gérer les versions de code source et suivre l'historique
+                    des modifications d'un projet.
+                </p>
+
+                <div class="image-container">
+                    <img src="https://git-scm.com/images/logos/downloads/Git-Logo-2Color.png" alt="Git Logo" style="max-width: 400px;">
+                    <p class="image-caption">Logo officiel de Git</p>
+                </div>
+
+                <h3>Pourquoi Git est essentiel en Data Engineering ?</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📊 Versionnage des pipelines</h4>
+                        <p>Suivez l'évolution de vos scripts ETL, transformations et orchestrations avec un historique complet.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🤝 Collaboration d'équipe</h4>
+                        <p>Plusieurs Data Engineers travaillent simultanément sur les mêmes pipelines sans conflits.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔄 Reproductibilité</h4>
+                        <p>Retournez à n'importe quelle version antérieure en cas de bug ou de régression.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🚀 CI/CD Integration</h4>
+                        <p>Déployez automatiquement vos pipelines de données dans différents environnements.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📝 Documentation automatique</h4>
+                        <p>Les messages de commit servent de journal des modifications et décisions.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔍 Audit et traçabilité</h4>
+                        <p>Identifiez qui a fait quoi, quand et pourquoi dans votre codebase.</p>
+                    </div>
+                </div>
+
+                <h3>Les concepts fondamentaux</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concept</th>
+                            <th>Description</th>
+                            <th>Analogie</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Repository (Dépôt)</strong></td>
+                            <td>Conteneur qui stocke tout l'historique du projet</td>
+                            <td>Une bibliothèque avec tous les livres et leurs versions</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Commit</strong></td>
+                            <td>Snapshot (photo) de votre code à un instant T</td>
+                            <td>Une sauvegarde de jeu vidéo</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Branch (Branche)</strong></td>
+                            <td>Ligne de développement indépendante</td>
+                            <td>Une version alternative de votre projet</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Merge (Fusion)</strong></td>
+                            <td>Combinaison de deux branches</td>
+                            <td>Fusionner deux documents Word</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Remote</strong></td>
+                            <td>Version du dépôt hébergée sur un serveur distant</td>
+                            <td>Votre cloud storage (GitHub, GitLab)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Clone</strong></td>
+                            <td>Copie locale d'un dépôt distant</td>
+                            <td>Télécharger un projet depuis le cloud</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Architecture Git : Distribué vs Centralisé</h3>
+
+                <div class="image-container">
+                    <img src="https://git-scm.com/images/about/branches@2x.png" alt="Git Branches" style="max-width: 700px;">
+                    <p class="image-caption">Git permet un développement parallèle avec des branches</p>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Git vs SVN/CVS</h4>
+                    <p>
+                        Contrairement aux systèmes centralisés (SVN, CVS), Git est <strong>distribué</strong>.
+                        Chaque développeur possède une copie complète de l'historique, permettant de travailler hors ligne
+                        et de créer des branches sans toucher au serveur central.
+                    </p>
+                </div>
+
+                <h3>Les trois états de Git</h3>
+
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────┐      ┌─────────────────────┐      ┌─────────────────────┐
+│                     │      │                     │      │                     │
+│  Working Directory  │─────▶│   Staging Area      │─────▶│   Repository        │
+│   (Modifié)         │      │   (Préparé)         │      │   (Commité)         │
+│                     │      │                     │      │                     │
+└─────────────────────┘      └─────────────────────┘      └─────────────────────┘
+        ▲                            ▲                            │
+        │                            │                            │
+        │        git checkout        │         git add            │   git commit
+        └────────────────────────────┴────────────────────────────┘
+                                                (Modifie/Stage/Commit)
+</pre>
+                </div>
+
+                <ul>
+                    <li><strong>Working Directory</strong> : Vos fichiers actuels sur lesquels vous travaillez</li>
+                    <li><strong>Staging Area (Index)</strong> : Zone de préparation avant le commit</li>
+                    <li><strong>Repository (.git)</strong> : Base de données contenant tout l'historique</li>
+                </ul>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 1 terminée !</h4>
+                <p>
+                    Vous avez appris les bases de Git et compris pourquoi c'est essentiel en Data Engineering.
+                    Passez maintenant aux exercices ou continuez avec la Partie 2 sur l'installation.
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="../exercices.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                        🎯 Faire les exercices
+                    </a>
+                    <a href="partie2.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 2 →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

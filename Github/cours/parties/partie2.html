@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 2 : Premiers pas avec GitHub - Formation GitHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Partie 2 : Premiers pas avec GitHub</h1>
+            <p class="subtitle">Créez votre compte et publiez votre premier repository</p>
+            <span class="duration">⏱️ Durée : 30 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html" class="active">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Créer un compte GitHub professionnel</li>
+                    <li>Configurer votre profil de manière optimale</li>
+                    <li>Mettre en place l'authentification SSH</li>
+                    <li>Créer votre premier repository</li>
+                    <li>Cloner un repository et pousser du code</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Créer un compte GitHub</h2>
+
+                <ol>
+                    <li>Rendez-vous sur <a href="https://github.com" target="_blank">github.com</a></li>
+                    <li>Cliquez sur "Sign up"</li>
+                    <li>Choisissez votre nom d'utilisateur (visible publiquement)</li>
+                    <li>Vérifiez votre email</li>
+                    <li>Choisissez un plan (Free est suffisant pour commencer)</li>
+                </ol>
+
+                <div class="alert alert-info">
+                    <h4>Conseils pour votre nom d'utilisateur</h4>
+                    <ul>
+                        <li>Choisissez un nom professionnel (il apparaîtra sur vos contributions)</li>
+                        <li>Évitez les caractères spéciaux</li>
+                        <li>Il peut servir de portfolio pour votre carrière</li>
+                    </ul>
+                </div>
+
+                <h3>Configurer votre profil</h3>
+
+                <p>Un profil complet améliore votre crédibilité professionnelle :</p>
+
+                <div class="feature-box">
+                    <h5>Éléments essentiels</h5>
+                    <ul>
+                        <li><strong>Photo de profil</strong> : Photo professionnelle ou avatar</li>
+                        <li><strong>Nom complet</strong> : Votre véritable nom</li>
+                        <li><strong>Bio</strong> : Courte description (ex: "Data Engineer @ Company | Python, SQL,
+                            Airflow")</li>
+                        <li><strong>Localisation</strong> : Ville, Pays</li>
+                        <li><strong>Site web / LinkedIn</strong> : Liens professionnels</li>
+                        <li><strong>Entreprise</strong> : Votre employeur actuel</li>
+                    </ul>
+                </div>
+
+                <h3>Authentification avec SSH</h3>
+
+                <p>Pour éviter de saisir votre mot de passe à chaque push, configurez une clé SSH :</p>
+
+                <h4>Générer une clé SSH</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Générer une nouvelle clé SSH
+ssh-keygen -t ed25519 -C "votre.email@example.com"
+
+# Appuyez sur Entrée pour accepter l'emplacement par défaut
+# Entrez une passphrase (optionnel mais recommandé)
+
+# Démarrer l'agent SSH
+eval "$(ssh-agent -s)"
+
+# Ajouter votre clé à l'agent
+ssh-add ~/.ssh/id_ed25519
+
+# Copier la clé publique
+cat ~/.ssh/id_ed25519.pub
+# ou sur macOS :
+pbcopy < ~/.ssh/id_ed25519.pub</code></pre>
+                </div>
+
+                <h4>Ajouter la clé à GitHub</h4>
+
+                <ol>
+                    <li>Sur GitHub, allez dans <strong>Settings</strong> → <strong>SSH and GPG keys</strong></li>
+                    <li>Cliquez sur <strong>New SSH key</strong></li>
+                    <li>Donnez un titre (ex: "MacBook Pro")</li>
+                    <li>Collez votre clé publique</li>
+                    <li>Cliquez sur <strong>Add SSH key</strong></li>
+                </ol>
+
+                <h4>Tester la connexion</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Tester la connexion SSH
+ssh -T git@github.com
+
+# Résultat attendu :
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>C'est configuré !</h4>
+                    <p>Vous pouvez maintenant cloner des dépôts et push sans mot de passe avec les URLs SSH
+                        (git@github.com:...).</p>
+                </div>
+
+                <h3>Créer votre premier repository</h3>
+
+                <h4>Via l'interface web</h4>
+
+                <ol>
+                    <li>Cliquez sur le bouton <strong>+</strong> en haut à droite</li>
+                    <li>Sélectionnez <strong>New repository</strong></li>
+                    <li>Configurez votre repository :
+                        <ul>
+                            <li><strong>Repository name</strong> : <code>data-pipeline-demo</code></li>
+                            <li><strong>Description</strong> : "Demo ETL pipeline for learning"</li>
+                            <li><strong>Public/Private</strong> : Choisissez selon vos besoins</li>
+                            <li>✅ Cochez "Add a README file"</li>
+                            <li>Choisissez un <strong>.gitignore</strong> (Python)</li>
+                            <li>Choisissez une <strong>License</strong> (MIT pour l'open source)</li>
+                        </ul>
+                    </li>
+                    <li>Cliquez sur <strong>Create repository</strong></li>
+                </ol>
+
+                <div class="screenshot-note">
+                    À ce stade, votre premier repository est créé sur GitHub !
+                </div>
+
+                <h4>Cloner le repository localement</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Cloner avec SSH (recommandé)
+git clone git@github.com:votre-username/data-pipeline-demo.git
+
+# Ou avec HTTPS
+git clone https://github.com/votre-username/data-pipeline-demo.git
+
+# Entrer dans le dossier
+cd data-pipeline-demo
+
+# Vérifier le remote
+git remote -v</code></pre>
+                </div>
+
+                <h3>Pousser un projet existant vers GitHub</h3>
+
+                <p>Si vous avez déjà un projet Git local, voici comment le pousser sur GitHub :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 1. Créer un repository vide sur GitHub (sans README, .gitignore, license)
+
+# 2. Dans votre projet local existant
+cd mon-projet-existant
+
+# 3. Ajouter le remote GitHub
+git remote add origin git@github.com:votre-username/mon-projet.git
+
+# 4. Vérifier
+git remote -v
+
+# 5. Pousser votre code
+git branch -M main
+git push -u origin main</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Attention aux secrets !</h4>
+                    <p>
+                        Avant de pousser, vérifiez que votre <code>.gitignore</code> exclut bien tous les fichiers
+                        sensibles
+                        (.env, credentials, API keys, etc.). Une fois pushé sur GitHub, même supprimé, le secret reste
+                        dans l'historique !
+                    </p>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Configurez SSH pour éviter de saisir votre mot de passe à chaque push</li>
+                    <li>Un profil GitHub complet améliore votre crédibilité professionnelle</li>
+                    <li>Utilisez des noms de repository clairs et descriptifs</li>
+                    <li>Ajoutez toujours un README, .gitignore et une license</li>
+                    <li>Ne committez JAMAIS de secrets ou credentials</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Votre environnement GitHub est prêt ! Passons à la <strong>Partie 3</strong> pour apprendre à
+                    collaborer avec les Pull Requests.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie1.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 1 : Introduction
+                </a>
+                <a href="partie3.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 3 : Pull Requests →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation GitHub pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+
+</html>

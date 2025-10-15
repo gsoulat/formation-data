@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 : Pull Requests et Code Review - Formation GitHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 Partie 3 : Pull Requests et Code Review</h1>
+            <p class="subtitle">Maîtrisez le workflow collaboratif central de GitHub</p>
+            <span class="duration">⏱️ Durée : 40 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html" class="active">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Comprendre le rôle central des Pull Requests</li>
+                    <li>Créer une Pull Request complète et bien documentée</li>
+                    <li>Effectuer des code reviews constructives</li>
+                    <li>Connaître les bonnes pratiques pour auteurs et reviewers</li>
+                    <li>Choisir le bon type de merge</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Qu'est-ce qu'une Pull Request ?</h2>
+
+                <p>
+                    Une <strong>Pull Request</strong> (ou PR) est le mécanisme central de collaboration sur GitHub.
+                    C'est une demande pour intégrer des modifications d'une branche vers une autre, généralement de
+                    votre
+                    branche feature vers <code>main</code>.
+                </p>
+
+                <div class="workflow-diagram">
+                    <pre>
+┌──────────────┐
+│  main branch │
+└──────┬───────┘
+       │
+       │ (créer feature branch)
+       ↓
+┌──────────────────┐
+│ feature/new-etl  │ ← Développement
+└──────┬───────────┘
+       │
+       │ (push + create PR)
+       ↓
+┌──────────────────┐
+│   Pull Request   │ ← Review, Discussion, Tests
+└──────┬───────────┘
+       │
+       │ (merge après approbation)
+       ↓
+┌──────────────┐
+│  main branch │ ← Code intégré
+└──────────────┘
+</pre>
+                </div>
+
+                <h3>Créer une Pull Request : Workflow complet</h3>
+
+                <h4>Étape 1 : Créer une branche</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># S'assurer d'être à jour
+git checkout main
+git pull origin main
+
+# Créer une branche feature
+git checkout -b feature/add-data-validation
+
+# Développer votre fonctionnalité
+# ... modifiez vos fichiers ...
+
+# Committer vos changements
+git add .
+git commit -m "feat: add data validation module"</code></pre>
+                </div>
+
+                <h4>Étape 2 : Pousser la branche</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Pousser la branche vers GitHub
+git push -u origin feature/add-data-validation
+
+# GitHub affiche un lien direct pour créer la PR</code></pre>
+                </div>
+
+                <h4>Étape 3 : Créer la PR sur GitHub</h4>
+
+                <ol>
+                    <li>Allez sur votre repository sur GitHub</li>
+                    <li>Cliquez sur <strong>Compare & pull request</strong></li>
+                    <li>Ou allez dans l'onglet <strong>Pull requests</strong> → <strong>New pull request</strong></li>
+                    <li>Sélectionnez les branches :
+                        <ul>
+                            <li><strong>base</strong> : <code>main</code> (branche de destination)</li>
+                            <li><strong>compare</strong> : <code>feature/add-data-validation</code> (votre branche)
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h4>Étape 4 : Rédiger une description complète</h4>
+
+                <p>Une bonne PR contient :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-markdown">## 🎯 Objectif
+
+Ajout d'un module de validation des données pour détecter les problèmes de qualité avant le chargement.
+
+## 📝 Changements
+
+- Nouveau fichier `src/validate.py` avec deux fonctions principales
+- `validate_schema()` : vérifie que les colonnes attendues sont présentes
+- `validate_data_quality()` : détecte les valeurs nulles et doublons
+- Ajout de tests unitaires dans `tests/test_validate.py`
+- Mise à jour du README avec documentation du module
+
+## ✅ Tests
+
+- [x] Tests unitaires passent localement (`pytest tests/`)
+- [x] Testé manuellement avec un dataset de 10 000 lignes
+- [x] Pas de régression sur les pipelines existants
+
+## 🔗 Liens
+
+Closes #42
+
+## 📸 Captures d'écran (si UI)
+
+N/A
+
+## ⚠️ Points d'attention pour les reviewers
+
+- Vérifier si la logique de détection des doublons est suffisante
+- Suggérer des validations supplémentaires à implémenter
+</code></pre>
+                </div>
+
+                <h4>Étape 5 : Assigner des reviewers</h4>
+
+                <p>Sur la droite de la PR :</p>
+
+                <ul>
+                    <li><strong>Reviewers</strong> : Sélectionnez les personnes qui doivent relire le code</li>
+                    <li><strong>Assignees</strong> : Vous-même (personne responsable de la PR)</li>
+                    <li><strong>Labels</strong> : Exemple : <code>enhancement</code>, <code>bug</code>,
+                        <code>documentation</code>
+                    </li>
+                    <li><strong>Projects</strong> : Lier à un projet si vous utilisez GitHub Projects</li>
+                    <li><strong>Milestone</strong> : Si applicable (exemple : v1.0.0)</li>
+                </ul>
+
+                <h3>Code Review : Bonnes pratiques</h3>
+
+                <h4>Pour l'auteur de la PR</h4>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>✅ À faire</h4>
+                        <ul>
+                            <li>PR petite et focalisée (&lt; 400 lignes)</li>
+                            <li>Description claire et complète</li>
+                            <li>Tests qui passent avant de demander review</li>
+                            <li>Répondre rapidement aux commentaires</li>
+                            <li>Accepter les critiques constructives</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>❌ À éviter</h4>
+                        <ul>
+                            <li>PR massive avec des milliers de lignes</li>
+                            <li>Mélanger plusieurs features non liées</li>
+                            <li>Ignorer les commentaires des reviewers</li>
+                            <li>Push force sans prévenir</li>
+                            <li>Description vide ou "fix"</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Pour le reviewer</h4>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>✅ À faire</h4>
+                        <ul>
+                            <li>Lire toute la PR avant de commenter</li>
+                            <li>Être constructif et respectueux</li>
+                            <li>Proposer des solutions, pas juste critiquer</li>
+                            <li>Valider la logique métier</li>
+                            <li>Vérifier les tests et edge cases</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>❌ À éviter</h4>
+                        <ul>
+                            <li>Commentaires vagues ("c'est moche")</li>
+                            <li>Imposer son style personnel</li>
+                            <li>Bloquer pour des détails mineurs</li>
+                            <li>Ignorer la PR pendant des jours</li>
+                            <li>Approuver sans vraiment lire</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Types de commentaires sur une PR</h4>
+
+                <ul>
+                    <li><strong>Comment</strong> : Simple commentaire, pas bloquant</li>
+                    <li><strong>Approve</strong> : ✅ Validation de la PR, prête à merger</li>
+                    <li><strong>Request changes</strong> : ❌ Modifications nécessaires avant merge</li>
+                </ul>
+
+                <h3>Intégrer les modifications demandées</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Effectuer les modifications demandées
+# ... éditer les fichiers ...
+
+# Committer les changements
+git add .
+git commit -m "fix: address review comments - improve error handling"
+
+# Pousser les modifications
+git push origin feature/add-data-validation
+
+# La PR se met automatiquement à jour sur GitHub</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Git Push automatique</h4>
+                    <p>
+                        Chaque fois que vous push un nouveau commit sur la branche, la PR est automatiquement mise à
+                        jour.
+                        Les reviewers sont notifiés des nouveaux changements.
+                    </p>
+                </div>
+
+                <h3>Merger la Pull Request</h3>
+
+                <p>Une fois que la PR est approuvée et que les tests passent :</p>
+
+                <h4>Trois types de merge</h4>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Quand l'utiliser ?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Merge commit</strong></td>
+                            <td>Crée un commit de merge, garde tout l'historique</td>
+                            <td>Projets où l'historique complet est important</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Squash and merge</strong></td>
+                            <td>Combine tous les commits en un seul</td>
+                            <td>Garder un historique propre sur main (recommandé)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rebase and merge</strong></td>
+                            <td>Réapplique les commits sur main sans commit de merge</td>
+                            <td>Historique linéaire strict</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-success">
+                    <h4>Recommandation</h4>
+                    <p>
+                        Pour la plupart des projets, <strong>Squash and merge</strong> est le meilleur choix.
+                        Cela crée un historique propre sur main avec un commit par feature.
+                    </p>
+                </div>
+
+                <h4>Après le merge</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Mettre à jour votre branche main locale
+git checkout main
+git pull origin main
+
+# Supprimer la branche feature localement
+git branch -d feature/add-data-validation
+
+# GitHub propose automatiquement de supprimer la branche distante</code></pre>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Les Pull Requests sont le mécanisme central de collaboration sur GitHub</li>
+                    <li>Une PR doit être petite (&lt; 400 lignes), focalisée et bien documentée</li>
+                    <li>Les code reviews sont constructives, respectueuses et proposent des solutions</li>
+                    <li>Squash and merge est recommandé pour garder un historique propre</li>
+                    <li>Ne mergez qu'après approbation et tests qui passent</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vous maîtrisez maintenant les Pull Requests ! Passons à la <strong>Partie 4</strong> pour apprendre
+                    à organiser votre travail avec Issues et Projects.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie2.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 2 : Premiers pas
+                </a>
+                <a href="partie4.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 4 : Issues et Projects →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation GitHub pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+
+</html>

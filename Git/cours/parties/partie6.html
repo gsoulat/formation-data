@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 6 - Commandes avancées et débogage</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Partie 6</h1>
+            <p class="subtitle">Commandes avancées et débogage</p>
+            <span class="duration">⏱️ Durée : 40 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie5.html">← Partie 5</a></li>
+                <li><a href="partie7.html">Partie 7 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>6. Commandes avancées et débogage</h2>
+
+                <h3>Annuler des modifications</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Annuler les modifications d'un fichier non stagé
+git checkout -- fichier.py
+# ou (Git 2.23+)
+git restore fichier.py
+
+# Restaurer tous les fichiers non stagés
+git restore .
+
+# Retirer un fichier de la staging area (unstage)
+git reset HEAD fichier.py
+# ou
+git restore --staged fichier.py
+
+# Annuler le dernier commit (garde les modifications)
+git reset --soft HEAD~1
+
+# Annuler le dernier commit ET les modifications
+git reset --hard HEAD~1
+
+# Annuler les N derniers commits
+git reset --hard HEAD~3
+
+# Revenir à un commit spécifique
+git reset --hard <commit-hash></code></pre>
+                </div>
+
+                <h3>Différences entre reset --soft, --mixed, --hard</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>HEAD</th>
+                            <th>Staging Area</th>
+                            <th>Working Directory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--soft</code></td>
+                            <td>✓ Modifié</td>
+                            <td>✗ Intact</td>
+                            <td>✗ Intact</td>
+                        </tr>
+                        <tr>
+                            <td><code>--mixed</code> (défaut)</td>
+                            <td>✓ Modifié</td>
+                            <td>✓ Réinitialisé</td>
+                            <td>✗ Intact</td>
+                        </tr>
+                        <tr>
+                            <td><code>--hard</code></td>
+                            <td>✓ Modifié</td>
+                            <td>✓ Réinitialisé</td>
+                            <td>✓ Réinitialisé</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Modifier l'historique avec commit --amend</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Modifier le message du dernier commit
+git commit --amend -m "Nouveau message corrigé"
+
+# Ajouter des fichiers oubliés au dernier commit
+git add fichier_oublie.py
+git commit --amend --no-edit
+# --no-edit garde le message existant
+
+# Modifier l'auteur du dernier commit
+git commit --amend --author="Nouveau Nom <email@example.com>"</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Attention avec --amend</h4>
+                    <p>
+                        N'utilisez <code>--amend</code> que si vous n'avez PAS encore pushé le commit.
+                        Sinon, vous devrez faire un force push.
+                    </p>
+                </div>
+
+                <h3>Stash : Mettre de côté temporairement</h3>
+
+                <p>
+                    Le <strong>stash</strong> permet de sauvegarder temporairement vos modifications en cours
+                    sans créer de commit, utile pour changer de branche rapidement.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Sauvegarder les modifications en cours
+git stash
+
+# Stash avec un message descriptif
+git stash save "Work in progress on MongoDB connector"
+
+# Lister tous les stashes
+git stash list
+# Résultat :
+# stash@{0}: WIP on main: abc1234 Last commit message
+# stash@{1}: On feature: xyz5678 Previous stash
+
+# Voir le contenu d'un stash
+git stash show stash@{0}
+git stash show -p stash@{0}  # Voir le diff
+
+# Réappliquer le dernier stash ET le supprimer
+git stash pop
+
+# Réappliquer un stash sans le supprimer
+git stash apply stash@{1}
+
+# Supprimer un stash spécifique
+git stash drop stash@{0}
+
+# Supprimer tous les stashes
+git stash clear
+
+# Créer une branche depuis un stash
+git stash branch nouvelle-branche stash@{0}</code></pre>
+                </div>
+
+                <h3>Voir les différences (diff)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Voir les modifications non stagées
+git diff
+
+# Voir les modifications stagées (prêtes à être commitées)
+git diff --staged
+# ou
+git diff --cached
+
+# Différence pour un fichier spécifique
+git diff fichier.py
+
+# Différence entre deux branches
+git diff main..feature/api-rest
+
+# Différence entre deux commits
+git diff abc123..def456
+
+# Voir uniquement les noms des fichiers modifiés
+git diff --name-only
+
+# Statistiques des modifications
+git diff --stat
+
+# Différence d'un commit spécifique
+git diff <commit-hash>^!</code></pre>
+                </div>
+
+                <h3>Chercher dans l'historique</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Trouver quand un mot a été introduit ou supprimé
+git log -S "extract_data" --source --all
+
+# Chercher dans les messages de commit
+git log --grep="MongoDB"
+
+# Voir qui a modifié chaque ligne d'un fichier
+git blame fichier.py
+
+# Blame avec plus de contexte
+git blame -L 10,20 fichier.py  # Lignes 10 à 20
+
+# Trouver le commit qui a introduit un bug (bisect)
+git bisect start
+git bisect bad                  # Le commit actuel est mauvais
+git bisect good v1.0           # v1.0 était bon
+# Git va checkout des commits intermédiaires
+# Testez et indiquez :
+git bisect good   # ou git bisect bad
+# Répétez jusqu'à trouver le commit fautif
+git bisect reset  # Terminer la recherche</code></pre>
+                </div>
+
+                <h3>Tags : Versionner vos releases</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un tag lightweight
+git tag v1.0.0
+
+# Créer un tag annoté (recommandé)
+git tag -a v1.0.0 -m "Release version 1.0.0 - Initial production release"
+
+# Lister tous les tags
+git tag
+
+# Lister les tags avec un pattern
+git tag -l "v1.0.*"
+
+# Voir les détails d'un tag
+git show v1.0.0
+
+# Taguer un commit passé
+git tag -a v0.9.0 abc1234 -m "Retroactive tag for beta release"
+
+# Pousser un tag vers le remote
+git push origin v1.0.0
+
+# Pousser tous les tags
+git push --tags
+
+# Supprimer un tag local
+git tag -d v1.0.0
+
+# Supprimer un tag distant
+git push origin --delete v1.0.0
+
+# Checkout sur un tag spécifique
+git checkout v1.0.0</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Semantic Versioning</h4>
+                    <p>Utilisez le format <strong>vMAJOR.MINOR.PATCH</strong> :</p>
+                    <ul>
+                        <li><strong>MAJOR</strong> : Changements incompatibles avec les versions précédentes</li>
+                        <li><strong>MINOR</strong> : Nouvelles fonctionnalités rétrocompatibles</li>
+                        <li><strong>PATCH</strong> : Corrections de bugs rétrocompatibles</li>
+                    </ul>
+                    <p><strong>Exemple :</strong> v2.3.1</p>
+                </div>
+
+                <h3>Cherry-pick : Appliquer un commit spécifique</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Appliquer un commit d'une autre branche
+git cherry-pick <commit-hash>
+
+# Cherry-pick sans créer de commit (permet de modifier)
+git cherry-pick -n <commit-hash>
+
+# Cherry-pick plusieurs commits
+git cherry-pick abc123 def456 ghi789</code></pre>
+                </div>
+
+                <h3>Reflog : L'historique de vos actions Git</h3>
+
+                <p>
+                    Le <strong>reflog</strong> enregistre tous les mouvements de HEAD. C'est votre filet de sécurité !
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Voir l'historique de HEAD
+git reflog
+
+# Résultat typique :
+# abc1234 HEAD@{0}: commit: Add new feature
+# def5678 HEAD@{1}: checkout: moving from main to feature
+# ghi9012 HEAD@{2}: reset: moving to HEAD~1
+
+# Revenir à un état précédent
+git reset --hard HEAD@{2}
+
+# Voir le reflog d'une branche spécifique
+git reflog show main</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Récupérer un commit perdu</h4>
+                    <p>
+                        Vous avez fait un <code>git reset --hard</code> par erreur ? Pas de panique !
+                        Utilisez <code>git reflog</code> pour retrouver le hash du commit perdu,
+                        puis <code>git reset --hard &lt;hash&gt;</code> pour y revenir.
+                    </p>
+                </div>
+
+                <h3>Git Worktree : Travailler sur plusieurs branches simultanément</h3>
+
+                <p>
+                    <strong>Git worktree</strong> permet de créer plusieurs copies de votre dépôt,
+                    chacune sur une branche différente. Utile pour tester rapidement une branche
+                    sans perdre votre travail en cours !
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un nouveau worktree pour tester une branche
+git worktree add ../mon-projet-hotfix hotfix/urgent-bug
+
+# Maintenant vous avez deux dossiers :
+# ./mon-projet/        (branche main ou feature)
+# ../mon-projet-hotfix/ (branche hotfix/urgent-bug)
+
+# Lister tous les worktrees
+git worktree list
+
+# Travailler dans le nouveau worktree
+cd ../mon-projet-hotfix
+# Vous êtes automatiquement sur la branche hotfix/urgent-bug
+git status
+
+# Faire vos modifications et commits
+echo "fix" >> bug.py
+git commit -am "fix: Resolve urgent production bug"
+
+# Retourner au worktree principal
+cd ../mon-projet
+
+# Supprimer un worktree quand vous avez fini
+git worktree remove ../mon-projet-hotfix
+
+# Ou supprimer de force (si non commité)
+git worktree remove --force ../mon-projet-hotfix
+
+# Nettoyer les worktrees obsolètes
+git worktree prune</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Cas d'usage de git worktree</h4>
+                    <ul>
+                        <li><strong>Hotfix urgent</strong> : Corriger un bug en prod sans perdre votre travail en cours</li>
+                        <li><strong>Code review</strong> : Tester la branche d'un collègue sans changer votre branche actuelle</li>
+                        <li><strong>Tests parallèles</strong> : Lancer des tests sur plusieurs branches simultanément</li>
+                        <li><strong>Comparaison</strong> : Comparer visuellement deux branches côte à côte</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Avantages de worktree vs stash</h4>
+                    <p><strong>Worktree :</strong></p>
+                    <ul>
+                        <li>✅ Garder plusieurs branches actives en même temps</li>
+                        <li>✅ Pas besoin de commiter ou stasher</li>
+                        <li>✅ Voir le code de deux branches dans deux éditeurs</li>
+                    </ul>
+                    <p><strong>Stash :</strong></p>
+                    <ul>
+                        <li>✅ Plus rapide pour un changement temporaire</li>
+                        <li>✅ Pas de dossier supplémentaire</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 6 terminée !</h4>
+                <p>
+                    Vous maîtrisez maintenant les commandes avancées de Git ! Passez à la Partie 7 pour découvrir
+                    les meilleures pratiques spécifiques au Data Engineering.
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="../exercices.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                        🎯 Faire les exercices
+                    </a>
+                    <a href="partie7.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 7 →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

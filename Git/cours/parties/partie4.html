@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 4 - Maîtriser les branches</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Partie 4</h1>
+            <p class="subtitle">Maîtriser les branches</p>
+            <span class="duration">⏱️ Durée : 40 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie3.html">← Partie 3</a></li>
+                <li><a href="partie5.html">Partie 5 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>4. Maîtriser les branches</h2>
+
+                <h3>Pourquoi utiliser des branches ?</h3>
+
+                <p>
+                    Les branches sont l'une des fonctionnalités les plus puissantes de Git. Elles permettent de :
+                </p>
+
+                <ul>
+                    <li><strong>Isoler le développement</strong> : Travailler sur une feature sans affecter la branche principale</li>
+                    <li><strong>Expérimenter</strong> : Tester des idées sans risque</li>
+                    <li><strong>Collaborer</strong> : Chaque membre de l'équipe travaille sur sa branche</li>
+                    <li><strong>Gérer les releases</strong> : Avoir des versions stables en production</li>
+                    <li><strong>Code review</strong> : Faire relire le code avant de merger</li>
+                </ul>
+
+                <div class="image-container">
+                    <img src="https://git-scm.com/book/en/v2/images/advance-master.png" alt="Git Branching" style="max-width: 600px;">
+                    <p class="image-caption">Les branches permettent un développement parallèle</p>
+                </div>
+
+                <h3>Créer et naviguer entre les branches</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lister toutes les branches locales
+git branch
+
+# Lister toutes les branches (locales et distantes)
+git branch -a
+
+# Créer une nouvelle branche
+git branch feature/mongodb-connector
+
+# Basculer sur une branche existante
+git checkout feature/mongodb-connector
+
+# Créer ET basculer sur une nouvelle branche (raccourci)
+git checkout -b feature/api-rest
+
+# Syntaxe moderne (Git 2.23+)
+git switch feature/mongodb-connector      # Changer de branche
+git switch -c feature/new-dashboard       # Créer et changer
+
+# Renommer une branche
+git branch -m ancien-nom nouveau-nom
+
+# Supprimer une branche (seulement si elle est mergée)
+git branch -d feature/old-feature
+
+# Forcer la suppression d'une branche
+git branch -D feature/experimental</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>git checkout vs git switch</h4>
+                    <p>
+                        <strong>git switch</strong> est la commande moderne (Git 2.23+) pour changer de branche.
+                        Elle est plus simple et moins ambiguë que <code>git checkout</code> qui fait plusieurs choses.
+                    </p>
+                    <ul>
+                        <li><code>git switch</code> : Changer de branche uniquement</li>
+                        <li><code>git checkout</code> : Changer de branche OU restaurer des fichiers (ambigu)</li>
+                    </ul>
+                    <p><strong>Recommandation :</strong> Utilisez <code>git switch</code> pour les branches et <code>git restore</code> pour les fichiers.</p>
+                </div>
+
+                <h3>Stratégies de branches courantes</h3>
+
+                <h4>1. Git Flow (pour projets complexes)</h4>
+
+                <div class="workflow-diagram">
+                    <pre>
+main (production) ──────●────────●────────●──────▶
+                         ↑        ↑        ↑
+                         │        │        │
+develop ─────●─────●─────┴────●───┴────●───┴──────▶
+             ↑     ↑          ↑        ↑
+             │     │          │        │
+feature/A ───┴─────┘          │        │
+                               │        │
+feature/B ─────────────────────┴────────┘
+</pre>
+                </div>
+
+                <ul>
+                    <li><strong>main</strong> : Code en production (toujours stable)</li>
+                    <li><strong>develop</strong> : Branche de développement principale</li>
+                    <li><strong>feature/*</strong> : Nouvelles fonctionnalités</li>
+                    <li><strong>hotfix/*</strong> : Corrections urgentes en production</li>
+                    <li><strong>release/*</strong> : Préparation d'une release</li>
+                </ul>
+
+                <h4>2. GitHub Flow (plus simple)</h4>
+
+                <div class="workflow-diagram">
+                    <pre>
+main ─────●─────────●───────────●─────────▶
+          ↑         ↑           ↑
+          │         │           │
+feature/A ┴─────────┘           │
+                                │
+feature/B ──────────────────────┘
+</pre>
+                </div>
+
+                <ul>
+                    <li>Une seule branche principale : <strong>main</strong></li>
+                    <li>Chaque feature part de main et y retourne via Pull Request</li>
+                    <li>Déploiement continu depuis main</li>
+                </ul>
+
+                <h3>Fusionner des branches (Merge)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 1. Se placer sur la branche de destination
+git checkout main
+
+# 2. Fusionner la branche feature
+git merge feature/mongodb-connector
+
+# Merge avec message personnalisé
+git merge feature/api-rest -m "Merge API REST implementation"
+
+# Merge sans fast-forward (crée toujours un commit de merge)
+git merge --no-ff feature/dashboard
+
+# Annuler un merge en cours (en cas de conflit)
+git merge --abort</code></pre>
+                </div>
+
+                <h3>Types de merge</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Fast-Forward Merge</h4>
+                        <p>Quand il n'y a pas eu de commit sur la branche cible depuis la création de la branche feature.</p>
+                        <div class="workflow-diagram">
+                            <pre>
+Avant :
+main      ●───●
+               ↘
+feature        ●───●
+
+Après :
+main      ●───●───●───●
+</pre>
+                        </div>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>3-Way Merge</h4>
+                        <p>Quand les deux branches ont divergé. Git crée un commit de merge.</p>
+                        <div class="workflow-diagram">
+                            <pre>
+Avant :
+main      ●───●───●
+               ↘   ↘
+feature        ●───●
+
+Après :
+main      ●───●───●───M
+               ↘   ↗
+feature        ●───●
+</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Résoudre les conflits de merge</h3>
+
+                <p>Un conflit survient quand Git ne peut pas fusionner automatiquement des modifications contradictoires.</p>
+
+                <div class="alert alert-danger">
+                    <h4>Quand surviennent les conflits ?</h4>
+                    <ul>
+                        <li>Deux branches modifient la même ligne d'un fichier</li>
+                        <li>Un fichier est supprimé dans une branche et modifié dans l'autre</li>
+                        <li>Le même fichier est renommé différemment dans les deux branches</li>
+                    </ul>
+                </div>
+
+                <h4>Étapes de résolution d'un conflit</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 1. Tenter le merge
+git merge feature/new-pipeline
+
+# Git affiche :
+# Auto-merging etl_pipeline.py
+# CONFLICT (content): Merge conflict in etl_pipeline.py
+# Automatic merge failed; fix conflicts and then commit the result.
+
+# 2. Voir les fichiers en conflit
+git status
+# Unmerged paths:
+#   both modified:   etl_pipeline.py
+
+# 3. Ouvrir le fichier en conflit
+cat etl_pipeline.py</code></pre>
+                </div>
+
+                <p>Le fichier contiendra des marqueurs de conflit :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">def extract_data():
+    """Extract data from source"""
+<<<<<<< HEAD
+    source = "postgresql://prod-db:5432/sales"
+    engine = create_engine(source)
+=======
+    source = "mongodb://prod-mongo:27017/sales"
+    client = MongoClient(source)
+>>>>>>> feature/new-pipeline
+    return data</code></pre>
+                </div>
+
+                <ul>
+                    <li><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> : Code de la branche actuelle (main)</li>
+                    <li><code>=======</code> : Séparateur</li>
+                    <li><code>&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/new-pipeline</code> : Code de la branche à merger</li>
+                </ul>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 4. Éditer le fichier pour résoudre le conflit
+# Supprimez les marqueurs et gardez le bon code
+
+# 5. Marquer le conflit comme résolu
+git add etl_pipeline.py
+
+# 6. Finaliser le merge
+git commit -m "Merge feature/new-pipeline - Resolved conflicts in etl_pipeline.py"
+
+# Ou simplement :
+git commit
+# Git pré-remplit le message de commit</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Outils pour résoudre les conflits</h4>
+                    <ul>
+                        <li><strong>VS Code</strong> : Détection automatique avec boutons "Accept Current/Incoming/Both"</li>
+                        <li><strong>Meld</strong> : Outil de diff visuel</li>
+                        <li><strong>KDiff3</strong> : Merge tool avancé</li>
+                        <li><code>git mergetool</code> : Lancer l'outil configuré</li>
+                    </ul>
+                </div>
+
+                <h3>Rebase : Une alternative au merge</h3>
+
+                <p>
+                    Le <strong>rebase</strong> réécrit l'historique en "rejouant" vos commits sur une autre base.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Se placer sur la branche feature
+git checkout feature/api-rest
+
+# Rebaser sur main
+git rebase main
+
+# Si conflit, résoudre puis :
+git add fichier-resolu.py
+git rebase --continue
+
+# Annuler le rebase
+git rebase --abort</code></pre>
+                </div>
+
+                <div class="workflow-diagram">
+                    <pre>
+Avant rebase :
+main      ●───●───●───●
+               ↘
+feature        ●───●
+
+Après rebase :
+main      ●───●───●───●
+                       ↘
+feature                ●───●
+</pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Règle d'or du rebase</h4>
+                    <p>
+                        <strong>Ne JAMAIS rebaser des commits qui ont été pushés sur un dépôt public !</strong>
+                        Le rebase réécrit l'historique et peut causer des problèmes pour vos collaborateurs.
+                    </p>
+                    <p>Utilisez le rebase uniquement sur vos branches locales non partagées.</p>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 4 terminée !</h4>
+                <p>
+                    Vous maîtrisez maintenant les branches, le merge et la résolution de conflits.
+                    Passez à la collaboration avec des dépôts distants !
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="../exercices.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                        🎯 Faire les exercices
+                    </a>
+                    <a href="partie5.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 5 →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>

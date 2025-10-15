@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3: Operations CRUD - Formation MongoDB</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Module 3: Operations CRUD</h1>
+            <p class="subtitle">Create, Read, Update, Delete</p>
+            <span class="duration">Duree: 10 minutes</span>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="01-introduction.html">M1: Introduction</a></li>
+                <li><a href="02-installation.html">M2: Installation</a></li>
+                <li><a href="03-crud.html" class="active">M3: CRUD</a></li>
+                <li><a href="04-aggregation.html">M4: Agregation</a></li>
+                <li><a href="05-index-performance.html">M5: Index</a></li>
+                <li><a href="06-modelisation.html">M6: Modelisation</a></li>
+                <li><a href="07-data-engineering.html">M7: Data Engineering</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs du module</h2>
+                <ul>
+                    <li>Inserer des documents (insertOne, insertMany)</li>
+                    <li>Lire des documents (find, findOne)</li>
+                    <li>Mettre a jour des documents (updateOne, updateMany)</li>
+                    <li>Supprimer des documents (deleteOne, deleteMany)</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Create - Inserer des documents</h2>
+
+                <h3>insertOne() - Inserer un document</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// MongoDB Shell
+db.users.insertOne({
+  name: "Alice Dupont",
+  email: "alice@example.com",
+  age: 28,
+  skills: ["Python", "MongoDB"],
+  created_at: new Date()
+})
+
+// Resultat
+{
+  acknowledged: true,
+  insertedId: ObjectId("507f1f77bcf86cd799439011")
+}</code></pre>
+                </div>
+
+                <h3>insertMany() - Inserer plusieurs documents</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">db.users.insertMany([
+  {
+    name: "Bob Martin",
+    email: "bob@example.com",
+    age: 32,
+    skills: ["JavaScript", "React"],
+    department: "Frontend"
+  },
+  {
+    name: "Charlie Brown",
+    email: "charlie@example.com",
+    age: 25,
+    skills: ["Python", "Django", "PostgreSQL"],
+    department: "Backend"
+  },
+  {
+    name: "Diana Prince",
+    email: "diana@example.com",
+    age: 30,
+    skills: ["Data Science", "Python", "ML"],
+    department: "Data"
+  }
+])
+
+// Resultat
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId("..."),
+    '1': ObjectId("..."),
+    '2': ObjectId("...")
+  }
+}</code></pre>
+                </div>
+
+                <h3>Avec Python (PyMongo)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">from pymongo import MongoClient
+from datetime import datetime
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['mydb']
+collection = db['users']
+
+# Insert one
+user = {
+    "name": "Alice Dupont",
+    "email": "alice@example.com",
+    "age": 28,
+    "skills": ["Python", "MongoDB"],
+    "created_at": datetime.utcnow()
+}
+
+result = collection.insert_one(user)
+print(f"Inserted ID: {result.inserted_id}")
+
+# Insert many
+users = [
+    {"name": "Bob", "age": 32, "department": "Frontend"},
+    {"name": "Charlie", "age": 25, "department": "Backend"},
+    {"name": "Diana", "age": 30, "department": "Data"}
+]
+
+result = collection.insert_many(users)
+print(f"Inserted {len(result.inserted_ids)} documents")</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Read - Lire des documents</h2>
+
+                <h3>find() - Trouver plusieurs documents</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Tous les documents
+db.users.find()
+
+// Avec filtre
+db.users.find({ age: { $gt: 25 } })
+
+// Projection (selectionner des champs)
+db.users.find(
+  { age: { $gt: 25 } },
+  { name: 1, email: 1, _id: 0 }
+)
+
+// Limiter les resultats
+db.users.find().limit(5)
+
+// Trier les resultats
+db.users.find().sort({ age: -1 })  // -1 = decroissant, 1 = croissant
+
+// Skip (pagination)
+db.users.find().skip(10).limit(5)
+
+// Compter les documents
+db.users.countDocuments({ age: { $gt: 25 } })</code></pre>
+                </div>
+
+                <h3>findOne() - Trouver un document</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Premier document correspondant
+db.users.findOne({ email: "alice@example.com" })
+
+// Par ID
+db.users.findOne({ _id: ObjectId("507f1f77bcf86cd799439011") })</code></pre>
+                </div>
+
+                <h3>Operateurs de requete</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operateur</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>$eq</code></td>
+                            <td>Egal a</td>
+                            <td><code>{ age: { $eq: 25 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$ne</code></td>
+                            <td>Different de</td>
+                            <td><code>{ age: { $ne: 25 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$gt</code></td>
+                            <td>Plus grand que</td>
+                            <td><code>{ age: { $gt: 25 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$gte</code></td>
+                            <td>Plus grand ou egal</td>
+                            <td><code>{ age: { $gte: 25 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$lt</code></td>
+                            <td>Plus petit que</td>
+                            <td><code>{ age: { $lt: 30 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$lte</code></td>
+                            <td>Plus petit ou egal</td>
+                            <td><code>{ age: { $lte: 30 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$in</code></td>
+                            <td>Dans un tableau</td>
+                            <td><code>{ age: { $in: [25, 30, 35] } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$nin</code></td>
+                            <td>Pas dans un tableau</td>
+                            <td><code>{ age: { $nin: [25, 30] } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$and</code></td>
+                            <td>ET logique</td>
+                            <td><code>{ $and: [{ age: {$gt: 25} }, { age: {$lt: 35} }] }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$or</code></td>
+                            <td>OU logique</td>
+                            <td><code>{ $or: [{ age: 25 }, { age: 30 }] }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$exists</code></td>
+                            <td>Champ existe</td>
+                            <td><code>{ email: { $exists: true } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$regex</code></td>
+                            <td>Expression reguliere</td>
+                            <td><code>{ name: { $regex: /^A/ } }</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Avec Python (PyMongo)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python"># Find all
+users = collection.find()
+for user in users:
+    print(user)
+
+# Find with filter
+users = collection.find({"age": {"$gt": 25}})
+
+# Find one
+user = collection.find_one({"email": "alice@example.com"})
+
+# Projection
+users = collection.find(
+    {"age": {"$gt": 25}},
+    {"name": 1, "email": 1, "_id": 0}
+)
+
+# Sort, limit, skip
+users = collection.find().sort("age", -1).limit(5).skip(10)
+
+# Count
+count = collection.count_documents({"age": {"$gt": 25}})
+print(f"Nombre d'utilisateurs > 25 ans: {count}")</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Update - Mettre a jour des documents</h2>
+
+                <h3>updateOne() - Mettre a jour un document</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Modifier un champ
+db.users.updateOne(
+  { email: "alice@example.com" },
+  { $set: { age: 29, updated_at: new Date() } }
+)
+
+// Ajouter un element a un tableau
+db.users.updateOne(
+  { email: "alice@example.com" },
+  { $push: { skills: "Docker" } }
+)
+
+// Incrementer une valeur
+db.users.updateOne(
+  { email: "alice@example.com" },
+  { $inc: { age: 1 } }
+)
+
+// Supprimer un champ
+db.users.updateOne(
+  { email: "alice@example.com" },
+  { $unset: { temporary_field: "" } }
+)</code></pre>
+                </div>
+
+                <h3>updateMany() - Mettre a jour plusieurs documents</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Mettre a jour tous les utilisateurs > 25 ans
+db.users.updateMany(
+  { age: { $gt: 25 } },
+  { $set: { status: "senior", updated_at: new Date() } }
+)</code></pre>
+                </div>
+
+                <h3>Operateurs de mise a jour</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Operateur</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>$set</code></td>
+                            <td>Definir la valeur d'un champ</td>
+                            <td><code>{ $set: { age: 30 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$unset</code></td>
+                            <td>Supprimer un champ</td>
+                            <td><code>{ $unset: { age: "" } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$inc</code></td>
+                            <td>Incrementer une valeur</td>
+                            <td><code>{ $inc: { age: 1 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$mul</code></td>
+                            <td>Multiplier une valeur</td>
+                            <td><code>{ $mul: { price: 1.1 } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$rename</code></td>
+                            <td>Renommer un champ</td>
+                            <td><code>{ $rename: { "name": "fullName" } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$push</code></td>
+                            <td>Ajouter a un tableau</td>
+                            <td><code>{ $push: { skills: "Python" } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$pull</code></td>
+                            <td>Retirer d'un tableau</td>
+                            <td><code>{ $pull: { skills: "Python" } }</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>$addToSet</code></td>
+                            <td>Ajouter si n'existe pas</td>
+                            <td><code>{ $addToSet: { skills: "Python" } }</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Avec Python (PyMongo)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python"># Update one
+result = collection.update_one(
+    {"email": "alice@example.com"},
+    {"$set": {"age": 29, "updated_at": datetime.utcnow()}}
+)
+print(f"Modified {result.modified_count} document")
+
+# Update many
+result = collection.update_many(
+    {"age": {"$gt": 25}},
+    {"$set": {"status": "senior"}}
+)
+print(f"Modified {result.modified_count} documents")
+
+# Upsert (update or insert)
+result = collection.update_one(
+    {"email": "new@example.com"},
+    {"$set": {"name": "New User", "age": 25}},
+    upsert=True
+)</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Delete - Supprimer des documents</h2>
+
+                <h3>deleteOne() et deleteMany()</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Supprimer un document
+db.users.deleteOne({ email: "alice@example.com" })
+
+// Supprimer plusieurs documents
+db.users.deleteMany({ age: { $lt: 18 } })
+
+// Supprimer tous les documents d'une collection
+db.users.deleteMany({})
+
+// Supprimer une collection entiere
+db.users.drop()</code></pre>
+                </div>
+
+                <h3>Avec Python (PyMongo)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python"># Delete one
+result = collection.delete_one({"email": "alice@example.com"})
+print(f"Deleted {result.deleted_count} document")
+
+# Delete many
+result = collection.delete_many({"age": {"$lt": 18}})
+print(f"Deleted {result.deleted_count} documents")
+
+# Drop collection
+collection.drop()</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Attention aux suppressions !</h4>
+                    <p>
+                        <code>deleteMany({})</code> et <code>drop()</code> suppriment definitivement les donnees.
+                        Assurez-vous d'avoir des sauvegardes avant d'executer ces commandes en production.
+                    </p>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points cles a retenir</h3>
+                <ul>
+                    <li>insertOne/insertMany pour creer des documents</li>
+                    <li>find/findOne avec operateurs de requete ($gt, $in, $regex, etc.)</li>
+                    <li>updateOne/updateMany avec operateurs ($set, $inc, $push, etc.)</li>
+                    <li>deleteOne/deleteMany pour supprimer des documents</li>
+                    <li>PyMongo offre une API Python similaire au shell MongoDB</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="02-installation.html" class="nav-button prev">Module 2: Installation</a>
+                <a href="04-aggregation.html" class="nav-button next">Module 4: Agregation</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Module 3/7 - Formation MongoDB pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Docker Modulaire - Data Engineering</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🐳 Formation Docker Modulaire</h1>
+            <p class="subtitle">De Zéro à Hero - Data Engineering</p>
+            <span class="duration">⏱️ Durée totale : 1 heure | 7 modules</span>
+        </header>
+
+        <div class="content">
+            <div class="intro">
+                <h2>Bienvenue dans la Formation Docker</h2>
+                <p>
+                    Cette formation complète vous permettra de maîtriser <strong>Docker</strong>, l'outil de
+                    conteneurisation essentiel pour le Data Engineering moderne. Apprenez à créer, gérer et optimiser
+                    des conteneurs pour vos pipelines de données.
+                </p>
+
+                <h3>🎯 Objectifs de la formation</h3>
+                <ul>
+                    <li>Comprendre les concepts fondamentaux de Docker et de la conteneurisation</li>
+                    <li>Installer et configurer Docker sur votre machine</li>
+                    <li>Créer et gérer des images et conteneurs Docker</li>
+                    <li>Écrire des Dockerfiles performants et sécurisés</li>
+                    <li>Utiliser Docker Compose pour orchestrer des applications multi-conteneurs</li>
+                    <li>Appliquer les meilleures pratiques pour le Data Engineering</li>
+                </ul>
+
+                <h3>📋 Prérequis</h3>
+                <ul>
+                    <li>Connaissances de base en ligne de commande (bash/terminal)</li>
+                    <li>Notions de développement (Python recommandé)</li>
+                    <li>Compréhension des concepts de base en informatique</li>
+                    <li>Aucune expérience préalable avec Docker requise</li>
+                </ul>
+
+                <h3>🔧 Configuration requise</h3>
+                <ul>
+                    <li>Un ordinateur avec Windows 10+, macOS ou Linux</li>
+                    <li>Au moins 4 Go de RAM disponible</li>
+                    <li>10 Go d'espace disque libre</li>
+                    <li>Droits d'administration pour installer Docker</li>
+                </ul>
+            </div>
+
+            <div class="modules-grid">
+                <!-- Partie 1 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">1</span>
+                        <span class="module-duration">15 min</span>
+                    </div>
+                    <h3>📚 Les Fondamentaux de Docker</h3>
+                    <p>Découvrez ce qu'est Docker, les problèmes qu'il résout, et pourquoi il est essentiel en Data
+                        Engineering.</p>
+                    <ul>
+                        <li>Qu'est-ce que Docker ?</li>
+                        <li>Docker vs Machines Virtuelles</li>
+                        <li>Architecture Docker</li>
+                        <li>Cas d'usage en Data Engineering</li>
+                    </ul>
+                    <a href="parties/partie1.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 2 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">2</span>
+                        <span class="module-duration">10 min</span>
+                    </div>
+                    <h3>🚀 Premiers Pas avec Docker</h3>
+                    <p>Installez Docker et lancez vos premiers conteneurs avec les commandes essentielles.</p>
+                    <ul>
+                        <li>Installation de Docker</li>
+                        <li>Votre premier conteneur</li>
+                        <li>Commandes Docker essentielles</li>
+                        <li>Options de docker run</li>
+                    </ul>
+                    <a href="parties/partie2.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 3 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">3</span>
+                        <span class="module-duration">10 min</span>
+                    </div>
+                    <h3>🎨 Maîtriser les Images et Conteneurs</h3>
+                    <p>Comprenez l'architecture en couches des images Docker et apprenez à les inspecter.</p>
+                    <ul>
+                        <li>Anatomie d'une image Docker</li>
+                        <li>Tags et versions</li>
+                        <li>Inspection et debugging</li>
+                        <li>Gestion des images</li>
+                    </ul>
+                    <a href="parties/partie3.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 4 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">4</span>
+                        <span class="module-duration">10 min</span>
+                    </div>
+                    <h3>📝 Créer des Images avec Dockerfile</h3>
+                    <p>Maîtrisez l'écriture de Dockerfiles performants et sécurisés avec les multi-stage builds.</p>
+                    <ul>
+                        <li>Structure d'un Dockerfile</li>
+                        <li>Instructions essentielles</li>
+                        <li>Multi-stage builds</li>
+                        <li>Bonnes pratiques</li>
+                    </ul>
+                    <a href="parties/partie4.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 5 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">5</span>
+                        <span class="module-duration">5 min</span>
+                    </div>
+                    <h3>💾 Volumes, Réseaux et Variables</h3>
+                    <p>Gérez la persistance des données et la communication entre conteneurs.</p>
+                    <ul>
+                        <li>Volumes Docker</li>
+                        <li>Types de volumes</li>
+                        <li>Réseaux Docker</li>
+                        <li>Variables d'environnement</li>
+                    </ul>
+                    <a href="parties/partie5.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 6 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">6</span>
+                        <span class="module-duration">5 min</span>
+                    </div>
+                    <h3>🎼 Docker Compose - Orchestration</h3>
+                    <p>Orchestrez des applications multi-conteneurs avec Docker Compose.</p>
+                    <ul>
+                        <li>Qu'est-ce que Docker Compose ?</li>
+                        <li>Structure docker-compose.yml</li>
+                        <li>Commandes Compose</li>
+                        <li>Stack Data Engineering</li>
+                    </ul>
+                    <a href="parties/partie6.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 7 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">7</span>
+                        <span class="module-duration">5 min</span>
+                    </div>
+                    <h3>🚀 Concepts Avancés et Best Practices</h3>
+                    <p>Optimisez vos images, sécurisez vos conteneurs et appliquez les meilleures pratiques.</p>
+                    <ul>
+                        <li>Optimisation des images</li>
+                        <li>Sécurité Docker</li>
+                        <li>Nettoyage et maintenance</li>
+                        <li>Ressources pour aller plus loin</li>
+                    </ul>
+                    <a href="parties/partie7.html" class="btn-primary">Commencer →</a>
+                </div>
+            </div>
+
+            <div class="progression-path">
+                <h2>🗺️ Parcours d'apprentissage</h2>
+                <div class="path-timeline">
+                    <div class="path-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Fondamentaux</h4>
+                            <p>Comprenez les concepts de base</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">2-3</div>
+                        <div class="step-content">
+                            <h4>Pratique</h4>
+                            <p>Lancez vos premiers conteneurs</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Création</h4>
+                            <p>Construisez vos propres images</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">5-6</div>
+                        <div class="step-content">
+                            <h4>Orchestration</h4>
+                            <p>Gérez des stacks complètes</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">7</div>
+                        <div class="step-content">
+                            <h4>Expertise</h4>
+                            <p>Maîtrisez les bonnes pratiques</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tips-section">
+                <h2>💡 Conseils pour réussir</h2>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4>🎯 Pratiquez régulièrement</h4>
+                        <p>Docker s'apprend en pratiquant. Testez chaque commande sur votre machine.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>📝 Prenez des notes</h4>
+                        <p>Créez votre propre aide-mémoire avec les commandes que vous utilisez le plus.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🔍 Expérimentez</h4>
+                        <p>N'ayez pas peur de tester différentes configurations et options.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🤝 Partagez</h4>
+                        <p>Discutez avec d'autres développeurs et partagez vos découvertes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <h3>🎓 Prêt à commencer ?</h3>
+                <p>
+                    Suivez les modules dans l'ordre pour une progression optimale. Chaque partie s'appuie sur les
+                    connaissances acquises précédemment.
+                </p>
+                <p style="margin-top: 15px;">
+                    <a href="parties/partie1.html"
+                        style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                        Commencer la Partie 1 : Fondamentaux →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Docker pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+</body>
+
+</html>

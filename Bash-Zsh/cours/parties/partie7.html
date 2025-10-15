@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 7 - Optimisation et Bonnes Pratiques</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Partie 7</h1>
+            <p class="subtitle">Optimisation et Bonnes Pratiques</p>
+            <span class="duration">⏱️ Durée : 35 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie6.html">← Partie 6</a></li>
+                <li><a href="partie8.html">Partie 8 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>7. Optimisation et Bonnes Pratiques</h2>
+
+                <p>Cette dernière partie couvre les optimisations, configurations avancées et les bonnes pratiques pour devenir un expert du shell en Data Engineering.</p>
+
+                <h3>Alias personnalisés</h3>
+
+                <p>Les alias permettent de créer des raccourcis pour vos commandes fréquentes. Gain de temps énorme au quotidien.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un alias (temporaire pour la session)
+alias ll='ls -lah'
+alias gs='git status'
+alias gp='git push'
+
+# Utiliser l'alias
+ll  # équivalent à : ls -lah
+
+# Alias avec arguments
+alias grep='grep --color=auto'
+
+# Alias pour Data Engineering
+alias csvhead='head -20 | column -t -s,'
+alias csvcount='wc -l'
+alias csvunique='sort -u | wc -l'
+
+# Exemples d'utilisation
+cat data.csv | csvhead
+cat data.csv | csvcount
+
+# Alias complexes (utilisez des fonctions à la place)
+# Mauvais :
+alias process='cd /data && python process.py && cd -'
+
+# Meilleur (fonction) :
+process() {
+    (cd /data && python process.py)
+}
+
+# Lister tous les alias
+alias
+
+# Supprimer un alias
+unalias ll
+
+# Ignorer un alias temporairement (utiliser \)
+\ls  # Appelle ls sans l'alias</code></pre>
+                </div>
+
+                <h3>Configuration .bashrc / .zshrc</h3>
+
+                <p>Ces fichiers sont exécutés à chaque ouverture de terminal. Configurez-les pour personnaliser votre environnement.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># ~/.bashrc (pour Bash)
+# ~/.zshrc (pour Zsh)
+
+# Éditer le fichier
+nano ~/.bashrc   # ou ~/.zshrc
+
+# ============================================
+# Exemple de configuration complète
+# ============================================
+
+# ------- Alias généraux -------
+alias ll='ls -lah'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias grep='grep --color=auto'
+
+# ------- Alias Git -------
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit -m'
+alias gp='git push'
+alias gl='git log --oneline --graph'
+alias gd='git diff'
+
+# ------- Alias Data Engineering -------
+alias csvhead='head -20 | column -t -s,'
+alias csvtail='tail -20 | column -t -s,'
+alias csvcount='wc -l'
+alias csvcolumns="head -1 | tr ',' '\n' | nl"
+
+# Compter les lignes sans header
+alias csvlines='tail -n +2 | wc -l'
+
+# ------- Variables d'environnement -------
+export EDITOR='vim'
+export VISUAL='vim'
+export PAGER='less'
+
+# Historique
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTCONTROL=ignoredups:erasedups
+
+# ------- Fonctions utiles -------
+
+# Créer et entrer dans un dossier
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Extraire n'importe quelle archive
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.gz)  tar xzf "$1"   ;;
+            *.tar.bz2) tar xjf "$1"   ;;
+            *.zip)     unzip "$1"     ;;
+            *.gz)      gunzip "$1"    ;;
+            *.bz2)     bunzip2 "$1"   ;;
+            *)         echo "Cannot extract $1" ;;
+        esac
+    else
+        echo "File not found: $1"
+    fi
+}
+
+# Backup rapide
+backup() {
+    cp "$1" "$1.backup.$(date +%Y%m%d_%H%M%S)"
+}
+
+# Recherche rapide
+ff() {
+    find . -type f -name "*$1*"
+}
+
+# Recherche dans le contenu
+ffc() {
+    grep -r "$1" .
+}
+
+# ------- Path -------
+export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# ------- Prompt personnalisé (Bash) -------
+# Afficher : user@host:directory$
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+# Prompt avec git branch
+parse_git_branch() {
+    git branch 2>/dev/null | grep '*' | sed 's/* //'
+}
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[01;31m\]$(parse_git_branch)\[\033[00m\]\$ '
+
+# ------- Complétion (Bash) -------
+if [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+fi
+
+# ------- Source de fichiers additionnels -------
+# Garder les alias privés dans un fichier séparé
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Fonctions custom
+if [ -f ~/.bash_functions ]; then
+    . ~/.bash_functions
+fi
+
+# Variables d'environnement privées (API keys, etc.)
+if [ -f ~/.bash_private ]; then
+    . ~/.bash_private
+fi
+
+# ------- Recharger la configuration -------
+# Sans redémarrer le terminal
+alias reload='source ~/.bashrc'  # ou source ~/.zshrc
+
+# Après modification, recharger :
+source ~/.bashrc  # ou source ~/.zshrc</code></pre>
+                </div>
+
+                <h3>Oh My Zsh - Framework Zsh</h3>
+
+                <p>Oh My Zsh est un framework qui améliore considérablement l'expérience Zsh avec des thèmes et plugins.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installation
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# Éditer la configuration
+nano ~/.zshrc
+
+# ============================================
+# Configuration Oh My Zsh dans ~/.zshrc
+# ============================================
+
+# Thème (choisir parmi : agnoster, robbyrussell, powerlevel10k, etc.)
+ZSH_THEME="agnoster"
+
+# Plugins recommandés pour Data Engineering
+plugins=(
+    git
+    docker
+    kubectl
+    terraform
+    aws
+    python
+    pip
+    virtualenv
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    zsh-completions
+    colored-man-pages
+    command-not-found
+)
+
+# Installer des plugins additionnels
+
+# 1. zsh-autosuggestions (suggestions basées sur l'historique)
+git clone https://github.com/zsh-users/zsh-autosuggestions \
+    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+# 2. zsh-syntax-highlighting (coloration syntaxique)
+git clone https://github.com/zsh-users/zsh-syntax-highlighting \
+    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# 3. zsh-completions (autocomplétion avancée)
+git clone https://github.com/zsh-users/zsh-completions \
+    ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-completions
+
+# Plugins utiles pour Data Engineering :
+# - git : alias et fonctions git
+# - docker : autocomplétion docker
+# - kubectl : autocomplétion kubernetes
+# - python : fonctions python utiles
+# - aws : autocomplétion AWS CLI
+
+# Recharger après modification
+source ~/.zshrc
+
+# Changer de thème rapidement
+omz theme list      # Lister les thèmes
+omz theme set agnoster
+
+# Mettre à jour Oh My Zsh
+omz update</code></pre>
+                </div>
+
+                <h3>Fonctions réutilisables pour Data Engineering</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># ~/.bash_functions ou ~/.zsh_functions
+
+# ------- CSV Utilities -------
+
+# Afficher les colonnes d'un CSV
+csvcolumns() {
+    head -1 "$1" | tr ',' '\n' | nl
+}
+
+# Afficher un CSV formaté
+csvlook() {
+    cat "$1" | head -20 | column -t -s','
+}
+
+# Extraire une colonne par nom
+csvcolumn() {
+    local file=$1
+    local column_name=$2
+    local col_num=$(head -1 "$file" | tr ',' '\n' | grep -n "^${column_name}$" | cut -d: -f1)
+
+    if [ -z "$col_num" ]; then
+        echo "Column not found: $column_name" >&2
+        return 1
+    fi
+
+    cut -d',' -f"$col_num" "$file"
+}
+
+# Statistiques CSV
+csvstats() {
+    local file=$1
+    echo "File: $file"
+    echo "Lines (with header): $(wc -l < "$file")"
+    echo "Lines (data only): $(tail -n +2 "$file" | wc -l)"
+    echo "Columns: $(head -1 "$file" | awk -F',' '{print NF}')"
+    echo "Size: $(du -h "$file" | cut -f1)"
+}
+
+# ------- JSON Utilities -------
+
+# Pretty print JSON
+jsonpretty() {
+    if [ -f "$1" ]; then
+        jq '.' "$1"
+    else
+        echo "$1" | jq '.'
+    fi
+}
+
+# Valider un JSON
+jsonvalid() {
+    if jq empty "$1" 2>/dev/null; then
+        echo "✓ Valid JSON"
+        return 0
+    else
+        echo "✗ Invalid JSON"
+        return 1
+    fi
+}
+
+# ------- Data Processing -------
+
+# Comparer deux fichiers CSV (structure)
+csvcompare() {
+    echo "File 1: $1"
+    csvcolumns "$1"
+    echo ""
+    echo "File 2: $2"
+    csvcolumns "$2"
+    echo ""
+    echo "Diff:"
+    diff <(head -1 "$1") <(head -1 "$2")
+}
+
+# Dédupliquer un CSV (garder header)
+csvdedup() {
+    local input=$1
+    local output=${2:-"${input%.csv}_dedup.csv"}
+
+    head -1 "$input" > "$output"
+    tail -n +2 "$input" | sort -u >> "$output"
+
+    echo "Deduplicated: $output"
+}
+
+# Fusionner plusieurs CSV avec le même header
+csvmerge() {
+    local output=$1
+    shift
+    local files=("$@")
+
+    # Prendre le header du premier fichier
+    head -1 "${files[0]}" > "$output"
+
+    # Ajouter les données de tous les fichiers (sans header)
+    for file in "${files[@]}"; do
+        tail -n +2 "$file" >> "$output"
+    done
+
+    echo "Merged into: $output"
+}
+
+# ------- Database Utilities -------
+
+# Export PostgreSQL vers CSV
+pgexport() {
+    local query=$1
+    local output=$2
+    psql -c "COPY ($query) TO STDOUT WITH CSV HEADER" > "$output"
+    echo "Exported to: $output"
+}
+
+# Import CSV vers PostgreSQL
+pgimport() {
+    local file=$1
+    local table=$2
+    psql -c "\COPY $table FROM '$file' WITH CSV HEADER"
+}
+
+# ------- Log Analysis -------
+
+# Top 10 erreurs dans les logs
+logerrors() {
+    local logfile=${1:-"*.log"}
+    grep -i "error" $logfile | \
+        awk '{print $5}' | \
+        sort | uniq -c | sort -rn | head -10
+}
+
+# Filtrer logs par date
+logdate() {
+    local date=$1
+    local logfile=${2:-"*.log"}
+    grep "$date" $logfile
+}
+
+# ------- Monitoring -------
+
+# Surveiller l'espace disque
+diskusage() {
+    df -h | grep -E "^/dev/" | \
+        awk '{print $5 " " $1 " " $6}' | \
+        sort -rn
+}
+
+# Trouver les gros fichiers
+bigfiles() {
+    local dir=${1:-.}
+    local size=${2:-100M}
+    find "$dir" -type f -size +${size} -exec ls -lh {} \; | \
+        awk '{print $5 " " $9}' | sort -rh
+}
+
+# ------- Project Setup -------
+
+# Créer une structure de projet data
+dataproject() {
+    local name=$1
+
+    if [ -z "$name" ]; then
+        echo "Usage: dataproject <project_name>"
+        return 1
+    fi
+
+    mkdir -p "$name"/{data/{raw,processed,cleaned,archive},scripts,logs,config,docs,tests}
+
+    cat > "$name/README.md" << EOF
+# $name
+
+Data Engineering Project
+
+## Structure
+
+- \`data/raw/\` - Raw data
+- \`data/processed/\` - Processed data
+- \`data/cleaned/\` - Cleaned data
+- \`data/archive/\` - Archived data
+- \`scripts/\` - Scripts
+- \`logs/\` - Log files
+- \`config/\` - Configuration files
+- \`docs/\` - Documentation
+- \`tests/\` - Tests
+EOF
+
+    cat > "$name/.gitignore" << EOF
+data/raw/*
+data/processed/*
+data/cleaned/*
+logs/*
+*.pyc
+__pycache__/
+.env
+EOF
+
+    echo "Project created: $name"
+    tree "$name" 2>/dev/null || ls -R "$name"
+}
+
+# Source ces fonctions dans .bashrc/.zshrc :
+# source ~/.bash_functions</code></pre>
+                </div>
+
+                <h3>Logging et Error Handling avancés</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">#!/usr/bin/env bash
+#
+# Template avec logging et error handling robuste
+#
+
+set -euo pipefail
+
+# Configuration du logging
+readonly LOG_DIR="logs"
+readonly LOG_FILE="$LOG_DIR/$(basename "$0" .sh)_$(date +%Y%m%d_%H%M%S).log"
+mkdir -p "$LOG_DIR"
+
+# Niveaux de log
+readonly LOG_LEVEL_DEBUG=0
+readonly LOG_LEVEL_INFO=1
+readonly LOG_LEVEL_WARN=2
+readonly LOG_LEVEL_ERROR=3
+
+# Niveau actuel (modifiable via env var)
+LOG_LEVEL=${LOG_LEVEL:-$LOG_LEVEL_INFO}
+
+# Couleurs
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly MAGENTA='\033[0;35m'
+readonly NC='\033[0m'
+
+# Fonction de log générique
+log() {
+    local level=$1
+    local level_num=$2
+    local color=$3
+    shift 3
+    local message="$*"
+
+    if [ $level_num -ge $LOG_LEVEL ]; then
+        local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+        # Console (avec couleur)
+        echo -e "${color}[${level}]${NC} ${timestamp} - ${message}"
+        # Fichier (sans couleur)
+        echo "[${level}] ${timestamp} - ${message}" >> "$LOG_FILE"
+    fi
+}
+
+log_debug() { log "DEBUG" $LOG_LEVEL_DEBUG "$BLUE" "$@"; }
+log_info()  { log "INFO " $LOG_LEVEL_INFO  "$GREEN" "$@"; }
+log_warn()  { log "WARN " $LOG_LEVEL_WARN  "$YELLOW" "$@"; }
+log_error() { log "ERROR" $LOG_LEVEL_ERROR "$RED" "$@"; }
+
+# Fonction pour erreur fatale
+die() {
+    log_error "$@"
+    exit 1
+}
+
+# Trap pour capturer les erreurs
+error_handler() {
+    local line=$1
+    log_error "Error occurred in script at line $line"
+    log_error "Command that failed: $BASH_COMMAND"
+
+    # Stack trace
+    log_error "Call stack:"
+    local frame=0
+    while caller $frame; do
+        ((frame++))
+    done | while read line func file; do
+        log_error "  at $func ($file:$line)"
+    done
+
+    exit 1
+}
+
+trap 'error_handler ${LINENO}' ERR
+
+# Trap pour le nettoyage
+cleanup() {
+    log_info "Cleaning up..."
+    # Votre code de nettoyage ici
+}
+
+trap cleanup EXIT
+
+# Fonction de validation avec logging
+validate_file() {
+    local file=$1
+
+    log_debug "Validating file: $file"
+
+    if [ ! -f "$file" ]; then
+        log_error "File not found: $file"
+        return 1
+    fi
+
+    if [ ! -s "$file" ]; then
+        log_warn "File is empty: $file"
+        return 2
+    fi
+
+    log_info "File validated: $file"
+    return 0
+}
+
+# Fonction avec retry et logging
+retry_with_backoff() {
+    local max_attempts=$1
+    shift
+    local cmd="$@"
+    local attempt=1
+    local delay=1
+
+    while [ $attempt -le $max_attempts ]; do
+        log_info "Attempt $attempt/$max_attempts: $cmd"
+
+        if eval "$cmd"; then
+            log_info "Command succeeded"
+            return 0
+        fi
+
+        log_warn "Attempt $attempt failed"
+
+        if [ $attempt -lt $max_attempts ]; then
+            log_info "Waiting ${delay}s before retry..."
+            sleep $delay
+            delay=$((delay * 2))  # Exponential backoff
+        fi
+
+        ((attempt++))
+    done
+
+    log_error "All $max_attempts attempts failed"
+    return 1
+}
+
+# Exemple d'utilisation
+main() {
+    log_info "=== Script started ==="
+
+    # Exemple avec validation
+    if validate_file "data.csv"; then
+        log_info "Processing data..."
+    else
+        die "Cannot proceed without valid data file"
+    fi
+
+    # Exemple avec retry
+    if ! retry_with_backoff 3 "curl -f https://api.example.com/data"; then
+        die "Failed to fetch data after retries"
+    fi
+
+    log_info "=== Script completed successfully ==="
+}
+
+main "$@"</code></pre>
+                </div>
+
+                <h3>ShellCheck - Linter pour scripts shell</h3>
+
+                <p>ShellCheck est un outil indispensable qui détecte les erreurs et mauvaises pratiques dans vos scripts.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installation
+# macOS
+brew install shellcheck
+
+# Ubuntu/Debian
+sudo apt install shellcheck
+
+# Vérifier un script
+shellcheck script.sh
+
+# Exemple d'output :
+# In script.sh line 10:
+# for file in $(ls *.csv); do
+#             ^-- SC2045: Iterating over ls output is fragile...
+
+# Ignorer certains warnings
+# shellcheck disable=SC2045
+for file in $(ls *.csv); do
+    echo "$file"
+done
+
+# Vérifier récursivement tous les scripts
+find . -name "*.sh" -exec shellcheck {} \;
+
+# Intégration dans CI/CD
+# .github/workflows/shellcheck.yml
+# name: ShellCheck
+# on: [push]
+# jobs:
+#   shellcheck:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Run ShellCheck
+#         uses: ludeeus/action-shellcheck@master
+
+# Erreurs communes détectées par ShellCheck :
+
+# 1. Variables non quotées
+# Mauvais :
+echo $var
+# Bon :
+echo "$var"
+
+# 2. Utiliser ls dans une boucle
+# Mauvais :
+for file in $(ls *.csv); do
+# Bon :
+for file in *.csv; do
+
+# 3. Comparaison de chaînes
+# Mauvais :
+if [ $var == "value" ]
+# Bon :
+if [ "$var" = "value" ]
+
+# 4. Variable non définie
+# Mauvais :
+echo "Value: $undefined_var"
+# Bon (avec set -u):
+undefined_var=""
+echo "Value: $undefined_var"
+
+# 5. Chemins avec espaces
+# Mauvais :
+cd $HOME/my folder
+# Bon :
+cd "$HOME/my folder"</code></pre>
+                </div>
+
+                <h3>Bonnes pratiques essentielles</h3>
+
+                <div class="key-points">
+                    <h3>💡 Checklist des bonnes pratiques</h3>
+                </div>
+
+                <h4>1. Structure et organisation</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">#!/usr/bin/env bash
+#
+# Script: script_name.sh
+# Description: Ce que fait le script
+# Author: Votre nom
+# Date: 2024-01-15
+# Usage: ./script_name.sh [options] <args>
+#
+
+# 1. Mode strict au début
+set -euo pipefail
+
+# 2. Variables globales en haut (readonly pour les constantes)
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_NAME="$(basename "$0")"
+readonly VERSION="1.0.0"
+
+# 3. Configuration
+CONFIG_FILE="${CONFIG_FILE:-config.ini}"
+DEBUG="${DEBUG:-0}"
+
+# 4. Fonctions (définir avant utilisation)
+usage() { ... }
+validate_input() { ... }
+main() { ... }
+
+# 5. Appeler main en dernier
+main "$@"</code></pre>
+                </div>
+
+                <h4>2. Quoting (guillemets)</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># TOUJOURS quoter les variables
+echo "$var"              # Bon
+echo $var                # Mauvais
+
+# Quoter les chemins
+cd "$HOME/my folder"     # Bon
+cd $HOME/my folder       # Mauvais
+
+# Arrays : quoter avec "@"
+for item in "${array[@]}"; do   # Bon
+for item in ${array[@]}; do     # Mauvais
+
+# Ne PAS quoter pour le word splitting intentionnel
+options="-a -b -c"
+command $options         # OK si intentionnel</code></pre>
+                </div>
+
+                <h4>3. Error handling</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Vérifier les codes de retour
+if command; then
+    echo "Success"
+else
+    echo "Failed" >&2
+    exit 1
+fi
+
+# Ou avec &&/||
+command || { echo "Failed" >&2; exit 1; }
+
+# Valider les entrées
+if [ $# -ne 2 ]; then
+    echo "Error: Invalid arguments" >&2
+    usage
+    exit 1
+fi
+
+# Vérifier l'existence des fichiers
+[ -f "$file" ] || { echo "File not found" >&2; exit 1; }
+
+# Utiliser trap pour le nettoyage
+trap cleanup EXIT ERR</code></pre>
+                </div>
+
+                <h4>4. Portabilité</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Shebang portable
+#!/usr/bin/env bash
+
+# Éviter les bashismes si vous visez POSIX
+# Bon (POSIX):
+if [ "$var" = "value" ]; then
+
+# Bash uniquement:
+if [[ $var == "value" ]]; then
+
+# Fonctions portables
+portable_func() {  # POSIX
+    echo "test"
+}
+
+function bash_func() {  # Bash only
+    echo "test"
+}
+
+# Commandes portables
+command -v python   # Portable
+which python        # Moins portable</code></pre>
+                </div>
+
+                <h3>Checklist finale</h3>
+
+                <div class="alert alert-success">
+                    <h4>✅ Avant de mettre un script en production</h4>
+                    <ul>
+                        <li>✓ <code>set -euo pipefail</code> activé</li>
+                        <li>✓ Toutes les variables sont quotées</li>
+                        <li>✓ Validation des entrées (arguments, fichiers)</li>
+                        <li>✓ Gestion d'erreurs complète</li>
+                        <li>✓ Logging approprié (info, warn, error)</li>
+                        <li>✓ Fonction cleanup avec trap EXIT</li>
+                        <li>✓ Usage/help message clair</li>
+                        <li>✓ Testé avec ShellCheck</li>
+                        <li>✓ Testé manuellement (succès et échec)</li>
+                        <li>✓ Documentation (commentaires, README)</li>
+                        <li>✓ Versionné dans Git</li>
+                    </ul>
+                </div>
+
+                <h3>Exercice final : Projet complet</h3>
+
+                <div class="exercise">
+                    <h4>🎯 Projet final : Pipeline ETL complet</h4>
+                    <p>Créez un pipeline ETL professionnel qui :</p>
+                    <ol>
+                        <li>Télécharge des données depuis une API</li>
+                        <li>Valide les données (format, complétude)</li>
+                        <li>Transforme JSON en CSV</li>
+                        <li>Nettoie et déduplique</li>
+                        <li>Génère des statistiques</li>
+                        <li>Archive les fichiers traités</li>
+                        <li>Envoie un rapport par email (ou logs)</li>
+                    </ol>
+                    <p><strong>Exigences :</strong></p>
+                    <ul>
+                        <li>Utiliser le template professionnel</li>
+                        <li>Logging complet</li>
+                        <li>Gestion d'erreurs robuste</li>
+                        <li>Options en ligne de commande</li>
+                        <li>Mode dry-run</li>
+                        <li>Traitement parallèle si possible</li>
+                        <li>Passe ShellCheck sans warnings</li>
+                    </ul>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir un exemple de structure</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash">#!/usr/bin/env bash
+# Utilisez le template professionnel ci-dessus
+
+# Ajoutez ces fonctions spécifiques :
+
+extract() {
+    log_info "Extracting data from API..."
+    # curl avec retry
+}
+
+validate() {
+    log_info "Validating data..."
+    # jq validation
+}
+
+transform() {
+    log_info "Transforming data..."
+    # jq JSON to CSV
+}
+
+clean() {
+    log_info "Cleaning data..."
+    # sed, awk, dedup
+}
+
+stats() {
+    log_info "Generating statistics..."
+    # wc, awk, agrégations
+}
+
+archive() {
+    log_info "Archiving..."
+    # tar, move to archive
+}
+
+report() {
+    log_info "Generating report..."
+    # Créer un rapport texte
+}
+
+# Pipeline principal
+main() {
+    extract
+    validate
+    transform
+    clean
+    stats
+    archive
+    report
+}</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>💡 Ressources supplémentaires</h4>
+                    <ul>
+                        <li><a href="https://www.shellcheck.net/" target="_blank">ShellCheck Online</a> - Vérifier vos scripts en ligne</li>
+                        <li><a href="https://github.com/ohmyzsh/ohmyzsh" target="_blank">Oh My Zsh</a> - Framework Zsh</li>
+                        <li><a href="https://github.com/dylanaraps/pure-bash-bible" target="_blank">Pure Bash Bible</a> - Techniques avancées</li>
+                        <li><a href="https://google.github.io/styleguide/shellguide.html" target="_blank">Google Shell Style Guide</a></li>
+                        <li><a href="https://stedolan.github.io/jq/manual/" target="_blank">jq Manual</a> - Documentation officielle jq</li>
+                        <li><a href="https://www.gnu.org/software/parallel/" target="_blank">GNU Parallel</a> - Documentation</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>🎉 Formation terminée !</h4>
+                <p>
+                    Félicitations ! Vous avez complété la formation Bash/Zsh pour Data Engineering.
+                    Vous avez maintenant toutes les compétences nécessaires pour créer des pipelines
+                    de données robustes et performants en shell.
+                </p>
+                <p style="margin-top: 20px;">
+                    <strong>Prochaines étapes :</strong>
+                </p>
+                <ul>
+                    <li>Pratiquez régulièrement avec des projets réels</li>
+                    <li>Configurez votre environnement (.bashrc/.zshrc)</li>
+                    <li>Créez une bibliothèque de fonctions réutilisables</li>
+                    <li>Contribuez à des projets open source</li>
+                    <li>Partagez vos scripts avec la communauté</li>
+                </ul>
+                <p style="margin-top: 20px;">
+                    <a href="partie8.html"
+                        style="display: inline-block; padding: 12px 25px; background: #ff9800; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                        Partie 8 : Oh My Zsh + Powerlevel10k →
+                    </a>
+                    <a href="../index.html"
+                        style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        ← Retour à l'accueil
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Bash/Zsh pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

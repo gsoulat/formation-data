@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 1 : Introduction à GitHub - Formation GitHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 1 : Introduction à GitHub</h1>
+            <p class="subtitle">Découvrez GitHub et son écosystème</p>
+            <span class="duration">⏱️ Durée : 20 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html" class="active">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Comprendre ce qu'est GitHub et son histoire</li>
+                    <li>Faire la distinction entre Git et GitHub</li>
+                    <li>Découvrir les avantages de GitHub en Data Engineering</li>
+                    <li>Connaître les concepts clés de la plateforme</li>
+                    <li>Explorer les alternatives à GitHub</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Qu'est-ce que GitHub ?</h2>
+
+                <p>
+                    <strong>GitHub</strong> est une plateforme web d'hébergement et de gestion de code source basée sur
+                    Git.
+                    Lancée en 2008 et rachetée par Microsoft en 2018, c'est la plus grande plateforme de développement
+                    collaboratif
+                    au monde avec plus de 100 millions de développeurs.
+                </p>
+
+                <div class="image-container">
+                    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                        alt="GitHub Logo" style="max-width: 200px;">
+                    <p class="image-caption">Logo de GitHub</p>
+                </div>
+
+                <h3>GitHub vs Git : Quelle différence ?</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Git</th>
+                            <th>GitHub</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Type</strong></td>
+                            <td>Logiciel de contrôle de version</td>
+                            <td>Plateforme web (service)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Installation</strong></td>
+                            <td>Local sur votre machine</td>
+                            <td>Hébergé dans le cloud</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fonction principale</strong></td>
+                            <td>Versionner du code</td>
+                            <td>Héberger, collaborer, automatiser</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Interface</strong></td>
+                            <td>Ligne de commande (CLI)</td>
+                            <td>Interface web + CLI</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Collaboration</strong></td>
+                            <td>Possible mais limitée</td>
+                            <td>Optimisée pour la collaboration</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <h4>En résumé</h4>
+                    <p>
+                        <strong>Git</strong> est l'outil que vous utilisez localement pour gérer les versions.<br>
+                        <strong>GitHub</strong> est la plateforme où vous hébergez vos dépôts Git et collaborez avec
+                        d'autres.
+                    </p>
+                </div>
+
+                <h3>Pourquoi utiliser GitHub en Data Engineering ?</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>🤝 Collaboration d'équipe</h4>
+                        <p>Plusieurs Data Engineers travaillent sur les mêmes pipelines avec Pull Requests et code
+                            review.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔄 CI/CD intégré</h4>
+                        <p>GitHub Actions permet de tester et déployer automatiquement vos pipelines de données.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📊 Gestion de projet</h4>
+                        <p>Issues, Projects et Milestones pour organiser le développement de vos solutions data.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔒 Sécurité avancée</h4>
+                        <p>Détection automatique de secrets, scan de vulnérabilités, Dependabot pour les dépendances.
+                        </p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📝 Documentation</h4>
+                        <p>README, Wiki, GitHub Pages pour documenter vos projets data.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🌐 Open Source</h4>
+                        <p>Accès à des millions de projets data engineering open source pour apprendre et contribuer.
+                        </p>
+                    </div>
+                </div>
+
+                <h3>Les concepts clés de GitHub</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concept</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Repository</strong></td>
+                            <td>Projet hébergé sur GitHub contenant code, historique et configuration</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fork</strong></td>
+                            <td>Copie personnelle d'un dépôt pour y apporter des modifications</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pull Request (PR)</strong></td>
+                            <td>Proposition de modifications à intégrer dans une branche</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Issue</strong></td>
+                            <td>Ticket pour signaler un bug, proposer une feature ou poser une question</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Actions</strong></td>
+                            <td>Workflows d'automatisation (CI/CD, tests, déploiements)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gist</strong></td>
+                            <td>Partage rapide de snippets de code ou de notes</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Alternatives à GitHub</h3>
+
+                <ul>
+                    <li><strong>GitLab</strong> : Alternative open source avec CI/CD très puissant</li>
+                    <li><strong>Bitbucket</strong> : Intégré avec l'écosystème Atlassian (Jira, Confluence)</li>
+                    <li><strong>Azure DevOps</strong> : Solution Microsoft pour le cycle complet DevOps</li>
+                    <li><strong>Gitea</strong> : Solution légère auto-hébergée</li>
+                </ul>
+
+                <div class="alert alert-success">
+                    <h4>Pourquoi choisir GitHub ?</h4>
+                    <ul>
+                        <li>Plus grande communauté de développeurs au monde</li>
+                        <li>Intégration native avec de nombreux outils (VS Code, CI/CD, etc.)</li>
+                        <li>GitHub Actions puissant et gratuit pour les projets publics</li>
+                        <li>Excellent pour l'open source</li>
+                        <li>Interface intuitive et features avancées</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>GitHub est une plateforme web basée sur Git, pas un remplacement de Git</li>
+                    <li>GitHub ajoute collaboration, automatisation et sécurité au-dessus de Git</li>
+                    <li>En Data Engineering, GitHub facilite le travail d'équipe sur les pipelines</li>
+                    <li>Les concepts clés : Repository, Fork, Pull Request, Issue, Actions</li>
+                    <li>GitHub domine le marché mais des alternatives existent (GitLab, Bitbucket)</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Maintenant que vous comprenez ce qu'est GitHub, passons à la <strong>Partie 2</strong> où vous
+                    allez créer votre compte et configurer votre environnement.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="../index.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Retour à l'accueil
+                </a>
+                <a href="partie2.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 2 : Premiers pas →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation GitHub pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+
+</html>

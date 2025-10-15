@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker vs Kubernetes - Différences, Avantages et Inconvénients</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 60px 40px;
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            color: #0066cc;
+            font-size: 2.2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #00a3e0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h3 {
+            color: #0066cc;
+            font-size: 1.6em;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h4 {
+            color: #333;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            text-align: justify;
+        }
+
+        .intro {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #0066cc;
+            margin-bottom: 40px;
+            font-size: 1.15em;
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .tech-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .tech-card.docker {
+            border-top: 5px solid #2496ED;
+        }
+
+        .tech-card.kubernetes {
+            border-top: 5px solid #326CE5;
+        }
+
+        .tech-card h3 {
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 0;
+        }
+
+        .tech-logo {
+            font-size: 2.5em;
+        }
+
+        .advantages, .disadvantages {
+            margin: 25px 0;
+        }
+
+        .advantages h4 {
+            color: #28a745;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .disadvantages h4 {
+            color: #dc3545;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding: 12px 0 12px 35px;
+            position: relative;
+            font-size: 1.05em;
+        }
+
+        .advantages li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .disadvantages li::before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%);
+            color: white;
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .comparison-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .comparison-table tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            color: #0066cc;
+            width: 25%;
+        }
+
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border-left: 5px solid #0066cc;
+        }
+
+        .architecture-diagram pre {
+            background: #263238;
+            color: #aed581;
+            padding: 25px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .use-case {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+        }
+
+        .use-case h4 {
+            color: #856404;
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .key-differences {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .difference-card {
+            background: white;
+            border: 2px solid #0066cc;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .difference-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.2);
+        }
+
+        .difference-card h4 {
+            color: #0066cc;
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #0066cc;
+        }
+
+        .highlight strong {
+            color: #0066cc;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95em;
+            color: #d63384;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .conclusion {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #28a745;
+            margin-top: 40px;
+        }
+
+        .conclusion h3 {
+            color: #155724;
+            margin-top: 0;
+        }
+
+        footer {
+            background: linear-gradient(135deg, #263238 0%, #37474f 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            font-size: 0.95em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header {
+                padding: 40px 20px;
+            }
+
+            header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-table {
+                font-size: 0.9em;
+            }
+
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .tech-card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐳 Docker vs Kubernetes ☸️</h1>
+            <p>Comprendre les différences, avantages et inconvénients</p>
+        </header>
+
+        <div class="content">
+            <section class="introduction">
+                <div class="intro">
+                    <p><strong>Docker et Kubernetes sont deux technologies complémentaires</strong> qui ont révolutionné le monde du développement et du déploiement d'applications. Bien qu'elles soient souvent mentionnées ensemble, elles servent des objectifs différents et répondent à des besoins distincts dans l'écosystème de la conteneurisation.</p>
+                    <p>Ce document explique en détail ce qui distingue ces deux technologies, leurs avantages respectifs, leurs inconvénients, et surtout quand et comment les utiliser efficacement.</p>
+                </div>
+            </section>
+
+            <section id="what-is-docker">
+                <h2>🐳 Qu'est-ce que Docker ?</h2>
+                <p>Docker est une <strong>plateforme de conteneurisation</strong> qui permet d'empaqueter une application avec toutes ses dépendances dans un conteneur standardisé. C'est la technologie fondamentale qui crée et exécute les conteneurs.</p>
+
+                <div class="highlight">
+                    <p><strong>Rôle principal :</strong> Docker s'occupe de la création, du packaging et de l'exécution des conteneurs individuels sur une machine hôte unique.</p>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h4>Architecture Docker</h4>
+                    <pre>
+┌─────────────────────────────────────────────────────────┐
+│                    MACHINE HÔTE                          │
+│                                                          │
+│  ┌────────────────────────────────────────────────┐    │
+│  │           Docker Engine (Daemon)                │    │
+│  └────────────────────────────────────────────────┘    │
+│                         │                               │
+│      ┌──────────────────┼──────────────────┐           │
+│      │                  │                   │           │
+│  ┌───▼────┐       ┌────▼────┐        ┌────▼────┐      │
+│  │Container│       │Container│        │Container│      │
+│  │  App 1  │       │  App 2  │        │  App 3  │      │
+│  └─────────┘       └─────────┘        └─────────┘      │
+│                                                          │
+│  ┌────────────────────────────────────────────────┐    │
+│  │           Système d'exploitation               │    │
+│  └────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <h3>Fonctionnalités principales de Docker</h3>
+                <ul>
+                    <li><strong>Création de conteneurs :</strong> Empaqueter des applications dans des conteneurs isolés</li>
+                    <li><strong>Gestion d'images :</strong> Build, pull, push d'images Docker</li>
+                    <li><strong>Exécution :</strong> Démarrer et arrêter des conteneurs</li>
+                    <li><strong>Networking :</strong> Connecter des conteneurs entre eux</li>
+                    <li><strong>Volumes :</strong> Gérer le stockage persistant</li>
+                    <li><strong>Docker Compose :</strong> Orchestrer plusieurs conteneurs sur une seule machine</li>
+                </ul>
+            </section>
+
+            <section id="what-is-kubernetes">
+                <h2>☸️ Qu'est-ce que Kubernetes ?</h2>
+                <p>Kubernetes (K8s) est une <strong>plateforme d'orchestration de conteneurs</strong> qui automatise le déploiement, la mise à l'échelle et la gestion d'applications conteneurisées à travers un cluster de machines.</p>
+
+                <div class="highlight">
+                    <p><strong>Rôle principal :</strong> Kubernetes gère des centaines ou milliers de conteneurs distribués sur plusieurs machines, en assurant leur disponibilité, leur scaling automatique et leur résilience.</p>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h4>Architecture Kubernetes</h4>
+                    <pre>
+┌─────────────────────────────────────────────────────────────────────┐
+│                      KUBERNETES CLUSTER                              │
+│                                                                      │
+│  ┌────────────────────────────────────────────────────────────┐    │
+│  │              CONTROL PLANE (Master)                         │    │
+│  │  [API Server] [Scheduler] [Controller] [etcd]              │    │
+│  └────────────────────────────────────────────────────────────┘    │
+│                              │                                      │
+│           ┌──────────────────┼──────────────────┐                  │
+│           │                  │                   │                  │
+│      ┌────▼─────┐       ┌───▼──────┐       ┌───▼──────┐           │
+│      │  NODE 1  │       │  NODE 2  │       │  NODE 3  │           │
+│      │          │       │          │       │          │           │
+│      │ ┌──────┐ │       │ ┌──────┐ │       │ ┌──────┐ │           │
+│      │ │ Pod  │ │       │ │ Pod  │ │       │ │ Pod  │ │           │
+│      │ │ 🐳🐳 │ │       │ │ 🐳🐳 │ │       │ │ 🐳🐳 │ │           │
+│      │ └──────┘ │       │ └──────┘ │       │ └──────┘ │           │
+│      │ ┌──────┐ │       │ ┌──────┐ │       │ ┌──────┐ │           │
+│      │ │ Pod  │ │       │ │ Pod  │ │       │ │ Pod  │ │           │
+│      │ │ 🐳   │ │       │ │ 🐳🐳 │ │       │ │ 🐳   │ │           │
+│      │ └──────┘ │       │ └──────┘ │       │ └──────┘ │           │
+│      └──────────┘       └──────────┘       └──────────┘           │
+└─────────────────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <h3>Fonctionnalités principales de Kubernetes</h3>
+                <ul>
+                    <li><strong>Orchestration :</strong> Gérer des milliers de conteneurs sur un cluster</li>
+                    <li><strong>Auto-scaling :</strong> Adapter automatiquement le nombre de conteneurs à la charge</li>
+                    <li><strong>Self-healing :</strong> Redémarrer automatiquement les conteneurs défaillants</li>
+                    <li><strong>Load balancing :</strong> Distribuer le trafic entre les conteneurs</li>
+                    <li><strong>Rolling updates :</strong> Déployer de nouvelles versions sans interruption</li>
+                    <li><strong>Service discovery :</strong> Découverte automatique des services</li>
+                    <li><strong>Configuration management :</strong> Gérer les secrets et configurations</li>
+                    <li><strong>Storage orchestration :</strong> Monter automatiquement des volumes</li>
+                </ul>
+            </section>
+
+            <section id="key-differences">
+                <h2>🔍 Différences Principales</h2>
+
+                <div class="key-differences">
+                    <div class="difference-card">
+                        <h4>📊 Niveau d'Abstraction</h4>
+                        <p><strong>Docker :</strong> Niveau conteneur individuel</p>
+                        <p><strong>Kubernetes :</strong> Niveau cluster et orchestration</p>
+                    </div>
+
+                    <div class="difference-card">
+                        <h4>🎯 Objectif Principal</h4>
+                        <p><strong>Docker :</strong> Créer et exécuter des conteneurs</p>
+                        <p><strong>Kubernetes :</strong> Orchestrer et gérer des conteneurs à grande échelle</p>
+                    </div>
+
+                    <div class="difference-card">
+                        <h4>🖥️ Scope d'Utilisation</h4>
+                        <p><strong>Docker :</strong> Une seule machine hôte</p>
+                        <p><strong>Kubernetes :</strong> Cluster de plusieurs machines</p>
+                    </div>
+
+                    <div class="difference-card">
+                        <h4>⚙️ Complexité</h4>
+                        <p><strong>Docker :</strong> Simple à apprendre et utiliser</p>
+                        <p><strong>Kubernetes :</strong> Courbe d'apprentissage importante</p>
+                    </div>
+
+                    <div class="difference-card">
+                        <h4>🔄 Scaling</h4>
+                        <p><strong>Docker :</strong> Manuel ou via Docker Compose</p>
+                        <p><strong>Kubernetes :</strong> Auto-scaling automatique et intelligent</p>
+                    </div>
+
+                    <div class="difference-card">
+                        <h4>🛡️ Haute Disponibilité</h4>
+                        <p><strong>Docker :</strong> Limitée à une machine</p>
+                        <p><strong>Kubernetes :</strong> Distribution sur plusieurs nodes</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="comparison">
+                <h2>⚖️ Tableau Comparatif Détaillé</h2>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Critère</th>
+                            <th>🐳 Docker</th>
+                            <th>☸️ Kubernetes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Type</td>
+                            <td>Plateforme de conteneurisation</td>
+                            <td>Orchestrateur de conteneurs</td>
+                        </tr>
+                        <tr>
+                            <td>Installation</td>
+                            <td>Simple et rapide</td>
+                            <td>Complexe, nécessite configuration</td>
+                        </tr>
+                        <tr>
+                            <td>Courbe d'apprentissage</td>
+                            <td>Facile pour débuter</td>
+                            <td>Difficile, nombreux concepts</td>
+                        </tr>
+                        <tr>
+                            <td>Déploiement</td>
+                            <td>Machine unique</td>
+                            <td>Cluster multi-machines</td>
+                        </tr>
+                        <tr>
+                            <td>Scaling</td>
+                            <td>Manuel (docker-compose scale)</td>
+                            <td>Automatique (HPA)</td>
+                        </tr>
+                        <tr>
+                            <td>Load Balancing</td>
+                            <td>Basique (via proxy)</td>
+                            <td>Natif et sophistiqué</td>
+                        </tr>
+                        <tr>
+                            <td>Auto-healing</td>
+                            <td>Restart policy limitée</td>
+                            <td>Complet et automatique</td>
+                        </tr>
+                        <tr>
+                            <td>Rolling Updates</td>
+                            <td>Manuel ou via CI/CD</td>
+                            <td>Natif avec rollback</td>
+                        </tr>
+                        <tr>
+                            <td>Service Discovery</td>
+                            <td>Via DNS ou liens</td>
+                            <td>Natif et automatique</td>
+                        </tr>
+                        <tr>
+                            <td>Stockage</td>
+                            <td>Volumes Docker</td>
+                            <td>PV, PVC, StorageClasses</td>
+                        </tr>
+                        <tr>
+                            <td>Configuration</td>
+                            <td>Variables d'environnement, .env</td>
+                            <td>ConfigMaps, Secrets</td>
+                        </tr>
+                        <tr>
+                            <td>Monitoring</td>
+                            <td>Via outils tiers</td>
+                            <td>Intégré (métriques, probes)</td>
+                        </tr>
+                        <tr>
+                            <td>Networking</td>
+                            <td>Bridge, Host, Overlay simple</td>
+                            <td>CNI plugins avancés</td>
+                        </tr>
+                        <tr>
+                            <td>Haute Disponibilité</td>
+                            <td>Non natif</td>
+                            <td>Design principal</td>
+                        </tr>
+                        <tr>
+                            <td>Cas d'usage</td>
+                            <td>Dev local, petites apps</td>
+                            <td>Production, grande échelle</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="docker-pros-cons">
+                <h2>🐳 Docker : Avantages et Inconvénients</h2>
+
+                <div class="comparison-container">
+                    <div class="tech-card docker">
+                        <div class="advantages">
+                            <h4>✓ Avantages</h4>
+                            <ul>
+                                <li><strong>Simplicité d'utilisation</strong> : Facile à apprendre et à mettre en œuvre</li>
+                                <li><strong>Installation rapide</strong> : Opérationnel en quelques minutes</li>
+                                <li><strong>Portabilité</strong> : "Build once, run anywhere"</li>
+                                <li><strong>Isolation</strong> : Chaque conteneur est isolé des autres</li>
+                                <li><strong>Légèreté</strong> : Plus léger que les machines virtuelles</li>
+                                <li><strong>Démarrage rapide</strong> : Conteneurs démarrent en secondes</li>
+                                <li><strong>Versioning</strong> : Gestion de versions d'images facile</li>
+                                <li><strong>Docker Hub</strong> : Large écosystème d'images prêtes</li>
+                                <li><strong>Docker Compose</strong> : Orchestration multi-conteneurs simple</li>
+                                <li><strong>Environnements cohérents</strong> : Dev, test et prod identiques</li>
+                                <li><strong>CI/CD friendly</strong> : Intégration facile dans pipelines</li>
+                                <li><strong>Ressources minimales</strong> : Fonctionne sur une simple machine</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tech-card docker">
+                        <div class="disadvantages">
+                            <h4>✗ Inconvénients</h4>
+                            <ul>
+                                <li><strong>Scaling limité</strong> : Difficile à scale au-delà d'une machine</li>
+                                <li><strong>Pas de clustering natif</strong> : Docker Swarm moins populaire</li>
+                                <li><strong>Haute disponibilité limitée</strong> : SPOF (Single Point of Failure)</li>
+                                <li><strong>Load balancing basique</strong> : Nécessite outils externes</li>
+                                <li><strong>Pas d'auto-healing avancé</strong> : Restart limité</li>
+                                <li><strong>Monitoring manuel</strong> : Nécessite configuration externe</li>
+                                <li><strong>Gestion manuelle</strong> : Déploiements et updates manuels</li>
+                                <li><strong>Pas de rolling updates natifs</strong> : Downtime possible</li>
+                                <li><strong>Sécurité à configurer</strong> : Nécessite attention particulière</li>
+                                <li><strong>Networking complexe</strong> : Pour configurations avancées</li>
+                                <li><strong>Stockage persistant délicat</strong> : Gestion volumes complexe</li>
+                                <li><strong>Pas adapté grande échelle</strong> : Limites pour production massive</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="kubernetes-pros-cons">
+                <h2>☸️ Kubernetes : Avantages et Inconvénients</h2>
+
+                <div class="comparison-container">
+                    <div class="tech-card kubernetes">
+                        <div class="advantages">
+                            <h4>✓ Avantages</h4>
+                            <ul>
+                                <li><strong>Scalabilité automatique</strong> : HPA pour scaling intelligent</li>
+                                <li><strong>Haute disponibilité</strong> : Distribution sur multiple nodes</li>
+                                <li><strong>Self-healing</strong> : Redémarrage automatique des pods</li>
+                                <li><strong>Load balancing natif</strong> : Distribution du trafic automatique</li>
+                                <li><strong>Rolling updates</strong> : Déploiement sans downtime</li>
+                                <li><strong>Rollback automatique</strong> : Retour arrière en cas d'erreur</li>
+                                <li><strong>Service discovery</strong> : Communication inter-services automatique</li>
+                                <li><strong>Orchestration puissante</strong> : Gestion de milliers de conteneurs</li>
+                                <li><strong>Multi-cloud</strong> : Déploiement sur AWS, Azure, GCP</li>
+                                <li><strong>Écosystème riche</strong> : Helm, Operators, Istio, etc.</li>
+                                <li><strong>Configuration déclarative</strong> : Infrastructure as Code</li>
+                                <li><strong>Stockage orchestré</strong> : PV, PVC, StorageClasses</li>
+                                <li><strong>Secrets management</strong> : Gestion sécurisée des credentials</li>
+                                <li><strong>Monitoring intégré</strong> : Métriques et health checks natifs</li>
+                                <li><strong>Standard industriel</strong> : Adopté par les grandes entreprises</li>
+                                <li><strong>CNCF support</strong> : Communauté active et standardisation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="tech-card kubernetes">
+                        <div class="disadvantages">
+                            <h4>✗ Inconvénients</h4>
+                            <ul>
+                                <li><strong>Complexité élevée</strong> : Courbe d'apprentissage importante</li>
+                                <li><strong>Installation complexe</strong> : Configuration cluster délicate</li>
+                                <li><strong>Ressources importantes</strong> : Nécessite infrastructure conséquente</li>
+                                <li><strong>Overhead</strong> : Consommation ressources pour le control plane</li>
+                                <li><strong>Coût élevé</strong> : Infrastructure et maintenance coûteuses</li>
+                                <li><strong>Overkill pour petits projets</strong> : Trop complexe pour apps simples</li>
+                                <li><strong>Documentation dense</strong> : Beaucoup de concepts à maîtriser</li>
+                                <li><strong>Debugging difficile</strong> : Troubleshooting plus complexe</li>
+                                <li><strong>Temps de setup long</strong> : Plusieurs heures/jours pour commencer</li>
+                                <li><strong>Mise à jour cluster délicate</strong> : Nécessite planification</li>
+                                <li><strong>Sécurité complexe</strong> : RBAC, NetworkPolicies, etc.</li>
+                                <li><strong>Vendor lock-in potentiel</strong> : Selon le cloud provider</li>
+                                <li><strong>Nécessite expertise</strong> : Compétences spécialisées requises</li>
+                                <li><strong>Local development lourd</strong> : Minikube/Kind consomment des ressources</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="when-to-use">
+                <h2>🎯 Quand Utiliser Quoi ?</h2>
+
+                <h3>🐳 Utilisez Docker quand :</h3>
+                <div class="use-case">
+                    <h4>💡 Développement Local</h4>
+                    <p>Docker est parfait pour créer des environnements de développement cohérents et reproductibles. Chaque développeur peut avoir exactement le même environnement.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Applications Simples</h4>
+                    <p>Pour des petites applications monolithiques ou des microservices limités (2-5 services), Docker Compose est largement suffisant.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Prototypes et POCs</h4>
+                    <p>Rapidité de mise en place pour tester des idées sans infrastructure complexe.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 CI/CD Pipelines</h4>
+                    <p>Building et testing d'applications dans des conteneurs isolés lors de l'intégration continue.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Apprentissage des Conteneurs</h4>
+                    <p>Commencer par Docker pour comprendre les bases de la conteneurisation avant de passer à Kubernetes.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Budget Limité</h4>
+                    <p>Pas besoin d'infrastructure cluster coûteuse, une simple machine suffit.</p>
+                </div>
+
+                <h3>☸️ Utilisez Kubernetes quand :</h3>
+                <div class="use-case">
+                    <h4>💡 Production à Grande Échelle</h4>
+                    <p>Applications avec des centaines de microservices nécessitant orchestration avancée.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Haute Disponibilité Critique</h4>
+                    <p>Applications qui ne peuvent pas se permettre de downtime (finance, santé, e-commerce).</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Scaling Dynamique</h4>
+                    <p>Applications avec des charges variables nécessitant un auto-scaling automatique.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Microservices Complexes</h4>
+                    <p>Architectures avec de nombreux services interdépendants nécessitant service discovery et load balancing.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Multi-Cloud ou Hybrid Cloud</h4>
+                    <p>Déploiement sur plusieurs cloud providers ou infrastructure hybride (on-premise + cloud).</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 DevOps Mature</h4>
+                    <p>Équipe avec expertise Kubernetes et infrastructure pour gérer la complexité.</p>
+                </div>
+
+                <div class="use-case">
+                    <h4>💡 Rolling Updates Fréquents</h4>
+                    <p>Déploiements multiples par jour nécessitant zero-downtime deployments.</p>
+                </div>
+            </section>
+
+            <section id="together">
+                <h2>🤝 Docker et Kubernetes Ensemble</h2>
+
+                <div class="highlight">
+                    <p><strong>Important :</strong> Docker et Kubernetes ne sont pas en compétition - ils sont complémentaires ! Kubernetes utilise Docker (ou d'autres runtimes de conteneurs) pour exécuter les conteneurs qu'il orchestre.</p>
+                </div>
+
+                <h3>Comment ils Travaillent Ensemble</h3>
+
+                <div class="architecture-diagram">
+                    <h4>Workflow Typique</h4>
+                    <pre>
+1. DÉVELOPPEMENT LOCAL
+   └─→ Développeur écrit le code
+       └─→ Dockerfile pour conteneuriser l'app
+           └─→ docker build pour créer l'image
+               └─→ docker run pour tester localement
+                   └─→ docker-compose pour tester multi-services
+
+2. INTÉGRATION CONTINUE (CI)
+   └─→ Push code vers Git
+       └─→ CI build l'image Docker
+           └─→ Tests dans conteneurs Docker
+               └─→ Push image vers Registry (Docker Hub, ACR, ECR)
+
+3. DÉPLOIEMENT KUBERNETES (CD)
+   └─→ Kubernetes pull l'image Docker depuis Registry
+       └─→ K8s crée les Pods avec conteneurs Docker
+           └─→ K8s orchestre et scale les conteneurs
+               └─→ K8s assure monitoring et healing
+
+┌─────────────────────────────────────────────────────────┐
+│                    ÉCOSYSTÈME COMPLET                    │
+│                                                          │
+│  DOCKER                    KUBERNETES                   │
+│  ┌──────────┐             ┌──────────┐                 │
+│  │  Build   │────────────→│ Runtime  │                 │
+│  │ Package  │   Images    │Orchestrate│                 │
+│  │   Run    │             │  Manage  │                 │
+│  └──────────┘             └──────────┘                 │
+│                                                          │
+│     DEV                        PROD                     │
+└─────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <h3>Pipeline DevOps Moderne</h3>
+                <ul>
+                    <li><strong>Développement :</strong> Docker pour environnement local cohérent</li>
+                    <li><strong>Build :</strong> Docker pour créer les images d'application</li>
+                    <li><strong>Test :</strong> Docker pour exécuter les tests dans des conteneurs isolés</li>
+                    <li><strong>Registry :</strong> Docker Hub, ACR, ECR pour stocker les images</li>
+                    <li><strong>Déploiement :</strong> Kubernetes pour orchestrer en production</li>
+                    <li><strong>Scaling :</strong> Kubernetes pour gérer la montée en charge</li>
+                    <li><strong>Monitoring :</strong> Kubernetes pour surveiller la santé des applications</li>
+                </ul>
+            </section>
+
+            <section id="evolution-path">
+                <h2>🚀 Chemin d'Évolution Recommandé</h2>
+
+                <div class="architecture-diagram">
+                    <h4>Progression Typique d'une Entreprise</h4>
+                    <pre>
+PHASE 1 : DÉBUT (Startup / Petite Équipe)
+├─→ Docker pour conteneuriser les applications
+├─→ Docker Compose pour orchestration locale
+├─→ Déploiement manuel sur serveurs
+└─→ 1-5 services
+
+PHASE 2 : CROISSANCE (Scale-up)
+├─→ Introduction de CI/CD avec Docker
+├─→ Docker Swarm ou services gérés simples
+├─→ Besoin de meilleure disponibilité
+└─→ 5-20 services
+
+PHASE 3 : MATURITÉ (Enterprise)
+├─→ Migration vers Kubernetes
+├─→ Cluster managé (AKS, EKS, GKE)
+├─→ Auto-scaling et self-healing
+├─→ Monitoring et observabilité avancés
+└─→ 20+ services
+
+PHASE 4 : OPTIMISATION (Cloud Native)
+├─→ Service Mesh (Istio, Linkerd)
+├─→ GitOps (ArgoCD, Flux)
+├─→ Multi-cluster / Multi-region
+└─→ Architecture cloud-native complète
+</pre>
+                </div>
+
+                <div class="highlight">
+                    <p><strong>Conseil :</strong> Ne sautez pas les étapes ! Commencez par Docker, maîtrisez-le, puis progressez vers Kubernetes quand votre cas d'usage le justifie réellement. Beaucoup d'entreprises sur-investissent dans Kubernetes trop tôt.</p>
+                </div>
+            </section>
+
+            <section id="decision-tree">
+                <h2>🌳 Arbre de Décision</h2>
+
+                <div class="architecture-diagram">
+                    <pre>
+                     Avez-vous besoin de conteneuriser ?
+                                    │
+                        ┌───────────┴───────────┐
+                      OUI                      NON
+                        │                        │
+                        │                    VM classiques
+                        │                    ou bare metal
+                        │
+                Combien de services ?
+                        │
+        ┌───────────────┼───────────────┐
+        │               │               │
+      1-3            4-10            10+
+        │               │               │
+        │               │               │
+    Quelle charge ?   Quelle charge ?  Quelle charge ?
+        │               │               │
+   ┌────┴────┐     ┌───┴───┐      ┌───┴───┐
+Faible   Élevée  Faible  Élevée  Faible  Élevée
+   │        │       │        │       │        │
+   │        │       │        │       │        │
+DOCKER  DOCKER  DOCKER/   K8S    K8S     K8S
+        COMPOSE  K8S             (必須)   (必須)
+                  (au choix)
+
+Haute disponibilité critique ?
+        │
+    ┌───┴───┐
+  OUI      NON
+    │        │
+  K8S    DOCKER
+ (必須)   suffit
+
+Budget et expertise ?
+        │
+    ┌───┴───┐
+Limités   OK
+    │        │
+ DOCKER    K8S
+           possible
+
+Multi-cloud nécessaire ?
+        │
+    ┌───┴───┐
+  OUI      NON
+    │        │
+  K8S    DOCKER
+ (必須)   suffit
+</pre>
+                </div>
+            </section>
+
+            <section id="real-world">
+                <h2>🌍 Exemples du Monde Réel</h2>
+
+                <h3>Entreprises Utilisant Principalement Docker</h3>
+                <ul>
+                    <li><strong>Startups en phase MVP</strong> : Focus sur rapidité de développement</li>
+                    <li><strong>Agences web</strong> : Sites web et applications simples pour clients</li>
+                    <li><strong>Équipes de R&D</strong> : Prototypage et expérimentation rapide</li>
+                    <li><strong>Développement local</strong> : Toutes les entreprises tech pour environnements dev</li>
+                </ul>
+
+                <h3>Entreprises Utilisant Kubernetes</h3>
+                <ul>
+                    <li><strong>Netflix</strong> : Streaming vidéo à échelle mondiale</li>
+                    <li><strong>Spotify</strong> : Streaming musical avec millions d'utilisateurs</li>
+                    <li><strong>Uber</strong> : Services en temps réel avec haute disponibilité</li>
+                    <li><strong>Airbnb</strong> : Plateforme globale avec microservices</li>
+                    <li><strong>Pinterest</strong> : Gestion de milliards d'images</li>
+                    <li><strong>Reddit</strong> : Trafic massif et variable</li>
+                </ul>
+
+                <h3>Cas d'Usage Hybride</h3>
+                <div class="highlight">
+                    <p><strong>Modèle Courant :</strong> Docker pour le développement et les tests, Kubernetes pour la production. C'est la configuration la plus répandue dans les entreprises modernes.</p>
+                </div>
+            </section>
+
+            <section id="costs">
+                <h2>💰 Comparaison des Coûts</h2>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>🐳 Docker</th>
+                            <th>☸️ Kubernetes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Infrastructure</td>
+                            <td>1 serveur simple (50-100€/mois)</td>
+                            <td>Cluster minimum 3 nodes (300-500€/mois)</td>
+                        </tr>
+                        <tr>
+                            <td>Setup Initial</td>
+                            <td>Quelques heures</td>
+                            <td>Plusieurs jours à semaines</td>
+                        </tr>
+                        <tr>
+                            <td>Formation Équipe</td>
+                            <td>1-2 semaines</td>
+                            <td>2-3 mois</td>
+                        </tr>
+                        <tr>
+                            <td>Maintenance</td>
+                            <td>Faible (quelques heures/mois)</td>
+                            <td>Élevée (plusieurs jours/mois)</td>
+                        </tr>
+                        <tr>
+                            <td>Expertise Requise</td>
+                            <td>Dev général</td>
+                            <td>DevOps/SRE spécialisé (salaire +20-40%)</td>
+                        </tr>
+                        <tr>
+                            <td>Outils Additionnels</td>
+                            <td>Peu nécessaires</td>
+                            <td>Helm, Monitoring, Service Mesh, etc.</td>
+                        </tr>
+                        <tr>
+                            <td>ROI</td>
+                            <td>Immédiat</td>
+                            <td>À long terme (6-12 mois)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight">
+                    <p><strong>Règle générale :</strong> Si votre économie d'échelle, votre résilience et votre temps de mise sur le marché ne justifient pas un investissement 5-10x supérieur, restez avec Docker.</p>
+                </div>
+            </section>
+
+            <section id="conclusion">
+                <div class="conclusion">
+                    <h3>🎓 Conclusion</h3>
+                    <p><strong>Docker et Kubernetes ne sont pas des alternatives</strong>, mais des technologies complémentaires qui répondent à des besoins différents :</p>
+
+                    <ul>
+                        <li><strong>Docker</strong> est la fondation : il crée et exécute les conteneurs. C'est simple, efficace, et parfait pour le développement local et les applications de petite à moyenne taille.</li>
+                        <li><strong>Kubernetes</strong> est l'orchestrateur : il gère les conteneurs à grande échelle. C'est complexe, puissant, et essentiel pour la production d'applications critiques avec haute disponibilité.</li>
+                    </ul>
+
+                    <p><strong>La meilleure approche :</strong></p>
+                    <ol>
+                        <li>Commencez par <strong>Docker</strong> pour maîtriser les conteneurs</li>
+                        <li>Utilisez <strong>Docker Compose</strong> pour orchestrer quelques services</li>
+                        <li>Migrez vers <strong>Kubernetes</strong> uniquement quand le besoin réel se présente</li>
+                        <li>Maintenez Docker pour le développement local même avec Kubernetes en production</li>
+                    </ol>
+
+                    <p><strong>Rappelez-vous :</strong> La complexité doit être justifiée par le besoin réel. Kubernetes est incroyablement puissant, mais Docker Compose peut être suffisant pour 80% des projets. Ne tombez pas dans le piège du "over-engineering".</p>
+
+                    <div class="highlight">
+                        <p style="text-align: center; font-size: 1.2em; margin-top: 20px;">
+                            <strong>"Use Docker to learn containers. Use Kubernetes when you need to manage containers at scale."</strong>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="resources">
+                <h2>📚 Ressources pour Aller Plus Loin</h2>
+
+                <h3>Documentation Officielle</h3>
+                <ul>
+                    <li><strong>Docker :</strong> https://docs.docker.com</li>
+                    <li><strong>Kubernetes :</strong> https://kubernetes.io/docs</li>
+                </ul>
+
+                <h3>Formations et Tutoriels</h3>
+                <ul>
+                    <li>Docker Getting Started : https://docs.docker.com/get-started</li>
+                    <li>Kubernetes Tutorials : https://kubernetes.io/docs/tutorials</li>
+                    <li>Play with Docker : https://labs.play-with-docker.com</li>
+                    <li>Play with Kubernetes : https://labs.play-with-k8s.com</li>
+                </ul>
+
+                <h3>Outils Utiles</h3>
+                <ul>
+                    <li><strong>Minikube :</strong> Kubernetes local</li>
+                    <li><strong>k3s :</strong> Kubernetes léger</li>
+                    <li><strong>Docker Desktop :</strong> Docker + Kubernetes intégré</li>
+                    <li><strong>Lens :</strong> IDE pour Kubernetes</li>
+                    <li><strong>Helm :</strong> Package manager pour Kubernetes</li>
+                </ul>
+            </section>
+        </div>
+
+        <footer>
+            <p>Formation Data Engineering - Simplon</p>
+            <p>Document créé pour comparer Docker et Kubernetes</p>
+            <p>&copy; 2025 - Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

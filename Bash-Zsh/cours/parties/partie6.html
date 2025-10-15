@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 6 - Fonctions et Outils Avancés</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Partie 6</h1>
+            <p class="subtitle">Fonctions et Outils Avancés</p>
+            <span class="duration">⏱️ Durée : 35 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie5.html">← Partie 5</a></li>
+                <li><a href="partie7.html">Partie 7 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>6. Fonctions et Outils Avancés</h2>
+
+                <p>Les fonctions permettent de structurer votre code et de le rendre réutilisable. Cette partie couvre également des outils avancés essentiels en Data Engineering.</p>
+
+                <h3>Définir des fonctions</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">#!/bin/bash
+
+# Syntaxe 1 (classique)
+function my_function() {
+    echo "Hello from function"
+}
+
+# Syntaxe 2 (préférée - POSIX)
+my_function() {
+    echo "Hello from function"
+}
+
+# Appeler la fonction
+my_function
+
+# Fonction avec paramètres
+greet() {
+    local name=$1
+    echo "Hello, $name!"
+}
+
+greet "Alice"
+greet "Bob"
+
+# Fonction avec plusieurs paramètres
+calculate_sum() {
+    local a=$1
+    local b=$2
+    local sum=$((a + b))
+    echo $sum
+}
+
+result=$(calculate_sum 10 20)
+echo "Sum: $result"
+
+# Fonction avec valeurs par défaut
+greet_with_default() {
+    local name=${1:-"Guest"}
+    echo "Hello, $name!"
+}
+
+greet_with_default "Alice"  # Hello, Alice!
+greet_with_default          # Hello, Guest!
+
+# Tous les paramètres
+print_all_args() {
+    echo "Number of arguments: $#"
+    echo "All arguments: $@"
+
+    local i=1
+    for arg in "$@"; do
+        echo "Argument $i: $arg"
+        ((i++))
+    done
+}
+
+print_all_args one two three</code></pre>
+                </div>
+
+                <h3>Variables locales vs globales</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">#!/bin/bash
+
+# Variable globale
+global_var="I am global"
+
+my_function() {
+    # Variable locale (seulement dans la fonction)
+    local local_var="I am local"
+
+    # Modifier la variable globale
+    global_var="Modified in function"
+
+    echo "Inside function:"
+    echo "  Global: $global_var"
+    echo "  Local: $local_var"
+}
+
+echo "Before function:"
+echo "  Global: $global_var"
+
+my_function
+
+echo "After function:"
+echo "  Global: $global_var"
+echo "  Local: $local_var"  # Vide - la variable n'existe pas ici
+
+# Bonne pratique : toujours utiliser 'local' pour les variables de fonction
+process_data() {
+    local input_file=$1
+    local output_file=$2
+    local temp_file="/tmp/temp_$$"  # $$ = PID du script
+
+    # Traitement
+    echo "Processing $input_file..."
+
+    # Les variables locales ne polluent pas l'espace global
+}
+
+# Variables en lecture seule
+readonly CONFIG_FILE="config.ini"
+readonly MAX_RETRIES=3
+
+# Tentative de modification (erreur)
+# CONFIG_FILE="other.ini"  # Erreur !
+
+# Export de variables (pour les sous-shells)
+export DATABASE_URL="postgresql://localhost/mydb"
+export API_KEY="secret123"
+
+# Les variables exportées sont disponibles dans les scripts appelés
+./another_script.sh  # Peut accéder à DATABASE_URL</code></pre>
+                </div>
+
+                <h3>Return vs Exit</h3>
+
+                <div class="alert alert-info">
+                    <h4>Return vs Exit</h4>
+                    <p>
+                        <code>return</code> : Sort de la fonction et retourne à l'appelant<br>
+                        <code>exit</code> : Termine complètement le script
+                    </p>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">#!/bin/bash
+
+# return : sortir de la fonction
+check_file() {
+    local file=$1
+
+    if [ ! -f "$file" ]; then
+        echo "File not found: $file"
+        return 1  # Code d'erreur
+    fi
+
+    if [ ! -s "$file" ]; then
+        echo "File is empty: $file"
+        return 2
+    fi
+
+    echo "File is valid: $file"
+    return 0  # Succès
+}
+
+# Utiliser le code de retour
+if check_file "data.csv"; then
+    echo "Processing file..."
+else
+    echo "Cannot process file (error code: $?)"
+fi
+
+# exit : terminer le script complètement
+validate_config() {
+    if [ ! -f "config.ini" ]; then
+        echo "FATAL: config.ini not found"
+        exit 1  # Termine tout le script
+    fi
+}
+
+validate_config
+echo "This will not execute if config.ini is missing"
+
+# Retourner des valeurs (via echo et command substitution)
+get_file_size() {
+    local file=$1
+    local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+    echo $size
+}
+
+size=$(get_file_size "data.csv")
+echo "File size: $size bytes"
+
+# Fonction avec retour multiple
+get_file_info() {
+    local file=$1
+
+    if [ ! -f "$file" ]; then
+        return 1
+    fi
+
+    local lines=$(wc -l < "$file")
+    local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+
+    # Retourner plusieurs valeurs via echo
+    echo "$lines $size"
+}
+
+# Capturer plusieurs valeurs
+if info=$(get_file_info "data.csv"); then
+    read -r lines size <<< "$info"
+    echo "Lines: $lines"
+    echo "Size: $size"
+fi</code></pre>
+                </div>
+
+                <h3>Bibliothèque de fonctions réutilisables</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">#!/bin/bash
+# Fichier: lib/utils.sh
+# Bibliothèque de fonctions réutilisables
+
+# Logging avec couleurs
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly BLUE='\033[0;34m'
+readonly NC='\033[0m'
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $(date +'%Y-%m-%d %H:%M:%S') - $*"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $(date +'%Y-%m-%d %H:%M:%S') - $*"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $(date +'%Y-%m-%d %H:%M:%S') - $*" >&2
+}
+
+log_debug() {
+    if [ "${DEBUG:-0}" -eq 1 ]; then
+        echo -e "${BLUE}[DEBUG]${NC} $(date +'%Y-%m-%d %H:%M:%S') - $*"
+    fi
+}
+
+# Fonction de validation
+validate_file() {
+    local file=$1
+    local min_size=${2:-1}
+
+    if [ ! -f "$file" ]; then
+        log_error "File not found: $file"
+        return 1
+    fi
+
+    if [ ! -s "$file" ]; then
+        log_error "File is empty: $file"
+        return 2
+    fi
+
+    local size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null)
+    if [ $size -lt $min_size ]; then
+        log_error "File too small: $file ($size bytes)"
+        return 3
+    fi
+
+    return 0
+}
+
+# Fonction de retry
+retry() {
+    local max_attempts=$1
+    shift
+    local cmd="$@"
+    local attempt=1
+
+    while [ $attempt -le $max_attempts ]; do
+        log_info "Attempt $attempt/$max_attempts: $cmd"
+
+        if eval "$cmd"; then
+            log_info "Success!"
+            return 0
+        fi
+
+        log_warn "Attempt $attempt failed"
+        ((attempt++))
+        sleep 2
+    done
+
+    log_error "All attempts failed"
+    return 1
+}
+
+# Créer un backup
+backup_file() {
+    local file=$1
+    local backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+
+    cp "$file" "$backup"
+    log_info "Backup created: $backup"
+}
+
+# Utiliser dans un autre script
+# source lib/utils.sh
+#
+# log_info "Starting process"
+# validate_file "data.csv" || exit 1
+# retry 3 "curl -f https://api.example.com/data"</code></pre>
+                </div>
+
+                <h3>xargs - Construire et exécuter des commandes</h3>
+
+                <p><code>xargs</code> est un outil puissant qui construit des commandes à partir de l'entrée standard. Très utile pour traiter de nombreux fichiers.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Syntaxe basique
+echo "file1.txt file2.txt file3.txt" | xargs rm
+
+# Équivalent à : rm file1.txt file2.txt file3.txt
+
+# Utiliser avec find
+find . -name "*.tmp" | xargs rm
+
+# -n : nombre d'arguments par commande
+echo "1 2 3 4 5 6" | xargs -n 2 echo
+# Output:
+# 1 2
+# 3 4
+# 5 6
+
+# -I {} : remplacer un placeholder
+find . -name "*.csv" | xargs -I {} echo "Processing {}"
+
+# -P : paralléliser (nombre de processus en parallèle)
+find . -name "*.csv" | xargs -P 4 -I {} gzip {}
+
+# Exemples pratiques en Data Engineering
+
+# 1. Compresser tous les CSV en parallèle (4 processus)
+find data/raw -name "*.csv" | xargs -P 4 -I {} gzip {}
+
+# 2. Copier plusieurs fichiers
+find . -name "*.csv" -mtime -1 | xargs -I {} cp {} archive/
+
+# 3. Compter les lignes de tous les fichiers
+find . -name "*.log" | xargs wc -l
+
+# 4. Rechercher dans plusieurs fichiers
+find . -name "*.csv" | xargs grep "ERROR"
+
+# 5. Télécharger plusieurs URLs
+cat urls.txt | xargs -P 5 -n 1 curl -O
+
+# 6. Exécuter une fonction sur chaque fichier
+process_file() {
+    echo "Processing $1..."
+    wc -l "$1"
+}
+export -f process_file
+
+find . -name "*.csv" | xargs -I {} bash -c 'process_file "$@"' _ {}
+
+# 7. Supprimer les fichiers vieux de plus de 30 jours
+find . -name "*.log" -mtime +30 | xargs rm
+
+# 8. Conversion de format en parallèle
+ls *.csv | xargs -P 4 -I {} sh -c 'csvtojson {} > {}.json'
+
+# 9. Créer des archives individuelles
+find data -name "*.csv" | xargs -I {} tar -czf {}.tar.gz {}
+
+# Gestion des noms avec espaces (utiliser -0 avec find -print0)
+find . -name "*.txt" -print0 | xargs -0 rm
+
+# Dry-run (afficher sans exécuter)
+find . -name "*.tmp" | xargs -t rm  # -t affiche la commande</code></pre>
+                </div>
+
+                <h3>Traitement parallèle avec GNU Parallel</h3>
+
+                <p><code>parallel</code> est un outil plus puissant que <code>xargs</code> pour exécuter des tâches en parallèle.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installation
+# macOS: brew install parallel
+# Ubuntu: sudo apt install parallel
+
+# Syntaxe basique
+ls *.csv | parallel gzip
+
+# Avec placeholder {}
+ls *.csv | parallel 'echo Processing {}; wc -l {}'
+
+# Limiter le nombre de jobs en parallèle
+ls *.csv | parallel -j 4 process_file {}
+
+# Avec barre de progression
+ls *.csv | parallel --progress gzip {}
+
+# Dry-run (afficher sans exécuter)
+ls *.csv | parallel --dry-run 'echo {}'
+
+# Exemples pratiques
+
+# 1. Traiter tous les CSV en parallèle
+find data/raw -name "*.csv" | \
+    parallel -j 8 'python process.py {} > processed/{/.}_out.csv'
+
+# 2. Téléchargement parallèle
+cat urls.txt | parallel -j 10 curl -O {}
+
+# 3. Compression parallèle avec progression
+find . -name "*.log" | parallel --progress gzip {}
+
+# 4. Traiter avec fonction bash
+process_csv() {
+    local file=$1
+    echo "Processing $file"
+    awk -F',' 'NR>1 {print $1,$3}' "$file" > "processed/$(basename "$file")"
+}
+export -f process_csv
+
+find data -name "*.csv" | parallel process_csv
+
+# 5. Exécuter des commandes sur plusieurs serveurs
+parallel -S server1,server2,server3 'hostname; uptime' ::: 1 2 3
+
+# 6. Conversion de formats
+parallel 'convert {} {.}.png' ::: *.jpg
+
+# 7. Traitement par chunks
+cat huge_file.txt | parallel --pipe -N 10000 'wc -l'
+
+# 8. Avec substitutions avancées
+# {}: nom complet
+# {.}: sans extension
+# {/}: basename
+# {//}: dirname
+# {/.}: basename sans extension
+
+parallel 'echo File: {}, Dir: {//}, Base: {/.}' ::: data/2024/sales.csv
+# Output: File: data/2024/sales.csv, Dir: data/2024, Base: sales</code></pre>
+                </div>
+
+                <h3>jq - Parser et manipuler du JSON</h3>
+
+                <p><code>jq</code> est l'outil incontournable pour travailler avec du JSON en ligne de commande. Essentiel en Data Engineering moderne.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installation
+# macOS: brew install jq
+# Ubuntu: sudo apt install jq
+
+# Fichier JSON exemple: users.json
+# {
+#   "users": [
+#     {"id": 1, "name": "Alice", "age": 30, "city": "Paris"},
+#     {"id": 2, "name": "Bob", "age": 25, "city": "Lyon"},
+#     {"id": 3, "name": "Charlie", "age": 35, "city": "Paris"}
+#   ]
+# }
+
+# Pretty print
+cat users.json | jq '.'
+
+# Extraire un champ
+cat users.json | jq '.users'
+
+# Extraire un élément d'un array
+cat users.json | jq '.users[0]'
+
+# Extraire un champ spécifique
+cat users.json | jq '.users[0].name'
+# Output: "Alice"
+
+# Extraire tous les noms
+cat users.json | jq '.users[].name'
+# Output:
+# "Alice"
+# "Bob"
+# "Charlie"
+
+# Créer un array de noms
+cat users.json | jq '[.users[].name]'
+# Output: ["Alice", "Bob", "Charlie"]
+
+# Filtrer (sélection)
+cat users.json | jq '.users[] | select(.age > 25)'
+
+# Filtrer par ville
+cat users.json | jq '.users[] | select(.city == "Paris")'
+
+# Transformer la structure
+cat users.json | jq '.users[] | {name: .name, age: .age}'
+
+# Compter les éléments
+cat users.json | jq '.users | length'
+
+# Trier
+cat users.json | jq '.users | sort_by(.age)'
+
+# Regrouper
+cat users.json | jq 'group_by(.city)'
+
+# Extraire uniquement certains champs
+cat users.json | jq '.users[] | {name, city}'
+
+# Calculer (somme des âges)
+cat users.json | jq '[.users[].age] | add'
+
+# Moyenne des âges
+cat users.json | jq '[.users[].age] | add / length'
+
+# Exemples pratiques
+
+# 1. API REST : extraire des données
+curl -s 'https://api.example.com/users' | jq '.data[].email'
+
+# 2. Convertir JSON en CSV
+cat users.json | jq -r '.users[] | [.id, .name, .age] | @csv'
+
+# 3. Filtrer et sauvegarder
+cat users.json | \
+    jq '.users[] | select(.age > 25)' > filtered.json
+
+# 4. Compter par catégorie
+cat orders.json | \
+    jq 'group_by(.status) | map({status: .[0].status, count: length})'
+
+# 5. Flatten nested JSON
+cat nested.json | jq '.data[].items[]'
+
+# 6. Combiner des champs
+cat users.json | \
+    jq '.users[] | .full_info = (.name + " - " + .city)'
+
+# 7. Extraire et formater
+cat users.json | jq -r '.users[] | "\(.name) is \(.age) years old"'
+
+# 8. Traiter plusieurs fichiers
+for file in *.json; do
+    jq '.users[].email' "$file"
+done
+
+# 9. Pipeline avec jq
+curl -s 'https://api.example.com/data' | \
+    jq '.items[] | select(.price > 100)' | \
+    jq -r '.name' | \
+    sort | uniq
+
+# 10. Créer du JSON
+echo '{"name": "Alice", "age": 30}' | \
+    jq '. + {city: "Paris", country: "France"}'
+
+# 11. Modifier des valeurs
+cat users.json | jq '.users[].age += 1'
+
+# 12. Supprimer des champs
+cat users.json | jq 'del(.users[].id)'</code></pre>
+                </div>
+
+                <h3>Process Substitution</h3>
+
+                <p>Process substitution permet d'utiliser la sortie d'une commande comme si c'était un fichier. Très puissant pour comparer ou combiner des données.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Syntaxe : <(commande)
+# La commande est exécutée et sa sortie est disponible comme un fichier
+
+# Comparer la sortie de deux commandes
+diff <(ls dir1) <(ls dir2)
+
+# Comparer deux listes triées
+diff <(sort file1.txt) <(sort file2.txt)
+
+# Exemples pratiques
+
+# 1. Comparer deux CSV après tri
+diff <(sort data1.csv) <(sort data2.csv)
+
+# 2. Comparer des listes d'utilisateurs sur deux serveurs
+diff <(ssh server1 "cat /etc/passwd") <(ssh server2 "cat /etc/passwd")
+
+# 3. Trouver les différences entre deux requêtes SQL
+diff <(psql -c "SELECT * FROM users WHERE active=true") \
+     <(psql -c "SELECT * FROM users WHERE created_at > '2024-01-01'")
+
+# 4. Combiner des sources de données
+paste <(cut -d',' -f1 file1.csv) <(cut -d',' -f2 file2.csv) > combined.csv
+
+# 5. Compter les lignes uniques entre deux fichiers
+comm -23 <(sort -u file1.txt) <(sort -u file2.txt)
+
+# 6. Joindre des données de deux sources
+join <(sort users.csv) <(sort orders.csv)
+
+# 7. Comparer des APIs
+diff <(curl -s api1.com/users | jq -S .) \
+     <(curl -s api2.com/users | jq -S .)
+
+# 8. Traiter plusieurs sources en parallèle
+while read -r line1 && read -r line2 <&3; do
+    echo "File1: $line1, File2: $line2"
+done < file1.txt 3< file2.txt
+
+# 9. Vérifier la cohérence de données
+# Emails dans DB vs emails dans fichier
+comm -23 \
+    <(psql -t -c "SELECT email FROM users" | sort) \
+    <(cut -d',' -f2 users.csv | sort)
+
+# 10. Output substitution (inverse)
+# Écrire vers un processus
+echo "data" > >(gzip > output.gz)</code></pre>
+                </div>
+
+                <h3>Cas pratique complet : Pipeline ETL avancé</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">#!/usr/bin/env bash
+#
+# Script: etl_pipeline.sh
+# Description: Pipeline ETL avancé avec fonctions et outils modernes
+#
+
+set -euo pipefail
+
+# Source des fonctions utilitaires
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/utils.sh"
+
+# Configuration
+readonly DATA_DIR="data"
+readonly RAW_DIR="$DATA_DIR/raw"
+readonly PROCESSED_DIR="$DATA_DIR/processed"
+readonly ARCHIVE_DIR="$DATA_DIR/archive"
+readonly PARALLEL_JOBS=4
+
+# Créer les dossiers
+mkdir -p "$RAW_DIR" "$PROCESSED_DIR" "$ARCHIVE_DIR"
+
+# Fonction d'extraction
+extract_data() {
+    log_info "=== EXTRACT Phase ==="
+
+    local api_url="https://api.example.com/data"
+    local output_file="$RAW_DIR/raw_data_$(date +%Y%m%d_%H%M%S).json"
+
+    log_info "Fetching data from API..."
+
+    if retry 3 "curl -sf '$api_url' -o '$output_file'"; then
+        log_info "Data extracted successfully: $output_file"
+        echo "$output_file"
+        return 0
+    else
+        log_error "Failed to extract data"
+        return 1
+    fi
+}
+
+# Fonction de transformation
+transform_data() {
+    local input_file=$1
+    local output_file="$PROCESSED_DIR/$(basename "${input_file%.json}").csv"
+
+    log_info "=== TRANSFORM Phase ==="
+    log_info "Input: $input_file"
+
+    # Valider le JSON
+    if ! jq empty "$input_file" 2>/dev/null; then
+        log_error "Invalid JSON file: $input_file"
+        return 1
+    fi
+
+    # Transformer JSON en CSV
+    log_info "Converting JSON to CSV..."
+
+    jq -r '
+        ["id", "name", "email", "age", "city"],
+        (.users[] | [.id, .name, .email, .age, .city])
+        | @csv
+    ' "$input_file" > "$output_file"
+
+    # Valider le résultat
+    if validate_file "$output_file" 100; then
+        log_info "Data transformed successfully: $output_file"
+        echo "$output_file"
+        return 0
+    else
+        log_error "Transformation failed"
+        return 1
+    fi
+}
+
+# Fonction de nettoyage
+clean_data() {
+    local input_file=$1
+    local output_file="${input_file%.csv}_clean.csv"
+
+    log_info "Cleaning data..."
+
+    # Supprimer les lignes vides et dédupliquer
+    sed '/^$/d' "$input_file" | \
+        awk '!seen[$0]++' > "$output_file"
+
+    local input_lines=$(wc -l < "$input_file")
+    local output_lines=$(wc -l < "$output_file")
+    local removed=$((input_lines - output_lines))
+
+    log_info "Removed $removed duplicate/empty lines"
+    echo "$output_file"
+}
+
+# Fonction d'enrichissement
+enrich_data() {
+    local input_file=$1
+    local output_file="${input_file%.csv}_enriched.csv"
+
+    log_info "Enriching data..."
+
+    # Ajouter une colonne avec timestamp
+    awk -F',' -v date="$(date +%Y-%m-%d)" '
+        NR==1 {print $0 ",processed_date"}
+        NR>1 {print $0 "," date}
+    ' "$input_file" > "$output_file"
+
+    log_info "Data enriched: $output_file"
+    echo "$output_file"
+}
+
+# Fonction de chargement
+load_data() {
+    local input_file=$1
+
+    log_info "=== LOAD Phase ==="
+
+    # Simuler un chargement en base de données
+    log_info "Loading data to database..."
+
+    local records=$(tail -n +2 "$input_file" | wc -l)
+    log_info "Loaded $records records"
+
+    # Archiver le fichier source
+    backup_file "$input_file"
+    mv "$input_file" "$ARCHIVE_DIR/"
+
+    return 0
+}
+
+# Fonction de génération de rapport
+generate_report() {
+    local processed_files=("$@")
+
+    log_info "=== REPORT Phase ==="
+
+    local report_file="report_$(date +%Y%m%d_%H%M%S).txt"
+
+    {
+        echo "ETL Pipeline Report"
+        echo "==================="
+        echo "Date: $(date)"
+        echo ""
+        echo "Processed Files:"
+
+        for file in "${processed_files[@]}"; do
+            echo "  - $(basename "$file")"
+            echo "    Lines: $(wc -l < "$file")"
+            echo "    Size: $(du -h "$file" | cut -f1)"
+        done
+
+        echo ""
+        echo "Summary:"
+        echo "  Total files: ${#processed_files[@]}"
+        echo "  Total records: $(find "$PROCESSED_DIR" -name "*.csv" -exec wc -l {} + | tail -1 | awk '{print $1}')"
+    } > "$report_file"
+
+    log_info "Report generated: $report_file"
+}
+
+# Pipeline principal
+main() {
+    log_info "Starting ETL Pipeline"
+    log_info "Parallel jobs: $PARALLEL_JOBS"
+
+    local processed_files=()
+
+    # EXTRACT
+    if ! raw_file=$(extract_data); then
+        log_error "Extraction failed"
+        exit 1
+    fi
+
+    # TRANSFORM
+    if ! csv_file=$(transform_data "$raw_file"); then
+        log_error "Transformation failed"
+        exit 1
+    fi
+
+    # CLEAN
+    if ! clean_file=$(clean_data "$csv_file"); then
+        log_error "Cleaning failed"
+        exit 1
+    fi
+
+    # ENRICH
+    if ! enriched_file=$(enrich_data "$clean_file"); then
+        log_error "Enrichment failed"
+        exit 1
+    fi
+
+    processed_files+=("$enriched_file")
+
+    # LOAD
+    if ! load_data "$enriched_file"; then
+        log_error "Loading failed"
+        exit 1
+    fi
+
+    # REPORT
+    generate_report "${processed_files[@]}"
+
+    log_info "ETL Pipeline completed successfully!"
+    exit 0
+}
+
+# Exécuter
+main "$@"</code></pre>
+                </div>
+
+                <h3>Exercices pratiques</h3>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 1 : Bibliothèque de fonctions</h4>
+                    <p>Créez un fichier <code>lib.sh</code> avec ces fonctions :</p>
+                    <ol>
+                        <li><code>count_lines(file)</code> : retourne le nombre de lignes</li>
+                        <li><code>is_csv(file)</code> : retourne 0 si le fichier est un CSV</li>
+                        <li><code>backup_with_date(file)</code> : crée un backup avec timestamp</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash">#!/bin/bash
+# lib.sh
+
+count_lines() {
+    local file=$1
+    if [ ! -f "$file" ]; then
+        return 1
+    fi
+    wc -l < "$file"
+}
+
+is_csv() {
+    local file=$1
+    [[ "$file" == *.csv ]]
+}
+
+backup_with_date() {
+    local file=$1
+    local backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+    cp "$file" "$backup"
+    echo "$backup"
+}
+
+# Utilisation :
+# source lib.sh
+# count_lines "data.csv"
+# is_csv "file.csv" && echo "It's a CSV"
+# backup_with_date "important.csv"</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 2 : Processing parallèle avec xargs</h4>
+                    <p>Créez un script qui :</p>
+                    <ol>
+                        <li>Trouve tous les CSV dans un dossier</li>
+                        <li>Compte les lignes de chacun en parallèle (4 processus)</li>
+                        <li>Affiche les résultats triés par taille</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash">#!/bin/bash
+set -euo pipefail
+
+count_and_print() {
+    local file=$1
+    local lines=$(wc -l < "$file")
+    echo "$lines $file"
+}
+
+export -f count_and_print
+
+find . -name "*.csv" | \
+    xargs -P 4 -I {} bash -c 'count_and_print "$@"' _ {} | \
+    sort -rn</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>💡 Points clés à retenir</h4>
+                    <ul>
+                        <li>Fonctions : structurer et réutiliser le code</li>
+                        <li><code>local</code> : toujours utiliser pour les variables de fonction</li>
+                        <li><code>return</code> vs <code>exit</code> : fonction vs script</li>
+                        <li><code>xargs</code> : construire des commandes à partir de l'entrée</li>
+                        <li><code>parallel</code> : traitement parallèle avancé</li>
+                        <li><code>jq</code> : manipuler du JSON en ligne de commande</li>
+                        <li><code>&lt;(cmd)</code> : process substitution pour comparer</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 6 terminée !</h4>
+                <p>
+                    Vous maîtrisez maintenant les fonctions et les outils avancés pour créer des pipelines
+                    de données sophistiqués. Passez à la Partie 7 pour les optimisations et bonnes pratiques.
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="partie7.html"
+                        style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 7 : Optimisation et Bonnes Pratiques →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Bash/Zsh pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1: Introduction a MongoDB - Formation MongoDB</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Module 1: Introduction a MongoDB</h1>
+            <p class="subtitle">Decouvrez MongoDB et les bases de donnees NoSQL</p>
+            <span class="duration">Duree: 10 minutes</span>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="01-introduction.html" class="active">M1: Introduction</a></li>
+                <li><a href="02-installation.html">M2: Installation</a></li>
+                <li><a href="03-crud.html">M3: CRUD</a></li>
+                <li><a href="04-aggregation.html">M4: Agregation</a></li>
+                <li><a href="05-index-performance.html">M5: Index</a></li>
+                <li><a href="06-modelisation.html">M6: Modelisation</a></li>
+                <li><a href="07-data-engineering.html">M7: Data Engineering</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs du module</h2>
+                <ul>
+                    <li>Comprendre ce qu'est MongoDB</li>
+                    <li>Connaitre les differences SQL vs NoSQL</li>
+                    <li>Maitriser les concepts cles (documents, collections, BSON)</li>
+                    <li>Identifier les cas d'usage de MongoDB</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Qu'est-ce que MongoDB ?</h2>
+
+                <p>
+                    <strong>MongoDB</strong> est une base de donnees NoSQL orientee documents, open-source, qui stocke les donnees
+                    au format JSON/BSON (Binary JSON). Creee en 2009, elle est devenue l'une des bases NoSQL les plus populaires
+                    pour sa flexibilite et sa scalabilite.
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Open Source</h4>
+                        <p>Code source ouvert et communaute active</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Orientee Documents</h4>
+                        <p>Stockage en format JSON/BSON flexible</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Scalable</h4>
+                        <p>Scalabilite horizontale native (sharding)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Haute Performance</h4>
+                        <p>Optimisee pour les lectures et ecritures rapides</p>
+                    </div>
+                </div>
+
+                <h3>SQL vs NoSQL : Les differences</h3>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>SQL (ex: PostgreSQL)</th>
+                            <th>NoSQL (MongoDB)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Structure</strong></td>
+                            <td>Tables avec schema rigide</td>
+                            <td>Documents flexibles (JSON)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Schema</strong></td>
+                            <td>Defini a l'avance, fixe</td>
+                            <td>Dynamique, flexible</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Relations</strong></td>
+                            <td>Joins entre tables</td>
+                            <td>Documents imbriques ou references</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scalabilite</strong></td>
+                            <td>Verticale (scale-up)</td>
+                            <td>Horizontale (scale-out)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cas d'usage</strong></td>
+                            <td>Transactions complexes, donnees structurees</td>
+                            <td>Big Data, donnees semi-structurees, flexibilite</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <h4>Quand utiliser MongoDB ?</h4>
+                    <ul>
+                        <li>Donnees semi-structurees ou non structurees</li>
+                        <li>Schema changeant frequemment</li>
+                        <li>Besoin de scalabilite horizontale</li>
+                        <li>Donnees hierarchiques ou imbriquees</li>
+                        <li>Prototypage rapide</li>
+                    </ul>
+                </div>
+
+                <h3>Concepts cles de MongoDB</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concept SQL</th>
+                            <th>Equivalent MongoDB</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Database</strong></td>
+                            <td>Database</td>
+                            <td>Conteneur de collections</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Table</strong></td>
+                            <td>Collection</td>
+                            <td>Groupe de documents</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Row</strong></td>
+                            <td>Document</td>
+                            <td>Enregistrement JSON/BSON</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column</strong></td>
+                            <td>Field</td>
+                            <td>Paire cle-valeur</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Index</strong></td>
+                            <td>Index</td>
+                            <td>Optimisation des recherches</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Join</strong></td>
+                            <td>$lookup</td>
+                            <td>Agregation entre collections</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Exemple de document MongoDB</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">{
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "name": "Alice Dupont",
+  "email": "alice.dupont@example.com",
+  "age": 28,
+  "skills": ["Python", "SQL", "MongoDB"],
+  "address": {
+    "city": "Paris",
+    "country": "France",
+    "zipcode": "75001"
+  },
+  "projects": [
+    {
+      "name": "Data Pipeline",
+      "status": "completed",
+      "technologies": ["Python", "Airflow", "MongoDB"]
+    },
+    {
+      "name": "ML Model",
+      "status": "in_progress",
+      "technologies": ["Python", "TensorFlow"]
+    }
+  ],
+  "created_at": ISODate("2024-01-15T10:30:00Z"),
+  "updated_at": ISODate("2024-01-20T14:45:00Z")
+}</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Avantages du format document</h4>
+                    <ul>
+                        <li>Structure flexible et evolutive</li>
+                        <li>Donnees imbriquees sans joins</li>
+                        <li>Modele proche du code applicatif (objets)</li>
+                        <li>Pas besoin de migrations de schema complexes</li>
+                    </ul>
+                </div>
+
+                <h3>BSON : Le format interne de MongoDB</h3>
+
+                <p>
+                    MongoDB stocke les documents au format <strong>BSON</strong> (Binary JSON), une extension binaire de JSON
+                    qui supporte plus de types de donnees et est plus efficace pour le stockage et le parcours.
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Types supplementaires</h4>
+                        <p>Date, ObjectId, Binary, Decimal128, etc.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Plus rapide</h4>
+                        <p>Encodage/decodage binaire optimise</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Plus compact</h4>
+                        <p>Stockage binaire efficace</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points cles a retenir</h3>
+                <ul>
+                    <li>MongoDB est une base NoSQL orientee documents (JSON/BSON)</li>
+                    <li>Schema flexible vs schema rigide en SQL</li>
+                    <li>Concepts: Database > Collection > Document > Field</li>
+                    <li>Ideal pour donnees semi-structurees et scalabilite horizontale</li>
+                    <li>Documents imbriques eliminent le besoin de nombreux joins</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-button prev">Retour a l'accueil</a>
+                <a href="02-installation.html" class="nav-button next">Module 2: Installation</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Module 1/7 - Formation MongoDB pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>

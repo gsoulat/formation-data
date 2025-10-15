@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 6 : Docker Compose - Orchestration - Formation Docker</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎼 Partie 6 : Docker Compose - Orchestration</h1>
+            <p class="subtitle">Orchestrer des applications multi-conteneurs</p>
+            <span class="duration">⏱️ Durée : 5 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html" class="active">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Comprendre Docker Compose et ses avantages</li>
+                    <li>Écrire un fichier docker-compose.yml complet</li>
+                    <li>Orchestrer une stack Data Engineering</li>
+                    <li>Maîtriser les commandes docker-compose</li>
+                    <li>Gérer les dépendances entre services</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>6.1 Qu'est-ce que Docker Compose ?</h2>
+
+                <div class="concept">
+                    <p><strong>Docker Compose</strong> est un outil pour définir et exécuter des applications Docker
+                        multi-conteneurs via un fichier YAML.</p>
+                    <p style="margin-top: 10px;"><strong>Avantages :</strong></p>
+                    <ul>
+                        <li>Configuration déclarative (Infrastructure as Code)</li>
+                        <li>Gestion simplifiée de stacks complexes</li>
+                        <li>Idéal pour le développement local</li>
+                        <li>Réseaux et volumes automatiquement créés</li>
+                    </ul>
+                </div>
+
+                <h2>6.2 Structure d'un docker-compose.yml</h2>
+
+                <div class="example">
+                    <h4>💼 Stack Data Engineering Complète</h4>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-yaml">version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15
+    container_name: data-postgres
+    environment:
+      POSTGRES_DB: warehouse
+      POSTGRES_USER: dataeng
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - data-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dataeng"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Pipeline ETL
+  etl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: etl-pipeline
+    environment:
+      DATABASE_URL: postgresql://dataeng:${POSTGRES_PASSWORD}@postgres:5432/warehouse
+    volumes:
+      - ./data:/data
+      - ./logs:/app/logs
+    networks:
+      - data-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Apache Airflow
+  airflow:
+    image: apache/airflow:2.7.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+    networks:
+      - data-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  data-network:
+    driver: bridge</code></pre>
+                    </div>
+                </div>
+
+                <h2>6.3 Commandes Docker Compose</h2>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Démarrer tous les services
+docker-compose up -d
+
+# Voir les logs
+docker-compose logs -f
+
+# Voir les logs d'un service spécifique
+docker-compose logs -f postgres
+
+# Arrêter les services
+docker-compose down
+
+# Arrêter et supprimer les volumes
+docker-compose down -v
+
+# Reconstruire les images
+docker-compose build
+
+# Reconstruire et démarrer
+docker-compose up -d --build
+
+# Exécuter une commande dans un service
+docker-compose exec postgres psql -U dataeng
+
+# Voir l'état des services
+docker-compose ps
+
+# Voir l'utilisation des ressources
+docker-compose top
+
+# Redémarrer un service spécifique
+docker-compose restart postgres
+
+# Voir les logs depuis le début
+docker-compose logs --tail=100 etl</code></pre>
+                </div>
+
+                <h2>6.4 Gestion des Dépendances</h2>
+
+                <div class="concept">
+                    <p>Docker Compose permet de gérer l'ordre de démarrage avec <code>depends_on</code> et les
+                        healthchecks.</p>
+                </div>
+
+                <div class="example">
+                    <h4>📝 Exemple : Attendre que PostgreSQL soit prêt</h4>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-yaml">services:
+  postgres:
+    image: postgres:15
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy  # Attend que postgres soit sain</code></pre>
+                    </div>
+                </div>
+
+                <h2>6.5 Variables d'Environnement</h2>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un fichier .env
+cat << EOF > .env
+POSTGRES_PASSWORD=monmotdepasse
+AIRFLOW_VERSION=2.7.0
+EOF
+
+# Docker Compose charge automatiquement .env
+docker-compose up -d</code></pre>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Bonnes pratiques :</strong>
+                    <ul>
+                        <li>Utilisez un fichier <code>.env</code> pour les variables locales</li>
+                        <li>Ajoutez <code>.env</code> à <code>.gitignore</code></li>
+                        <li>Créez un fichier <code>.env.example</code> avec des valeurs par défaut</li>
+                        <li>Utilisez <code>${VARIABLE:-default}</code> pour des valeurs par défaut</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Docker Compose simplifie l'orchestration d'applications multi-conteneurs</li>
+                    <li>Le fichier docker-compose.yml décrit toute votre stack de manière déclarative</li>
+                    <li><code>docker-compose up</code> démarre toute la stack d'un coup</li>
+                    <li>Les dépendances et healthchecks garantissent l'ordre de démarrage</li>
+                    <li>Utilisez des fichiers .env pour la configuration locale</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vous maîtrisez maintenant Docker Compose ! Passons à la <strong>Partie 7</strong> pour découvrir
+                    les concepts avancés et les meilleures pratiques.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie5.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 5 : Volumes et Réseaux
+                </a>
+                <a href="partie7.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 7 : Concepts Avancés →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Docker pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+
+</html>
