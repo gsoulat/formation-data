@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 : Notebooks et langages</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📓 Partie 3 : Notebooks et langages</h1>
+            <p class="subtitle">Maîtrisez les notebooks Databricks et les langages supportés</p>
+            <span class="duration">⏱️ Durée : 45 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie2.html">← Partie 2</a></li>
+                <li><a href="partie3.html" class="active">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="objectives">
+                <h2>🎯 Objectifs d'apprentissage</h2>
+                <ul>
+                    <li>Créer et organiser des notebooks Databricks</li>
+                    <li>Utiliser Python, SQL, Scala et R dans les notebooks</li>
+                    <li>Maîtriser les magic commands</li>
+                    <li>Créer des visualisations de données interactives</li>
+                    <li>Collaborer efficacement avec les widgets et le partage</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>1. Introduction aux notebooks Databricks</h2>
+
+                <p>Les notebooks Databricks sont des documents interactifs qui combinent code, visualisations et texte narratif. Ils supportent plusieurs langages dans un même notebook.</p>
+
+                <h3>Création d'un notebook</h3>
+                <div class="exercise">
+                    <h4>Créer votre premier notebook</h4>
+                    <ol>
+                        <li>Dans la barre latérale, cliquez sur <code>Workspace</code></li>
+                        <li>Naviguez vers votre dossier utilisateur</li>
+                        <li>Clic droit → <code>Create</code> → <code>Notebook</code></li>
+                        <li>Nommez-le "Mon Premier Notebook"</li>
+                        <li>Choisissez le langage par défaut : <strong>Python</strong></li>
+                        <li>Sélectionnez un cluster (ou créez-en un)</li>
+                    </ol>
+                </div>
+
+                <h3>Structure d'un notebook</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Cellules de code</h4>
+                        <p>Exécutent du code Python, SQL, Scala ou R</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Cellules Markdown</h4>
+                        <p>Documentation formatée avec titres, listes, images</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Visualisations</h4>
+                        <p>Graphiques intégrés générés à partir des résultats</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Widgets</h4>
+                        <p>Paramètres interactifs pour l'utilisateur</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>2. Langages supportés</h2>
+
+                <h3>Python (PySpark)</h3>
+                <p>Le langage le plus populaire pour Data Science et Machine Learning sur Databricks.</p>
+
+                <pre><code class="language-python"># Exemple Python dans un notebook Databricks
+# Créer un DataFrame depuis une liste
+data = [
+    ("Alice", 34, "Data Engineer"),
+    ("Bob", 45, "Data Scientist"),
+    ("Charlie", 29, "ML Engineer")
+]
+
+df = spark.createDataFrame(data, ["name", "age", "role"])
+
+# Afficher le contenu
+display(df)
+
+# Opérations sur le DataFrame
+df_filtered = df.filter(df.age > 30)
+display(df_filtered)
+
+# Statistiques descriptives
+df.describe().show()
+</code></pre>
+
+                <h3>SQL</h3>
+                <p>Pour les requêtes et analyses de données avec une syntaxe SQL familière.</p>
+
+                <pre><code class="language-sql">-- Utiliser SQL dans une cellule
+-- Créer une table temporaire
+CREATE OR REPLACE TEMP VIEW employees AS
+SELECT * FROM VALUES
+  ('Alice', 34, 'Data Engineer', 95000),
+  ('Bob', 45, 'Data Scientist', 105000),
+  ('Charlie', 29, 'ML Engineer', 98000)
+AS (name, age, role, salary);
+
+-- Requête d'analyse
+SELECT
+  role,
+  AVG(salary) as avg_salary,
+  COUNT(*) as count
+FROM employees
+GROUP BY role
+ORDER BY avg_salary DESC;
+</code></pre>
+
+                <h3>Scala</h3>
+                <p>Langage natif de Spark, offrant les meilleures performances.</p>
+
+                <pre><code class="language-scala">// Exemple Scala
+val data = Seq(
+  ("Alice", 34, "Data Engineer"),
+  ("Bob", 45, "Data Scientist"),
+  ("Charlie", 29, "ML Engineer")
+)
+
+val df = data.toDF("name", "age", "role")
+display(df)
+
+// Transformations typées
+case class Employee(name: String, age: Int, role: String)
+val ds = df.as[Employee]
+val seniors = ds.filter(_.age > 30)
+display(seniors)
+</code></pre>
+
+                <h3>R</h3>
+                <p>Pour les statisticiens et analystes préférant R.</p>
+
+                <pre><code class="language-r"># Exemple R avec SparkR
+library(SparkR)
+
+df <- createDataFrame(data.frame(
+  name = c("Alice", "Bob", "Charlie"),
+  age = c(34, 45, 29),
+  role = c("Data Engineer", "Data Scientist", "ML Engineer")
+))
+
+display(df)
+
+# Utiliser ggplot2 pour visualisation
+library(ggplot2)
+local_df <- collect(df)
+ggplot(local_df, aes(x=name, y=age)) +
+  geom_bar(stat="identity", fill="steelblue")
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>3. Magic Commands</h2>
+
+                <p>Les magic commands permettent de mélanger plusieurs langages dans un même notebook.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Magic Command</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>%python</code></td>
+                            <td>Exécuter du code Python</td>
+                            <td>Notebook par défaut SQL</td>
+                        </tr>
+                        <tr>
+                            <td><code>%sql</code></td>
+                            <td>Exécuter une requête SQL</td>
+                            <td>Requêtes dans notebook Python</td>
+                        </tr>
+                        <tr>
+                            <td><code>%scala</code></td>
+                            <td>Exécuter du code Scala</td>
+                            <td>Librairies Scala spécifiques</td>
+                        </tr>
+                        <tr>
+                            <td><code>%r</code></td>
+                            <td>Exécuter du code R</td>
+                            <td>Analyses statistiques R</td>
+                        </tr>
+                        <tr>
+                            <td><code>%md</code></td>
+                            <td>Cellule Markdown</td>
+                            <td>Documentation</td>
+                        </tr>
+                        <tr>
+                            <td><code>%sh</code></td>
+                            <td>Exécuter des commandes shell</td>
+                            <td>Vérifier l'environnement</td>
+                        </tr>
+                        <tr>
+                            <td><code>%fs</code></td>
+                            <td>Commandes filesystem (DBFS)</td>
+                            <td>Lister/copier des fichiers</td>
+                        </tr>
+                        <tr>
+                            <td><code>%run</code></td>
+                            <td>Exécuter un autre notebook</td>
+                            <td>Modularisation du code</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Exemples d'utilisation</h3>
+
+                <pre><code class="language-python"># Cellule 1 : Python par défaut
+data = [("Paris", 2.2), ("Lyon", 0.5), ("Marseille", 0.9)]
+cities_df = spark.createDataFrame(data, ["city", "population_millions"])
+cities_df.createOrReplaceTempView("cities")
+</code></pre>
+
+                <pre><code class="language-sql">-- Cellule 2 : Utiliser SQL sur les données Python
+%sql
+SELECT
+  city,
+  population_millions,
+  ROUND(population_millions * 1000000) as population
+FROM cities
+ORDER BY population_millions DESC
+</code></pre>
+
+                <pre><code class="language-markdown">%md
+### Cellule 3 : Documentation Markdown
+
+Les **trois plus grandes villes** de France :
+1. Paris
+2. Marseille
+3. Lyon
+
+*Données de population en millions d'habitants*
+</code></pre>
+
+                <pre><code class="language-bash">%sh
+# Cellule 4 : Commandes shell
+echo "Python version:"
+python --version
+echo "Spark version:"
+spark-submit --version | head -1
+</code></pre>
+
+                <pre><code class="language-python">%fs
+# Cellule 5 : Opérations filesystem
+ls /databricks-datasets/
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>4. Visualisations de données</h2>
+
+                <p>Databricks offre des visualisations intégrées puissantes avec la fonction <code>display()</code>.</p>
+
+                <h3>Visualisations automatiques</h3>
+                <pre><code class="language-python"># Créer des données de ventes
+sales_data = [
+    ("2024-01", "Produit A", 15000),
+    ("2024-01", "Produit B", 12000),
+    ("2024-02", "Produit A", 18000),
+    ("2024-02", "Produit B", 14000),
+    ("2024-03", "Produit A", 22000),
+    ("2024-03", "Produit B", 16000)
+]
+
+sales_df = spark.createDataFrame(sales_data, ["month", "product", "revenue"])
+
+# La fonction display() génère automatiquement des visualisations
+display(sales_df)
+</code></pre>
+
+                <div class="alert alert-info">
+                    <h4>Types de graphiques disponibles</h4>
+                    <ul>
+                        <li><strong>Bar Chart :</strong> Comparaisons catégorielles</li>
+                        <li><strong>Line Chart :</strong> Évolutions temporelles</li>
+                        <li><strong>Pie Chart :</strong> Proportions</li>
+                        <li><strong>Scatter Plot :</strong> Corrélations</li>
+                        <li><strong>Map :</strong> Données géospatiales</li>
+                        <li><strong>Box Plot :</strong> Distributions statistiques</li>
+                    </ul>
+                </div>
+
+                <h3>Visualisations avec bibliothèques Python</h3>
+                <pre><code class="language-python">import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+# Convertir en Pandas pour visualisation
+pandas_df = sales_df.toPandas()
+
+# Créer un graphique avec matplotlib
+plt.figure(figsize=(10, 6))
+for product in pandas_df['product'].unique():
+    data = pandas_df[pandas_df['product'] == product]
+    plt.plot(data['month'], data['revenue'], marker='o', label=product)
+
+plt.xlabel('Mois')
+plt.ylabel('Revenu (€)')
+plt.title('Évolution des revenus par produit')
+plt.legend()
+plt.grid(True)
+plt.xticks(rotation=45)
+plt.tight_layout()
+
+# Afficher dans Databricks
+display(plt.gcf())
+</code></pre>
+
+                <pre><code class="language-python"># Visualisation Seaborn
+fig, ax = plt.subplots(figsize=(10, 6))
+sns.barplot(data=pandas_df, x='month', y='revenue', hue='product', ax=ax)
+ax.set_title('Comparaison des revenus')
+ax.set_xlabel('Mois')
+ax.set_ylabel('Revenu (€)')
+plt.xticks(rotation=45)
+display(fig)
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>5. Widgets et paramétrage</h2>
+
+                <p>Les widgets permettent de créer des notebooks paramétrables et interactifs.</p>
+
+                <h3>Types de widgets</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Fonction</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>text</code></td>
+                            <td>Champ de texte</td>
+                            <td>Saisie de chemins, noms</td>
+                        </tr>
+                        <tr>
+                            <td><code>dropdown</code></td>
+                            <td>Liste déroulante</td>
+                            <td>Sélection parmi options</td>
+                        </tr>
+                        <tr>
+                            <td><code>combobox</code></td>
+                            <td>Combinaison dropdown + texte</td>
+                            <td>Options + saisie libre</td>
+                        </tr>
+                        <tr>
+                            <td><code>multiselect</code></td>
+                            <td>Sélection multiple</td>
+                            <td>Filtres multiples</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Création et utilisation de widgets</h3>
+                <pre><code class="language-python"># Créer un widget dropdown pour sélectionner un pays
+dbutils.widgets.dropdown("country", "France", ["France", "Allemagne", "Espagne", "Italie"])
+
+# Créer un widget texte pour la date
+dbutils.widgets.text("start_date", "2024-01-01")
+
+# Créer un widget multiselect pour les catégories
+dbutils.widgets.multiselect("categories", "Electronics", ["Electronics", "Clothing", "Food", "Books"])
+
+# Récupérer les valeurs des widgets
+selected_country = dbutils.widgets.get("country")
+start_date = dbutils.widgets.get("start_date")
+selected_categories = dbutils.widgets.get("categories")
+
+print(f"Analyse pour {selected_country} à partir du {start_date}")
+print(f"Catégories : {selected_categories}")
+
+# Utiliser dans une requête
+df = spark.sql(f"""
+    SELECT * FROM sales
+    WHERE country = '{selected_country}'
+    AND date >= '{start_date}'
+""")
+
+display(df)
+
+# Supprimer un widget
+# dbutils.widgets.remove("country")
+
+# Supprimer tous les widgets
+# dbutils.widgets.removeAll()
+</code></pre>
+
+                <div class="exercise">
+                    <h4>Exercice pratique : Dashboard paramétré</h4>
+                    <p>Créez un notebook qui :</p>
+                    <ol>
+                        <li>Crée un widget dropdown pour sélectionner un produit</li>
+                        <li>Crée un widget texte pour spécifier un seuil de revenu</li>
+                        <li>Filtre les données selon ces paramètres</li>
+                        <li>Affiche un graphique des résultats</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>6. Collaboration et partage</h2>
+
+                <h3>Fonctionnalités collaboratives</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Édition multi-utilisateurs</h4>
+                        <p>Plusieurs personnes peuvent travailler simultanément sur un notebook</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Commentaires</h4>
+                        <p>Ajoutez des commentaires sur des cellules spécifiques pour discussion</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Contrôle de version</h4>
+                        <p>Historique des révisions intégré avec Git integration</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Permissions</h4>
+                        <p>Contrôle d'accès granulaire (lecture, édition, exécution)</p>
+                    </div>
+                </div>
+
+                <h3>Partage d'un notebook</h3>
+                <div class="exercise">
+                    <h4>Partager avec votre équipe</h4>
+                    <ol>
+                        <li>Ouvrez le notebook à partager</li>
+                        <li>Cliquez sur <code>Share</code> en haut à droite</li>
+                        <li>Ajoutez des utilisateurs ou groupes</li>
+                        <li>Définissez les permissions :
+                            <ul>
+                                <li><strong>Can Read :</strong> Lecture seule</li>
+                                <li><strong>Can Run :</strong> Lecture + exécution</li>
+                                <li><strong>Can Edit :</strong> Lecture + édition + exécution</li>
+                            </ul>
+                        </li>
+                        <li>Cliquez sur <code>Add</code></li>
+                    </ol>
+                </div>
+
+                <h3>Intégration Git</h3>
+                <pre><code class="language-bash"># Configuration Git dans Databricks
+# 1. Dans User Settings → Git Integration
+# 2. Connectez votre compte GitHub/GitLab/Azure DevOps
+
+# Cloner un repository
+# Workspace → Add → Repo → Clone from Git
+# URL: https://github.com/your-org/your-repo.git
+
+# Les notebooks sont synchronisés avec le repo
+# Commits et push depuis l'interface Databricks
+</code></pre>
+
+                <h3>Export et partage de résultats</h3>
+                <pre><code class="language-python"># Exporter un notebook en différents formats
+# File → Export → DBC Archive (Databricks format)
+# File → Export → Source File (.py, .scala, .r, .sql)
+# File → Export → HTML
+# File → Export → Jupyter Notebook (.ipynb)
+
+# Partager les résultats via un dashboard
+# Dans une cellule de visualisation :
+# Cliquez sur "Add to Dashboard"
+# Créez un nouveau dashboard ou ajoutez à un existant
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>7. Bonnes pratiques</h2>
+
+                <div class="key-points">
+                    <h3>💡 Recommandations</h3>
+                    <ul>
+                        <li><strong>Organisation :</strong> Structurez vos notebooks avec des sections Markdown claires</li>
+                        <li><strong>Nommage :</strong> Utilisez des noms descriptifs (ex: "ETL_Sales_Daily" pas "Notebook1")</li>
+                        <li><strong>Modularité :</strong> Utilisez %run pour réutiliser du code commun</li>
+                        <li><strong>Documentation :</strong> Commentez votre code et utilisez des cellules Markdown</li>
+                        <li><strong>Performance :</strong> Évitez de charger trop de données avec display(), limitez avec .limit()</li>
+                        <li><strong>Widgets :</strong> Rendez vos notebooks paramétrables pour la réutilisation</li>
+                        <li><strong>Version Control :</strong> Intégrez Git pour historique et collaboration</li>
+                        <li><strong>Nettoyage :</strong> Supprimez les widgets avec removeAll() à la fin si nécessaire</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Erreurs courantes à éviter</h4>
+                    <ul>
+                        <li>Oublier de détacher le notebook avant de supprimer un cluster</li>
+                        <li>Utiliser <code>collect()</code> sur de très grandes DataFrames (risque OutOfMemory)</li>
+                        <li>Ne pas nettoyer les tables temporaires (créent du clutter)</li>
+                        <li>Hardcoder des chemins au lieu d'utiliser des widgets</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="key-points">
+                    <h3>📌 Points clés à retenir</h3>
+                    <ul>
+                        <li>Notebooks supportent Python, SQL, Scala et R dans un même document</li>
+                        <li>Magic commands (%sql, %python, %md, %fs, %run) pour mélanger les langages</li>
+                        <li>display() génère des visualisations interactives automatiques</li>
+                        <li>Widgets créent des notebooks paramétrables et réutilisables</li>
+                        <li>Collaboration en temps réel avec commentaires et permissions</li>
+                        <li>Intégration Git pour version control professionnel</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-warning">
+                <h4>Prochaine étape</h4>
+                <p>Vous maîtrisez les notebooks ! Dans la <strong>Partie 4</strong>, plongez dans Apache Spark et le traitement distribué de données.</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie2.html">← Partie 2</a></li>
+                <li><a href="partie3.html" class="active">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4 : Spark →</a></li>
+            </ul>
+        </nav>
+
+        <footer>
+            <p>&copy; 2024 Formation Simplon - Azure Databricks</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-scala.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-r.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+</html>
