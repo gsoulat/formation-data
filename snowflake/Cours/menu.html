@@ -1,0 +1,344 @@
+<!-- Navbar de navigation pour la formation Data Warehouse -->
+<style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(44, 62, 80, 0.95);
+        backdrop-filter: blur(15px);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        border-bottom: 2px solid #e74c3c;
+    }
+
+    .navbar-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px;
+        height: 60px;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        color: #e74c3c;
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+        color: #c0392b;
+        transform: scale(1.05);
+    }
+
+    .navbar-brand .brand-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+    }
+
+    .navbar-menu {
+        display: flex;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 5px;
+    }
+
+    .navbar-item {
+        position: relative;
+    }
+
+    .navbar-link {
+        display: flex;
+        align-items: center;
+        padding: 8px 15px;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .navbar-link:hover {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+        transform: translateY(-2px);
+    }
+
+    .navbar-link.active {
+        background: rgba(39, 174, 96, 0.3);
+        color: #27ae60;
+        font-weight: bold;
+    }
+
+    .navbar-link::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #e74c3c;
+        transition: width 0.3s ease;
+    }
+
+    .navbar-link:hover::before {
+        width: 100%;
+    }
+
+    .navbar-link.active::before {
+        width: 100%;
+        background: #27ae60;
+    }
+
+    .navbar-icon {
+        font-size: 1.1rem;
+        margin-right: 6px;
+    }
+
+    .navbar-text {
+        font-size: 0.85rem;
+    }
+
+    .navbar-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+    }
+
+    .navbar-toggle:hover {
+        color: #e74c3c;
+    }
+
+    .mobile-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(44, 62, 80, 0.98);
+        backdrop-filter: blur(15px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-menu.show {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .mobile-menu-item {
+        display: block;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .mobile-menu-item:hover {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+        padding-left: 30px;
+    }
+
+    .mobile-menu-item.active {
+        background: rgba(39, 174, 96, 0.2);
+        color: #27ae60;
+        border-left: 4px solid #27ae60;
+    }
+
+    .mobile-menu-item:last-child {
+        border-bottom: none;
+    }
+
+    /* Ajustement du contenu principal */
+    body {
+        padding-top: 60px;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .navbar-text {
+            display: none;
+        }
+
+        .navbar-link {
+            padding: 8px 10px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar-menu {
+            display: none;
+        }
+
+        .navbar-toggle {
+            display: block;
+        }
+    }
+</style>
+
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="page1_intro_datawarehouse.html" class="navbar-brand">
+            <span class="brand-icon">🎓</span>
+            <span>Formation Data Warehouse</span>
+        </a>
+
+        <ul class="navbar-menu">
+            <li class="navbar-item">
+                <a href="page1_intro_datawarehouse.html" class="navbar-link" id="nav-page1">
+                    <span class="navbar-icon">🏠</span>
+                    <span class="navbar-text">Introduction</span>
+                </a>
+            </li>
+            <li class="navbar-item">
+                <a href="page2_oltp_olap.html" class="navbar-link" id="nav-page2">
+                    <span class="navbar-icon">🏢</span>
+                    <span class="navbar-text">OLTP vs OLAP</span>
+                </a>
+            </li>
+            <li class="navbar-item">
+                <a href="page3_architecture_dw.html" class="navbar-link" id="nav-page3">
+                    <span class="navbar-icon">🏗️</span>
+                    <span class="navbar-text">Architecture</span>
+                </a>
+            </li>
+            <li class="navbar-item">
+                <a href="page4_modelisation.html" class="navbar-link" id="nav-page4">
+                    <span class="navbar-icon">⭐</span>
+                    <span class="navbar-text">Modélisation</span>
+                </a>
+            </li>
+            <li class="navbar-item">
+                <a href="page5_synthese.html" class="navbar-link" id="nav-page5">
+                    <span class="navbar-icon">📊</span>
+                    <span class="navbar-text">Synthèse</span>
+                </a>
+            </li>
+            <li class="navbar-item">
+                <a href="page6_cloud_techno.html" class="navbar-link" id="nav-page6">
+                    <span class="navbar-icon">☁️</span>
+                    <span class="navbar-text">Cloud</span>
+                </a>
+            </li>
+            <li class="navbar-item">
+                <a href="page7_pratique_modelisation.html" class="navbar-link" id="nav-page7">
+                    <span class="navbar-icon">🎯</span>
+                    <span class="navbar-text">Pratique</span>
+                </a>
+            </li>
+        </ul>
+
+        <button class="navbar-toggle" onclick="toggleMobileMenu()">☰</button>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu">
+        <a href="page1_intro_datawarehouse.html" class="mobile-menu-item" id="mobile-page1">
+            🏠 Introduction
+        </a>
+        <a href="page2_oltp_olap.html" class="mobile-menu-item" id="mobile-page2">
+            🏢 OLTP vs OLAP
+        </a>
+        <a href="page3_architecture_dw.html" class="mobile-menu-item" id="mobile-page3">
+            🏗️ Architecture DW
+        </a>
+        <a href="page4_modelisation.html" class="mobile-menu-item" id="mobile-page4">
+            ⭐ Modélisation
+        </a>
+        <a href="page5_synthese.html" class="mobile-menu-item" id="mobile-page5">
+            📊 Synthèse
+        </a>
+        <a href="page6_cloud_techno.html" class="mobile-menu-item" id="mobile-page6">
+            ☁️ Technologies Cloud
+        </a>
+        <a href="page7_pratique_modelisation.html" class="mobile-menu-item" id="mobile-page7">
+            🎯 Ateliers Pratiques
+        </a>
+    </div>
+</nav>
+
+<script>
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenu.classList.toggle('show');
+    }
+
+    function highlightCurrentPage() {
+        const currentPage = window.location.pathname.split('/').pop() || 'page1_intro_datawarehouse.html';
+
+        // Remove active class from all navbar items
+        document.querySelectorAll('.navbar-link').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        document.querySelectorAll('.mobile-menu-item').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // Add active class to current page
+        const pageMapping = {
+            'page1_intro_datawarehouse.html': ['nav-page1', 'mobile-page1'],
+            'page2_oltp_olap.html': ['nav-page2', 'mobile-page2'],
+            'page3_architecture_dw.html': ['nav-page3', 'mobile-page3'],
+            'page4_modelisation.html': ['nav-page4', 'mobile-page4'],
+            'page5_synthese.html': ['nav-page5', 'mobile-page5'],
+            'page6_cloud_techno.html': ['nav-page6', 'mobile-page6'],
+            'page7_pratique_modelisation.html': ['nav-page7', 'mobile-page7']
+        };
+
+        if (pageMapping[currentPage]) {
+            const [desktopId, mobileId] = pageMapping[currentPage];
+
+            const desktopItem = document.getElementById(desktopId);
+            const mobileItem = document.getElementById(mobileId);
+
+            if (desktopItem) desktopItem.classList.add('active');
+            if (mobileItem) mobileItem.classList.add('active');
+        }
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const toggleButton = document.querySelector('.navbar-toggle');
+
+        if (!mobileMenu.contains(event.target) && !toggleButton.contains(event.target)) {
+            mobileMenu.classList.remove('show');
+        }
+    });
+
+    // Highlight current page when menu is loaded
+    document.addEventListener('DOMContentLoaded', highlightCurrentPage);
+
+    // Close mobile menu when window is resized to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            document.getElementById('mobile-menu').classList.remove('show');
+        }
+    });
+</script>

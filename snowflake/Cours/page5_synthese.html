@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page 5 - Synthèse & Évaluation | Formation DW</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e74c3c;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #e74c3c;
+        }
+
+        .completion-badge {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            border-radius: 50px;
+            padding: 15px 30px;
+            display: inline-block;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: #e74c3c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .nav-btn.home {
+            background: #27ae60;
+        }
+
+        .nav-btn.home:hover {
+            background: #2ecc71;
+        }
+
+        .synthesis-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #e74c3c;
+            text-align: center;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 10px;
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .progress-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #27ae60;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .progress-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+        }
+
+        .progress-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .progress-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #27ae60;
+        }
+
+        .progress-description {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+            line-height: 1.4;
+        }
+
+        .knowledge-map {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .concept-network {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .concept-level {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .concept-node {
+            background: rgba(52, 152, 219, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-width: 150px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .concept-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(52, 152, 219, 0.5);
+        }
+
+        .concept-node.foundation {
+            background: rgba(231, 76, 60, 0.8);
+        }
+
+        .concept-node.architecture {
+            background: rgba(155, 89, 182, 0.8);
+        }
+
+        .concept-node.modeling {
+            background: rgba(39, 174, 96, 0.8);
+        }
+
+        .concept-node.advanced {
+            background: rgba(243, 156, 18, 0.8);
+        }
+
+        .connection-arrow {
+            font-size: 2rem;
+            color: #f39c12;
+            animation: bounce 2s infinite;
+        }
+
+        .final-quiz {
+            background: linear-gradient(45deg, #8e44ad, #9b59b6);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .quiz-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .quiz-counter {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .quiz-score {
+            font-size: 1.2rem;
+            color: #27ae60;
+        }
+
+        .question-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .option-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .option-button.correct {
+            background: #27ae60;
+            animation: correctPulse 0.5s ease-out;
+        }
+
+        .option-button.incorrect {
+            background: #c0392b;
+            animation: incorrectShake 0.5s ease-out;
+        }
+
+        .option-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .quiz-feedback {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .quiz-feedback.correct {
+            border-left: 4px solid #27ae60;
+        }
+
+        .quiz-feedback.incorrect {
+            border-left: 4px solid #c0392b;
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .quiz-btn {
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .quiz-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .quiz-btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quiz-btn.next {
+            background: #27ae60;
+        }
+
+        .quiz-btn.next:hover {
+            background: #229954;
+        }
+
+        .results-container {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .final-score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .performance-meter {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(#27ae60 0deg, #27ae60 0deg, #ecf0f1 0deg);
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .meter-inner {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .resources-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .resource-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .resource-title {
+            font-size: 1.2rem;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .certificate-section {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .certificate-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: rotate 3s infinite linear;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); background: #2ecc71; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes incorrectShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .concept-level {
+                flex-direction: column;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .performance-meter {
+                width: 150px;
+                height: 150px;
+            }
+
+            .meter-inner {
+                width: 100px;
+                height: 100px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="main-menu"></div>
+
+        <div class="header">
+            <h1>Synthèse & Évaluation</h1>
+            <p>Récapitulatif et évaluation des connaissances acquises</p>
+            <div class="completion-badge">
+                🎓 Formation Data Warehouse - JOUR 1 TERMINÉ
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="page4_modelisation.html" class="nav-btn">← Retour Modélisation</a>
+            <a href="page6_cloud_techno.html" class="nav-btn">Technologies Cloud →</a>
+        </div>
+
+        <!-- Vue d'ensemble des acquis -->
+        <div class="synthesis-section">
+            <h2 class="section-title">🎯 Récapitulatif de vos Acquis</h2>
+
+            <div class="progress-overview">
+                <div class="progress-card" onclick="reviewSection('oltp-olap')">
+                    <span class="progress-icon">🏢</span>
+                    <div class="progress-title">OLTP vs OLAP</div>
+                    <div class="progress-description">
+                        Différences entre systèmes transactionnels et analytiques
+                    </div>
+                </div>
+
+                <div class="progress-card" onclick="reviewSection('architecture')">
+                    <span class="progress-icon">🏗️</span>
+                    <div class="progress-title">Architecture DW</div>
+                    <div class="progress-description">
+                        Couches, flux ETL et approches architecturales
+                    </div>
+                </div>
+
+                <div class="progress-card" onclick="reviewSection('modeling')">
+                    <span class="progress-icon">⭐</span>
+                    <div class="progress-title">Modélisation</div>
+                    <div class="progress-description">
+                        Schémas dimensionnels et méthodes Kimball/Inmon
+                    </div>
+                </div>
+
+                <div class="progress-card" onclick="reviewSection('concepts')">
+                    <span class="progress-icon">💡</span>
+                    <div class="progress-title">Concepts Clés</div>
+                    <div class="progress-description">
+                        Faits, dimensions, granularité et clés de substitution
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carte conceptuelle -->
+        <div class="synthesis-section">
+            <h2 class="section-title">🗺️ Carte des Connaissances</h2>
+
+            <div class="knowledge-map">
+                <div class="concept-network">
+                    <div class="concept-level">
+                        <div class="concept-node foundation" onclick="explainConcept('foundation')">
+                            <strong>Fondements</strong><br>
+                            OLTP ↔ OLAP
+                        </div>
+                    </div>
+
+                    <div class="connection-arrow">⬇️</div>
+
+                    <div class="concept-level">
+                        <div class="concept-node architecture" onclick="explainConcept('architecture')">
+                            <strong>Architecture</strong><br>
+                            Sources → DW → Marts
+                        </div>
+                        <div class="concept-node architecture" onclick="explainConcept('etl')">
+                            <strong>Processus ETL</strong><br>
+                            Extract → Transform → Load
+                        </div>
+                    </div>
+
+                    <div class="connection-arrow">⬇️</div>
+
+                    <div class="concept-level">
+                        <div class="concept-node modeling" onclick="explainConcept('star')">
+                            <strong>Étoile</strong><br>
+                            Performance
+                        </div>
+                        <div class="concept-node modeling" onclick="explainConcept('snowflake')">
+                            <strong>Flocon</strong><br>
+                            Normalisation
+                        </div>
+                        <div class="concept-node modeling" onclick="explainConcept('galaxy')">
+                            <strong>Constellation</strong><br>
+                            Multi-faits
+                        </div>
+                    </div>
+
+                    <div class="connection-arrow">⬇️</div>
+
+                    <div class="concept-level">
+                        <div class="concept-node advanced" onclick="explainConcept('kimball')">
+                            <strong>Kimball</strong><br>
+                            Bottom-Up
+                        </div>
+                        <div class="concept-node advanced" onclick="explainConcept('inmon')">
+                            <strong>Inmon</strong><br>
+                            Top-Down
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz final -->
+        <div class="final-quiz">
+            <h2 class="section-title" style="color: white;">📝 Évaluation Finale</h2>
+
+            <div class="quiz-progress">
+                <div class="quiz-counter">
+                    Question <span id="current-question">1</span> / <span id="total-questions">10</span>
+                </div>
+                <div class="quiz-score">
+                    Score: <span id="current-score">0</span> / <span id="max-score">10</span>
+                </div>
+            </div>
+
+            <div id="quiz-container">
+                <div class="question-container">
+                    <div class="question-text" id="question-text">
+                        Quelle est la principale différence entre OLTP et OLAP ?
+                    </div>
+                    <div class="options-grid" id="options-container">
+                        <button class="option-button" onclick="selectAnswer(this, false)">
+                            OLTP est pour l'analyse, OLAP pour les transactions
+                        </button>
+                        <button class="option-button" onclick="selectAnswer(this, true)">
+                            OLTP est pour les transactions, OLAP pour l'analyse
+                        </button>
+                        <button class="option-button" onclick="selectAnswer(this, false)">
+                            Il n'y a pas de différence significative
+                        </button>
+                        <button class="option-button" onclick="selectAnswer(this, false)">
+                            OLTP et OLAP sont des synonymes
+                        </button>
+                    </div>
+                    <div id="question-feedback" class="quiz-feedback">
+                        <p id="feedback-text"></p>
+                    </div>
+                </div>
+
+                <div class="quiz-controls">
+                    <button class="quiz-btn" id="prev-btn" onclick="previousQuestion()" disabled>
+                        ← Précédent
+                    </button>
+                    <button class="quiz-btn next" id="next-btn" onclick="nextQuestion()" disabled>
+                        Suivant →
+                    </button>
+                </div>
+            </div>
+
+            <div id="results-container" class="results-container">
+                <h3>🎉 Évaluation Terminée !</h3>
+                <div class="final-score" id="final-score">0/10</div>
+                <div class="performance-meter" id="performance-meter">
+                    <div class="meter-inner" id="meter-inner">0%</div>
+                </div>
+                <div id="performance-message"></div>
+                <button class="quiz-btn" onclick="restartQuiz()">🔄 Recommencer</button>
+            </div>
+        </div>
+
+        <!-- Ressources complémentaires -->
+        <div class="resources-section">
+            <h2 class="section-title">📚 Ressources Complémentaires</h2>
+
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <div class="resource-title">📖 Documentation</div>
+                    <p>Guides approfondis sur la modélisation dimensionnelle et les meilleures pratiques</p>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-title">🛠️ Outils Pratiques</div>
+                    <p>Azure Synapse, Power BI, SQL Server, et autres technologies du Data Warehouse</p>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-title">🎯 Cas d'Usage</div>
+                    <p>Exemples concrets d'implémentation dans différents secteurs d'activité</p>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-title">🔗 Communauté</div>
+                    <p>Forums, groupes et ressources pour continuer votre apprentissage</p>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-title">📊 Templates</div>
+                    <p>Modèles de schémas dimensionnels réutilisables pour vos projets</p>
+                </div>
+
+                <div class="resource-card">
+                    <div class="resource-title">🎓 Formation Continue</div>
+                    <p>Prochaines étapes : ETL avancé, Big Data, Cloud et IA</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Certification -->
+        <div class="certificate-section">
+            <div class="certificate-icon">🏆</div>
+            <h3>Félicitations !</h3>
+            <p>Vous avez terminé avec succès la formation<br><strong>Data Warehouse - Fondamentaux et Modélisation</strong></p>
+            <button class="quiz-btn" onclick="generateCertificate()" style="margin-top: 20px; background: #27ae60;">
+                📜 Générer le Certificat
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Quelle est la principale différence entre OLTP et OLAP ?",
+                options: [
+                    "OLTP est pour l'analyse, OLAP pour les transactions",
+                    "OLTP est pour les transactions, OLAP pour l'analyse",
+                    "Il n'y a pas de différence significative",
+                    "OLTP et OLAP sont des synonymes"
+                ],
+                correct: 1,
+                feedback: "OLTP (Online Transaction Processing) gère les transactions opérationnelles quotidiennes, tandis qu'OLAP (Online Analytical Processing) est optimisé pour l'analyse et l'aide à la décision."
+            },
+            {
+                question: "Quelle couche de l'architecture DW est responsable de la transformation des données ?",
+                options: [
+                    "Couche de présentation",
+                    "Zone de staging",
+                    "Data marts",
+                    "Sources de données"
+                ],
+                correct: 1,
+                feedback: "La zone de staging est l'espace intermédiaire où s'effectuent toutes les opérations de nettoyage, validation et transformation des données avant leur intégration dans le Data Warehouse."
+            },
+            {
+                question: "Quel schéma offre les meilleures performances pour les requêtes analytiques ?",
+                options: [
+                    "Schéma en flocon",
+                    "Schéma en étoile",
+                    "Schéma normalisé 3NF",
+                    "Schéma en constellation"
+                ],
+                correct: 1,
+                feedback: "Le schéma en étoile minimise le nombre de jointures nécessaires grâce à sa structure dénormalisée, offrant ainsi les meilleures performances pour les requêtes analytiques."
+            },
+            {
+                question: "Que contiennent principalement les tables de faits ?",
+                options: [
+                    "Attributs descriptifs",
+                    "Mesures quantifiables",
+                    "Métadonnées",
+                    "Clés primaires uniquement"
+                ],
+                correct: 1,
+                feedback: "Les tables de faits contiennent les mesures quantifiables (ventes, quantités, montants) ainsi que les clés étrangères vers les dimensions."
+            },
+            {
+                question: "Quelle est l'approche de la méthode Kimball ?",
+                options: [
+                    "Top-Down (DW vers Data Marts)",
+                    "Bottom-Up (Data Marts vers DW)",
+                    "Parallèle",
+                    "Hybride uniquement"
+                ],
+                correct: 1,
+                feedback: "La méthode Kimball préconise une approche Bottom-Up, en commençant par la construction de Data Marts qui sont ensuite intégrés pour former le Data Warehouse global."
+            },
+            {
+                question: "À quoi servent les clés de substitution (surrogate keys) ?",
+                options: [
+                    "Remplacer les clés métier uniquement",
+                    "Optimiser les performances et permettre l'historisation",
+                    "Réduire la taille des tables",
+                    "Simplifier les requêtes utilisateur"
+                ],
+                correct: 1,
+                feedback: "Les clés de substitution sont des identifiants artificiels qui optimisent les jointures, permettent l'historisation des changements et garantissent la stabilité des relations."
+            },
+            {
+                question: "Que signifie ETL dans le contexte du Data Warehouse ?",
+                options: [
+                    "Evaluate, Test, Load",
+                    "Extract, Transform, Load",
+                    "Export, Transfer, Link",
+                    "Execute, Trace, Log"
+                ],
+                correct: 1,
+                feedback: "ETL signifie Extract (extraire les données des sources), Transform (les nettoyer et transformer), et Load (les charger dans le Data Warehouse)."
+            },
+            {
+                question: "Quelle est la granularité recommandée pour les tables de faits ?",
+                options: [
+                    "La plus agrégée possible",
+                    "La plus fine possible",
+                    "Toujours mensuelle",
+                    "Dépend uniquement des performances"
+                ],
+                correct: 1,
+                feedback: "Il est recommandé de partir de la granularité la plus fine possible car on peut toujours agréger des données détaillées, mais on ne peut pas désagréger des données déjà agrégées."
+            },
+            {
+                question: "Quel est l'avantage principal du schéma en flocon par rapport au schéma en étoile ?",
+                options: [
+                    "Meilleures performances",
+                    "Économie d'espace de stockage",
+                    "Simplicité de requêtes",
+                    "Rapidité de développement"
+                ],
+                correct: 1,
+                feedback: "Le schéma en flocon, grâce à sa normalisation, économise l'espace de stockage en éliminant la redondance, au détriment des performances de requête."
+            },
+            {
+                question: "Quelle caractéristique définit un Data Warehouse selon Inmon ?",
+                options: [
+                    "Volatile et détaillé",
+                    "Intégré, non-volatil, historisé et orienté sujet",
+                    "Normalisé et temps réel",
+                    "Décentralisé et flexible"
+                ],
+                correct: 1,
+                feedback: "Selon Bill Inmon, un Data Warehouse doit être intégré (données de multiples sources), non-volatil (données stables), historisé (évolution temporelle) et orienté sujet (organisé par domaines métier)."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let quizCompleted = false;
+
+        function updateQuizDisplay() {
+            const question = quizData[currentQuestionIndex];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-questions').textContent = quizData.length;
+            document.getElementById('current-score').textContent = score;
+            document.getElementById('max-score').textContent = quizData.length;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(button, index === question.correct);
+                optionsContainer.appendChild(button);
+            });
+
+            // Reset feedback
+            const feedback = document.getElementById('question-feedback');
+            feedback.classList.remove('show', 'correct', 'incorrect');
+
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            document.getElementById('next-btn').disabled = true;
+        }
+
+        function selectAnswer(button, isCorrect) {
+            const allButtons = document.querySelectorAll('.option-button');
+            const feedback = document.getElementById('question-feedback');
+            const feedbackText = document.getElementById('feedback-text');
+
+            // Disable all buttons
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                if (btn !== button) {
+                    btn.style.opacity = '0.6';
+                }
+            });
+
+            // Show result
+            if (isCorrect) {
+                button.classList.add('correct');
+                feedback.classList.add('show', 'correct');
+                feedbackText.innerHTML = `✅ <strong>Correct !</strong><br>${quizData[currentQuestionIndex].feedback}`;
+                score++;
+                document.getElementById('current-score').textContent = score;
+            } else {
+                button.classList.add('incorrect');
+                feedback.classList.add('show', 'incorrect');
+                feedbackText.innerHTML = `❌ <strong>Incorrect.</strong><br>${quizData[currentQuestionIndex].feedback}`;
+
+                // Highlight correct answer
+                allButtons.forEach((btn, index) => {
+                    if (index === quizData[currentQuestionIndex].correct) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            // Enable next button
+            document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                updateQuizDisplay();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                updateQuizDisplay();
+            }
+        }
+
+        function finishQuiz() {
+            const percentage = Math.round((score / quizData.length) * 100);
+
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results-container').classList.add('show');
+            document.getElementById('final-score').textContent = `${score}/${quizData.length}`;
+            document.getElementById('meter-inner').textContent = `${percentage}%`;
+
+            // Update performance meter
+            const meter = document.getElementById('performance-meter');
+            const degree = (percentage / 100) * 360;
+            meter.style.background = `conic-gradient(#27ae60 0deg, #27ae60 ${degree}deg, #ecf0f1 ${degree}deg)`;
+
+            // Performance message
+            const messageEl = document.getElementById('performance-message');
+            let message = '';
+            if (percentage >= 90) {
+                message = '🌟 Excellent ! Vous maîtrisez parfaitement les concepts du Data Warehouse.';
+            } else if (percentage >= 70) {
+                message = '👍 Très bien ! Vous avez une bonne compréhension des fondamentaux.';
+            } else if (percentage >= 50) {
+                message = '📚 Bien ! Quelques révisions vous aideront à consolider vos acquis.';
+            } else {
+                message = '💪 Continuez vos efforts ! Une relecture des concepts vous sera bénéfique.';
+            }
+            messageEl.textContent = message;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            quizCompleted = false;
+
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('results-container').classList.remove('show');
+
+            updateQuizDisplay();
+        }
+
+        function reviewSection(section) {
+            const messages = {
+                'oltp-olap': 'OLTP vs OLAP : Systèmes transactionnels (opérations quotidiennes) vs systèmes analytiques (aide à la décision).',
+                'architecture': 'Architecture DW : Sources → Staging → Data Warehouse → Data Marts → Présentation. Processus ETL pour transformer et charger les données.',
+                'modeling': 'Modélisation : Schémas en étoile (performance), flocon (normalisation), constellation (multi-faits). Méthodes Kimball vs Inmon.',
+                'concepts': 'Concepts clés : Tables de faits (mesures), dimensions (attributs), granularité (niveau de détail), clés de substitution (historisation).'
+            };
+
+            alert(`📚 Révision : ${messages[section]}`);
+        }
+
+        function explainConcept(concept) {
+            const explanations = {
+                'foundation': 'Fondements : OLTP pour les transactions quotidiennes, OLAP pour l\'analyse décisionnelle.',
+                'architecture': 'Architecture : Structure en couches depuis les sources jusqu\'aux outils de présentation.',
+                'etl': 'ETL : Extract (extraire), Transform (transformer), Load (charger) les données.',
+                'star': 'Étoile : Schéma dénormalisé centré sur une table de faits, optimal pour les performances.',
+                'snowflake': 'Flocon : Schéma normalisé économisant l\'espace mais avec plus de jointures.',
+                'galaxy': 'Constellation : Multiples tables de faits partageant des dimensions communes.',
+                'kimball': 'Kimball : Approche Bottom-Up, construction incrémentale par Data Marts.',
+                'inmon': 'Inmon : Approche Top-Down, conception globale puis spécialisation.'
+            };
+
+            alert(`💡 ${explanations[concept]}`);
+        }
+
+        function generateCertificate() {
+            const name = prompt('Entrez votre nom pour le certificat :') || 'Participant';
+            const date = new Date().toLocaleDateString('fr-FR');
+
+            alert(`🏆 CERTIFICAT DE FORMATION
+
+${name}
+
+a suivi avec succès la formation
+"DATA WAREHOUSE - FONDAMENTAUX ET MODÉLISATION"
+
+Compétences acquises :
+✓ Différenciation OLTP/OLAP
+✓ Architecture Data Warehouse
+✓ Modélisation dimensionnelle
+✓ Méthodes Kimball et Inmon
+
+Date : ${date}
+Durée : 6 heures
+
+🎓 Félicitations pour votre réussite !`);
+        }
+
+        // Chargement du menu
+        function loadMenu() {
+            fetch('menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('main-menu').innerHTML = data;
+                })
+                .catch(error => console.log('Menu non chargé:', error));
+        }
+
+        // Initialize quiz
+        window.addEventListener('load', () => {
+            loadMenu();
+            updateQuizDisplay();
+        });
+    </script>
+</body>
+</html>

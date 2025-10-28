@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 2 : Architecture HDFS - Formation Hadoop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💾 Partie 2 : Architecture HDFS</h1>
+            <p class="subtitle">Le système de fichiers distribué au cœur de Hadoop</p>
+            <div class="duration">⏱️ Durée : 2h</div>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">← Partie 1</a></li>
+                <li><a href="partie2.html" class="active">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs d'Apprentissage</h2>
+                <ul>
+                    <li>Comprendre l'architecture master/slave de HDFS</li>
+                    <li>Maîtriser les concepts de NameNode et DataNode</li>
+                    <li>Appréhender la réplication et la tolérance aux pannes</li>
+                    <li>Utiliser les commandes HDFS essentielles</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>📚 1. Qu'est-ce que HDFS ?</h2>
+
+                <p>
+                    <strong>HDFS</strong> (Hadoop Distributed File System) est le système de fichiers distribué de Hadoop.
+                    C'est un système conçu pour stocker de très grandes quantités de données sur plusieurs machines tout en
+                    offrant une tolérance aux pannes et un débit élevé.
+                </p>
+
+                <h3>Principes de Conception</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>💪 Tolérance aux Pannes</h4>
+                        <p>Les pannes matérielles sont la norme, pas l'exception. HDFS détecte et récupère automatiquement.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📈 Scalabilité</h4>
+                        <p>Conçu pour s'adapter à des centaines ou milliers de nœuds dans un cluster.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📊 Gros Fichiers</h4>
+                        <p>Optimisé pour stocker des fichiers de plusieurs gigaoctets à téraoctets.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔄 Accès Streaming</h4>
+                        <p>Conçu pour des lectures séquentielles rapides plutôt que des accès aléatoires.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💻 Matériel Standard</h4>
+                        <p>Fonctionne sur du matériel commodity (bon marché), pas de serveurs spécialisés requis.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>✏️ Write Once, Read Many</h4>
+                        <p>Les fichiers sont écrits une fois et lus plusieurs fois. Pas de modifications en place.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Analogie</h4>
+                    <p>
+                        Imaginez une bibliothèque où les livres (données) sont répartis dans plusieurs bâtiments (DataNodes).
+                        Il y a un catalogue central (NameNode) qui sait exactement dans quel bâtiment se trouve chaque livre.
+                        Chaque livre existe en plusieurs exemplaires dans différents bâtiments pour éviter la perte.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🏗️ 2. Architecture de HDFS</h2>
+
+                <h3>Vue d'Ensemble</h3>
+                <p>HDFS suit une architecture <strong>Master/Slave</strong> (ou Master/Worker) :</p>
+
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                           CLIENT                                │
+│                    (Application Hadoop)                         │
+└────────┬──────────────────────────────────────────┬─────────────┘
+         │                                          │
+         │ Métadonnées                             │ Données
+         ↓                                          ↓
+┌────────────────────┐                    ┌──────────────────────┐
+│     NAMENODE       │ ← Heartbeat &     │     DATANODES        │
+│   (Master/Maître)  │   Block Reports → │   (Slaves/Workers)   │
+│                    │                    │                      │
+│ - Métadonnées      │                    │  DataNode 1          │
+│ - Arborescence     │                    │  DataNode 2          │
+│ - Localisation     │                    │  DataNode 3          │
+│   des blocs        │                    │  DataNode N          │
+└────────────────────┘                    └──────────────────────┘
+         ↕
+┌────────────────────┐
+│ SECONDARY NAMENODE │
+│   (Checkpoint)     │
+└────────────────────┘
+                    </pre>
+                </div>
+
+                <h3>Composants Principaux</h3>
+
+                <h4>🎯 NameNode (Master)</h4>
+                <div class="card">
+                    <p>Le NameNode est le <strong>maître</strong> du cluster HDFS. Il gère :</p>
+                    <ul>
+                        <li><strong>Métadonnées</strong> : Structure de l'arborescence des fichiers et répertoires</li>
+                        <li><strong>Namespace</strong> : Noms de fichiers, permissions, propriétaires</li>
+                        <li><strong>Mapping des blocs</strong> : Quelle partie de fichier est stockée où</li>
+                        <li><strong>Heartbeats</strong> : Surveillance de l'état des DataNodes</li>
+                        <li><strong>Réplication</strong> : Décisions sur où répliquer les blocs</li>
+                    </ul>
+
+                    <div class="alert alert-danger">
+                        <h4>Point de Défaillance Unique (SPOF)</h4>
+                        <p>
+                            Le NameNode est critique ! Si le NameNode tombe en panne, tout le cluster devient inaccessible.
+                            Solution : <strong>High Availability (HA)</strong> avec un NameNode de secours.
+                        </p>
+                    </div>
+                </div>
+
+                <h4>💾 DataNodes (Slaves)</h4>
+                <div class="card">
+                    <p>Les DataNodes sont les <strong>esclaves/workers</strong> qui :</p>
+                    <ul>
+                        <li>Stockent physiquement les données sous forme de blocs</li>
+                        <li>Servent les requêtes de lecture et d'écriture des clients</li>
+                        <li>Envoient des heartbeats au NameNode toutes les 3 secondes</li>
+                        <li>Envoient des block reports (liste de blocs stockés) régulièrement</li>
+                        <li>Exécutent les instructions du NameNode (réplication, suppression)</li>
+                    </ul>
+                </div>
+
+                <h4>🔄 Secondary NameNode</h4>
+                <div class="card">
+                    <p><strong>Attention :</strong> Ce n'est PAS un NameNode de backup !</p>
+                    <p>Le Secondary NameNode :</p>
+                    <ul>
+                        <li>Fusionne périodiquement les fichiers FSImage et EditLog</li>
+                        <li>Crée des checkpoints pour accélérer le redémarrage du NameNode</li>
+                        <li>Réduit la charge du NameNode principal</li>
+                    </ul>
+                    <p><em>Note : En production, on utilise plutôt la configuration High Availability avec un Standby NameNode.</em></p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🧩 3. Blocs et Réplication</h2>
+
+                <h3>Concept de Blocs</h3>
+                <p>
+                    Dans HDFS, les fichiers sont découpés en <strong>blocs</strong> de taille fixe.
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Version Hadoop</th>
+                            <th>Taille de Bloc par Défaut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Hadoop 1.x</td>
+                            <td>64 MB</td>
+                        </tr>
+                        <tr>
+                            <td>Hadoop 2.x et 3.x</td>
+                            <td>128 MB</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <h4>Exemple</h4>
+                    <p>
+                        Un fichier de 300 MB sera découpé en :
+                    </p>
+                    <ul>
+                        <li>Bloc 1 : 128 MB</li>
+                        <li>Bloc 2 : 128 MB</li>
+                        <li>Bloc 3 : 44 MB (reste du fichier)</li>
+                    </ul>
+                </div>
+
+                <h3>Pourquoi des Blocs Aussi Gros ?</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📉 Minimiser les Métadonnées</h4>
+                        <p>Moins de blocs = moins de métadonnées à gérer dans le NameNode</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>⚡ Optimiser le Débit</h4>
+                        <p>Transferts séquentiels longs = meilleur débit réseau et disque</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔍 Réduire le Seek Time</h4>
+                        <p>Moins de déplacements de la tête de lecture sur le disque</p>
+                    </div>
+                </div>
+
+                <h3>Réplication des Blocs</h3>
+                <p>
+                    Chaque bloc est <strong>répliqué</strong> sur plusieurs DataNodes pour assurer la tolérance aux pannes.
+                    Le facteur de réplication par défaut est <strong>3</strong>.
+                </p>
+
+                <div class="workflow-diagram">
+                    <pre>
+Fichier original (300 MB)
+         ↓
+Découpage en blocs
+         ↓
+┌────────┬────────┬────────┐
+│ Bloc A │ Bloc B │ Bloc C │
+│ 128 MB │ 128 MB │ 44 MB  │
+└────────┴────────┴────────┘
+         ↓
+Réplication (facteur 3)
+
+Rack 1              Rack 2              Rack 3
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ DataNode 1  │    │ DataNode 3  │    │ DataNode 5  │
+│ A, B        │    │ A, C        │    │ B, C        │
+├─────────────┤    ├─────────────┤    ├─────────────┤
+│ DataNode 2  │    │ DataNode 4  │    │ DataNode 6  │
+│ B, C        │    │ A, B        │    │ A           │
+└─────────────┘    └─────────────┘    └─────────────┘
+                    </pre>
+                </div>
+
+                <h3>Stratégie de Placement des Répliques</h3>
+                <div class="key-points">
+                    <h3>🎯 Politique par Défaut (Rack Awareness)</h3>
+                    <ul>
+                        <li><strong>Réplique 1</strong> : Sur le nœud local (ou aléatoire si écriture depuis l'extérieur)</li>
+                        <li><strong>Réplique 2</strong> : Sur un nœud d'un rack différent</li>
+                        <li><strong>Réplique 3</strong> : Sur un autre nœud du même rack que la réplique 2</li>
+                    </ul>
+                    <p>
+                        <strong>Avantages :</strong> Balance entre fiabilité (tolérance aux pannes de rack) et
+                        performance réseau (2 répliques sur le même rack = moins de bande passante inter-rack).
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>⚙️ 4. Lecture et Écriture dans HDFS</h2>
+
+                <h3>Processus de Lecture</h3>
+                <div class="workflow-diagram">
+                    <pre>
+1. Client demande au NameNode les métadonnées du fichier
+   ↓
+2. NameNode retourne la liste des blocs et leur localisation
+   ↓
+3. Client contacte directement les DataNodes pour lire les blocs
+   ↓
+4. Client reçoit les données et les assemble
+                    </pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Optimisation</h4>
+                    <p>
+                        Le client lit toujours depuis le DataNode le plus proche (même rack, puis même datacenter).
+                        Cela minimise la latence et la consommation de bande passante réseau.
+                    </p>
+                </div>
+
+                <h3>Processus d'Écriture</h3>
+                <div class="workflow-diagram">
+                    <pre>
+1. Client demande au NameNode de créer un nouveau fichier
+   ↓
+2. NameNode vérifie les permissions et crée l'entrée
+   ↓
+3. Client découpe le fichier en blocs et demande les DataNodes cibles
+   ↓
+4. NameNode fournit une liste de DataNodes pour chaque bloc
+   ↓
+5. Client envoie le premier bloc au premier DataNode
+   ↓
+6. Le DataNode réplique automatiquement vers les autres DataNodes (pipeline)
+   ↓
+7. Une fois tous les blocs écrits et répliqués, le fichier est "fermé"
+                    </pre>
+                </div>
+
+                <h4>Pipeline de Réplication</h4>
+                <div class="workflow-diagram">
+                    <pre>
+Client  →  DataNode 1  →  DataNode 2  →  DataNode 3
+                ↓              ↓              ↓
+              ACK 1  ←  ACK 2  ←  ACK 3
+                    </pre>
+                </div>
+                <p>
+                    Les données sont envoyées en pipeline : pendant que DataNode 1 reçoit le bloc, il commence
+                    déjà à l'envoyer à DataNode 2, qui l'envoie à DataNode 3. C'est très efficace !
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>💻 5. Commandes HDFS Essentielles</h2>
+
+                <p>HDFS propose des commandes similaires aux commandes Unix pour manipuler les fichiers.</p>
+
+                <h3>Format Général</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">hdfs dfs -&lt;commande&gt; &lt;arguments&gt;
+# ou
+hadoop fs -&lt;commande&gt; &lt;arguments&gt;</code></pre>
+                </div>
+
+                <h3>Commandes de Base</h3>
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ls</td>
+                            <td>Lister les fichiers et répertoires</td>
+                            <td><code>hdfs dfs -ls /user/data</code></td>
+                        </tr>
+                        <tr>
+                            <td>mkdir</td>
+                            <td>Créer un répertoire</td>
+                            <td><code>hdfs dfs -mkdir /user/mydir</code></td>
+                        </tr>
+                        <tr>
+                            <td>put</td>
+                            <td>Copier un fichier local vers HDFS</td>
+                            <td><code>hdfs dfs -put data.txt /user/data/</code></td>
+                        </tr>
+                        <tr>
+                            <td>get</td>
+                            <td>Copier un fichier HDFS vers local</td>
+                            <td><code>hdfs dfs -get /user/data/result.txt .</code></td>
+                        </tr>
+                        <tr>
+                            <td>cat</td>
+                            <td>Afficher le contenu d'un fichier</td>
+                            <td><code>hdfs dfs -cat /user/data/log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td>rm</td>
+                            <td>Supprimer un fichier</td>
+                            <td><code>hdfs dfs -rm /user/data/old.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td>rm -r</td>
+                            <td>Supprimer un répertoire</td>
+                            <td><code>hdfs dfs -rm -r /user/data/olddir</code></td>
+                        </tr>
+                        <tr>
+                            <td>cp</td>
+                            <td>Copier dans HDFS</td>
+                            <td><code>hdfs dfs -cp /src/file.txt /dest/</code></td>
+                        </tr>
+                        <tr>
+                            <td>mv</td>
+                            <td>Déplacer/renommer dans HDFS</td>
+                            <td><code>hdfs dfs -mv /old/path /new/path</code></td>
+                        </tr>
+                        <tr>
+                            <td>du</td>
+                            <td>Taille des fichiers/répertoires</td>
+                            <td><code>hdfs dfs -du -h /user/data</code></td>
+                        </tr>
+                        <tr>
+                            <td>df</td>
+                            <td>Espace disque disponible</td>
+                            <td><code>hdfs dfs -df -h</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Commandes Avancées</h3>
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>copyFromLocal</td>
+                            <td>Copier local → HDFS (idem put)</td>
+                            <td><code>hdfs dfs -copyFromLocal data.txt /user/</code></td>
+                        </tr>
+                        <tr>
+                            <td>copyToLocal</td>
+                            <td>Copier HDFS → local (idem get)</td>
+                            <td><code>hdfs dfs -copyToLocal /user/data.txt .</code></td>
+                        </tr>
+                        <tr>
+                            <td>getmerge</td>
+                            <td>Fusionner plusieurs fichiers HDFS en un seul local</td>
+                            <td><code>hdfs dfs -getmerge /user/logs/* output.log</code></td>
+                        </tr>
+                        <tr>
+                            <td>tail</td>
+                            <td>Afficher la fin d'un fichier</td>
+                            <td><code>hdfs dfs -tail /user/logs/app.log</code></td>
+                        </tr>
+                        <tr>
+                            <td>chmod</td>
+                            <td>Changer les permissions</td>
+                            <td><code>hdfs dfs -chmod 755 /user/data</code></td>
+                        </tr>
+                        <tr>
+                            <td>chown</td>
+                            <td>Changer le propriétaire</td>
+                            <td><code>hdfs dfs -chown user:group /user/data</code></td>
+                        </tr>
+                        <tr>
+                            <td>setrep</td>
+                            <td>Modifier le facteur de réplication</td>
+                            <td><code>hdfs dfs -setrep -w 5 /user/important.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td>stat</td>
+                            <td>Afficher les statistiques d'un fichier</td>
+                            <td><code>hdfs dfs -stat %r /user/data.txt</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="exercise">
+                    <h4>Exercice Pratique : Commandes HDFS</h4>
+                    <p>À faire dans votre environnement Hadoop (vous le configurerez dans la Partie 6) :</p>
+                    <ol>
+                        <li>Créer un répertoire <code>/user/votrenom/tp1</code></li>
+                        <li>Créer un fichier local contenant "Hello Hadoop" et le copier dans HDFS</li>
+                        <li>Lister le contenu du répertoire dans HDFS</li>
+                        <li>Afficher le contenu du fichier depuis HDFS</li>
+                        <li>Vérifier le facteur de réplication du fichier</li>
+                        <li>Modifier le facteur de réplication à 5</li>
+                        <li>Supprimer le fichier</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🛡️ 6. Tolérance aux Pannes</h2>
+
+                <h3>Mécanismes de Protection</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>💓 Heartbeats</h4>
+                        <p>Les DataNodes envoient des heartbeats au NameNode toutes les 3 secondes. Si pas de heartbeat pendant 10 minutes → DataNode considéré comme mort.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔄 Ré-réplication Automatique</h4>
+                        <p>Si un DataNode tombe, le NameNode lance automatiquement la réplication des blocs manquants vers d'autres DataNodes.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>✅ Checksums</h4>
+                        <p>Chaque bloc est accompagné d'un checksum CRC-32. À chaque lecture, le checksum est vérifié pour détecter la corruption.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📸 Snapshots</h4>
+                        <p>Possibilité de créer des snapshots en lecture seule de l'arborescence HDFS pour la protection des données.</p>
+                    </div>
+                </div>
+
+                <h3>Scénarios de Panne</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type de Panne</th>
+                            <th>Impact</th>
+                            <th>Récupération</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Panne d'un DataNode</td>
+                            <td>Faible - Données toujours accessibles via répliques</td>
+                            <td>Automatique - Ré-réplication des blocs</td>
+                        </tr>
+                        <tr>
+                            <td>Panne d'un Rack</td>
+                            <td>Faible - Répliques sur autres racks</td>
+                            <td>Automatique - Ré-réplication</td>
+                        </tr>
+                        <tr>
+                            <td>Corruption de Bloc</td>
+                            <td>Faible - Lecture depuis réplique saine</td>
+                            <td>Automatique - Bloc corrompu supprimé et ré-répliqué</td>
+                        </tr>
+                        <tr>
+                            <td>Panne du NameNode</td>
+                            <td><strong>Critique</strong> - Cluster inaccessible</td>
+                            <td>Manuelle (sans HA) ou Automatique (avec HA)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>📝 Résumé de la Partie 2</h2>
+                <div class="key-points">
+                    <h3>Points Clés à Retenir</h3>
+                    <ul>
+                        <li>HDFS utilise une architecture Master (NameNode) / Slaves (DataNodes)</li>
+                        <li>Les fichiers sont découpés en blocs de 128 MB (par défaut)</li>
+                        <li>Chaque bloc est répliqué 3 fois par défaut pour la tolérance aux pannes</li>
+                        <li>Le NameNode gère les métadonnées, les DataNodes stockent les données</li>
+                        <li>Les commandes HDFS sont similaires aux commandes Unix</li>
+                        <li>HDFS est optimisé pour les gros fichiers et les accès séquentiels</li>
+                        <li>La réplication et les checksums assurent la fiabilité des données</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success" style="margin-top: 40px;">
+                <h4>✅ Prêt pour la Suite ?</h4>
+                <p>Vous maîtrisez maintenant HDFS, le système de stockage de Hadoop. Dans la partie suivante, nous découvrirons <strong>MapReduce</strong>, le paradigme de traitement parallèle des données.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+            <p><a href="partie3.html">Partie 3 : MapReduce →</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>

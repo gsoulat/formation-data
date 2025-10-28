@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 4 : YARN - Formation Hadoop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Partie 4 : YARN</h1>
+            <p class="subtitle">Yet Another Resource Negotiator - Le gestionnaire de ressources Hadoop</p>
+            <div class="duration">⏱️ Durée : 1h30</div>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie3.html">← Partie 3</a></li>
+                <li><a href="partie4.html" class="active">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs d'Apprentissage</h2>
+                <ul>
+                    <li>Comprendre l'architecture de YARN</li>
+                    <li>Distinguer ResourceManager et NodeManager</li>
+                    <li>Maîtriser les concepts d'ApplicationMaster et Container</li>
+                    <li>Découvrir les schedulers YARN</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>📚 1. Qu'est-ce que YARN ?</h2>
+
+                <p>
+                    <strong>YARN</strong> (Yet Another Resource Negotiator) est le gestionnaire de ressources de Hadoop 2.x et versions supérieures.
+                    Il sépare la gestion des ressources du traitement des données.
+                </p>
+
+                <h3>Pourquoi YARN ?</h3>
+                <div class="alert alert-info">
+                    <h4>Problème dans Hadoop 1.x</h4>
+                    <p>
+                        Dans Hadoop 1.x, le <strong>JobTracker</strong> gérait à la fois :
+                    </p>
+                    <ul>
+                        <li>L'allocation des ressources du cluster</li>
+                        <li>La planification et le monitoring des jobs MapReduce</li>
+                    </ul>
+                    <p>
+                        <strong>Limites :</strong> Goulot d'étranglement (scalabilité limitée à ~4000 nœuds),
+                        support uniquement de MapReduce, pas d'autres frameworks.
+                    </p>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Solution : YARN (Hadoop 2.x)</h4>
+                    <p>
+                        YARN sépare les responsabilités :
+                    </p>
+                    <ul>
+                        <li><strong>Gestion des ressources</strong> : ResourceManager + NodeManagers</li>
+                        <li><strong>Gestion des applications</strong> : ApplicationMaster par application</li>
+                    </ul>
+                    <p>
+                        <strong>Avantages :</strong> Scalabilité > 10 000 nœuds, support multi-framework
+                        (MapReduce, Spark, Tez, Storm, etc.)
+                    </p>
+                </div>
+
+                <h3>Hadoop 1.x vs Hadoop 2.x</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Hadoop 1.x</th>
+                            <th>Hadoop 2.x (YARN)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gestion de ressources</td>
+                            <td>JobTracker</td>
+                            <td>ResourceManager</td>
+                        </tr>
+                        <tr>
+                            <td>Exécution locale</td>
+                            <td>TaskTracker</td>
+                            <td>NodeManager</td>
+                        </tr>
+                        <tr>
+                            <td>Frameworks supportés</td>
+                            <td>MapReduce uniquement</td>
+                            <td>MapReduce, Spark, Tez, etc.</td>
+                        </tr>
+                        <tr>
+                            <td>Scalabilité</td>
+                            <td>~4 000 nœuds</td>
+                            <td>>10 000 nœuds</td>
+                        </tr>
+                        <tr>
+                            <td>Utilisation des ressources</td>
+                            <td>Slots fixes (map/reduce)</td>
+                            <td>Conteneurs flexibles</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>🏗️ 2. Architecture de YARN</h2>
+
+                <h3>Composants Principaux</h3>
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                        CLIENT                               │
+│                   (Soumet l'application)                    │
+└─────────────────────┬───────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│                   RESOURCE MANAGER                          │
+│                      (Master Global)                        │
+│                                                             │
+│  ┌──────────────┐              ┌────────────────┐         │
+│  │  Scheduler   │              │ ApplicationsManager │     │
+│  └──────────────┘              └────────────────┘         │
+└────────┬──────────────────────────────────────────┬────────┘
+         │                                          │
+         ↓                                          ↓
+┌────────────────────┐                  ┌──────────────────────┐
+│  NODE MANAGER 1    │                  │  NODE MANAGER N      │
+│                    │                  │                      │
+│  ┌──────────────┐  │                  │  ┌──────────────┐    │
+│  │ Container 1  │  │                  │  │ Container 1  │    │
+│  │ AppMaster    │  │                  │  │ Task         │    │
+│  └──────────────┘  │                  │  └──────────────┘    │
+│  ┌──────────────┐  │                  │  ┌──────────────┐    │
+│  │ Container 2  │  │                  │  │ Container 2  │    │
+│  │ Task         │  │                  │  │ Task         │    │
+│  └──────────────┘  │                  │  └──────────────┘    │
+└────────────────────┘                  └──────────────────────┘
+                    </pre>
+                </div>
+
+                <h3>ResourceManager (RM)</h3>
+                <div class="card">
+                    <p>Le <strong>ResourceManager</strong> est le maître global qui gère toutes les ressources du cluster.</p>
+                    <h4>Responsabilités :</h4>
+                    <ul>
+                        <li>Allouer les ressources aux applications</li>
+                        <li>Maintenir un inventaire des ressources disponibles</li>
+                        <li>Planifier les applications (via le Scheduler)</li>
+                        <li>Gérer le cycle de vie des applications</li>
+                    </ul>
+                    <h4>Sous-composants :</h4>
+                    <ul>
+                        <li><strong>Scheduler</strong> : Alloue les ressources (CPU, mémoire) aux applications</li>
+                        <li><strong>ApplicationsManager</strong> : Accepte les soumissions de jobs, négocie le premier conteneur pour l'ApplicationMaster</li>
+                    </ul>
+                </div>
+
+                <h3>NodeManager (NM)</h3>
+                <div class="card">
+                    <p>Le <strong>NodeManager</strong> est l'agent qui s'exécute sur chaque nœud worker du cluster.</p>
+                    <h4>Responsabilités :</h4>
+                    <ul>
+                        <li>Gérer les conteneurs sur son nœud</li>
+                        <li>Monitorer l'utilisation des ressources (CPU, mémoire, disque, réseau)</li>
+                        <li>Envoyer des heartbeats au ResourceManager</li>
+                        <li>Reporter l'état des conteneurs</li>
+                        <li>Gérer les logs des applications</li>
+                    </ul>
+                </div>
+
+                <h3>ApplicationMaster (AM)</h3>
+                <div class="card">
+                    <p>L'<strong>ApplicationMaster</strong> est un processus spécifique à chaque application.</p>
+                    <h4>Responsabilités :</h4>
+                    <ul>
+                        <li>Négocier les ressources avec le ResourceManager</li>
+                        <li>Travailler avec les NodeManagers pour exécuter et monitorer les tâches</li>
+                        <li>Gérer le cycle de vie de l'application</li>
+                        <li>Gérer les échecs de tâches et relancer si nécessaire</li>
+                    </ul>
+                    <p><em>Note : Chaque application (job MapReduce, application Spark, etc.) a son propre ApplicationMaster.</em></p>
+                </div>
+
+                <h3>Container</h3>
+                <div class="card">
+                    <p>Un <strong>Container</strong> est une unité d'allocation de ressources.</p>
+                    <h4>Caractéristiques :</h4>
+                    <ul>
+                        <li>Encapsule des ressources : CPU (vcores) et mémoire (RAM)</li>
+                        <li>S'exécute sur un NodeManager</li>
+                        <li>Peut contenir un ApplicationMaster ou une tâche (Map, Reduce, Spark executor, etc.)</li>
+                    </ul>
+                    <p><strong>Exemple :</strong> Container avec 2 GB RAM et 1 vcore</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔄 3. Cycle de Vie d'une Application YARN</h2>
+
+                <div class="workflow-diagram">
+                    <pre>
+1. Client soumet une application au ResourceManager
+   ↓
+2. ResourceManager alloue un conteneur pour l'ApplicationMaster
+   ↓
+3. NodeManager lance l'ApplicationMaster dans ce conteneur
+   ↓
+4. ApplicationMaster s'enregistre auprès du ResourceManager
+   ↓
+5. ApplicationMaster demande des conteneurs pour les tâches
+   ↓
+6. ResourceManager (Scheduler) alloue les conteneurs
+   ↓
+7. ApplicationMaster contacte les NodeManagers pour lancer les conteneurs
+   ↓
+8. NodeManagers lancent les conteneurs et exécutent les tâches
+   ↓
+9. Tâches reportent leur statut à l'ApplicationMaster
+   ↓
+10. ApplicationMaster reporte le progrès au ResourceManager
+   ↓
+11. Une fois terminé, ApplicationMaster se désenregistre
+   ↓
+12. NodeManagers nettoient les conteneurs
+                    </pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Exemple Concret : Job MapReduce</h4>
+                    <ol>
+                        <li>Client soumet un job MapReduce</li>
+                        <li>RM alloue un conteneur pour le MR ApplicationMaster</li>
+                        <li>MR AppMaster démarre et calcule les splits d'entrée</li>
+                        <li>MR AppMaster demande des conteneurs pour les mappers et reducers</li>
+                        <li>RM alloue les conteneurs demandés</li>
+                        <li>NMs lancent les tâches Map et Reduce</li>
+                        <li>MR AppMaster monitore le progrès</li>
+                        <li>À la fin, MR AppMaster se désenregistre</li>
+                    </ol>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📅 4. Schedulers YARN</h2>
+
+                <p>Le <strong>Scheduler</strong> détermine quelle application reçoit des ressources et quand.</p>
+
+                <h3>Types de Schedulers</h3>
+
+                <h4>1. FIFO Scheduler</h4>
+                <div class="card">
+                    <p><strong>First In, First Out</strong> - Le plus simple.</p>
+                    <ul>
+                        <li>Les applications sont servies dans l'ordre de soumission</li>
+                        <li>Une application monopolise toutes les ressources jusqu'à sa fin</li>
+                    </ul>
+                    <p><strong>Avantage :</strong> Simple</p>
+                    <p><strong>Inconvénient :</strong> Pas de multitâche, petites applications attendent longtemps</p>
+                    <p><em>Rarement utilisé en production.</em></p>
+                </div>
+
+                <h4>2. Capacity Scheduler</h4>
+                <div class="card">
+                    <p>Divise le cluster en <strong>queues</strong> (files d'attente) avec des capacités garanties.</p>
+                    <ul>
+                        <li>Chaque queue a un pourcentage minimum de ressources</li>
+                        <li>Les ressources inutilisées peuvent être partagées (élasticité)</li>
+                        <li>Hiérarchie de queues possible</li>
+                        <li>ACLs (contrôles d'accès) par queue</li>
+                    </ul>
+                    <p><strong>Exemple :</strong></p>
+                    <ul>
+                        <li>Queue "production" : 70% des ressources</li>
+                        <li>Queue "dev" : 20%</li>
+                        <li>Queue "test" : 10%</li>
+                    </ul>
+                    <p><em>Scheduler par défaut dans la plupart des distributions Hadoop.</em></p>
+                </div>
+
+                <h4>3. Fair Scheduler</h4>
+                <div class="card">
+                    <p>Partage équitablement les ressources entre toutes les applications actives.</p>
+                    <ul>
+                        <li>Chaque application reçoit environ la même quantité de ressources</li>
+                        <li>Support des pools (similaire aux queues)</li>
+                        <li>Possibilité de définir des poids et des priorités</li>
+                        <li>Préemption : peut tuer des conteneurs pour équilibrer</li>
+                    </ul>
+                    <p><strong>Avantage :</strong> Équité entre utilisateurs et applications</p>
+                    <p><em>Utilisé par défaut dans Cloudera (CDH).</em></p>
+                </div>
+
+                <h3>Comparaison des Schedulers</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Caractéristique</th>
+                            <th>FIFO</th>
+                            <th>Capacity</th>
+                            <th>Fair</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Multitâche</td>
+                            <td>❌</td>
+                            <td>✅</td>
+                            <td>✅</td>
+                        </tr>
+                        <tr>
+                            <td>Partage de ressources</td>
+                            <td>❌</td>
+                            <td>Par queue</td>
+                            <td>Équitable</td>
+                        </tr>
+                        <tr>
+                            <td>Élasticité</td>
+                            <td>❌</td>
+                            <td>✅</td>
+                            <td>✅</td>
+                        </tr>
+                        <tr>
+                            <td>Préemption</td>
+                            <td>❌</td>
+                            <td>Optionnel</td>
+                            <td>✅</td>
+                        </tr>
+                        <tr>
+                            <td>Complexité configuration</td>
+                            <td>Faible</td>
+                            <td>Moyenne</td>
+                            <td>Moyenne</td>
+                        </tr>
+                        <tr>
+                            <td>Cas d'usage</td>
+                            <td>Test/Dev</td>
+                            <td>Multi-tenant avec SLA</td>
+                            <td>Partage équitable</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>🖥️ 5. Monitoring YARN</h2>
+
+                <h3>YARN Web UI</h3>
+                <p>Interface web pour monitorer le cluster YARN.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Accéder à l'interface Web du ResourceManager
+http://&lt;resourcemanager-host&gt;:8088</code></pre>
+                </div>
+
+                <h4>Informations Disponibles :</h4>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📊 Cluster Metrics</h4>
+                        <ul>
+                            <li>Mémoire totale/utilisée/disponible</li>
+                            <li>VCores totaux/utilisés/disponibles</li>
+                            <li>Nombre de NodeManagers actifs</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📱 Applications</h4>
+                        <ul>
+                            <li>Applications en cours, terminées, échouées</li>
+                            <li>Progrès de chaque application</li>
+                            <li>Logs et diagnostics</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📂 Queues</h4>
+                        <ul>
+                            <li>Utilisation par queue</li>
+                            <li>Applications en attente par queue</li>
+                            <li>Capacité utilisée vs disponible</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🖥️ Nodes</h4>
+                        <ul>
+                            <li>État de chaque NodeManager</li>
+                            <li>Ressources utilisées par nœud</li>
+                            <li>Conteneurs actifs par nœud</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Commandes CLI</h3>
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>yarn node -list</code></td>
+                            <td>Lister tous les NodeManagers</td>
+                        </tr>
+                        <tr>
+                            <td><code>yarn application -list</code></td>
+                            <td>Lister les applications en cours</td>
+                        </tr>
+                        <tr>
+                            <td><code>yarn application -status &lt;app-id&gt;</code></td>
+                            <td>Voir le statut d'une application</td>
+                        </tr>
+                        <tr>
+                            <td><code>yarn application -kill &lt;app-id&gt;</code></td>
+                            <td>Tuer une application</td>
+                        </tr>
+                        <tr>
+                            <td><code>yarn logs -applicationId &lt;app-id&gt;</code></td>
+                            <td>Voir les logs d'une application</td>
+                        </tr>
+                        <tr>
+                            <td><code>yarn queue -status &lt;queue-name&gt;</code></td>
+                            <td>Voir le statut d'une queue</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>⚙️ 6. Configuration YARN</h2>
+
+                <p>Fichier principal : <code>yarn-site.xml</code></p>
+
+                <h3>Paramètres Importants</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-xml">&lt;configuration&gt;
+    &lt;!-- Adresse du ResourceManager --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;
+        &lt;value&gt;master.example.com&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Mémoire totale par NodeManager --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.resource.memory-mb&lt;/name&gt;
+        &lt;value&gt;8192&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- VCores totaux par NodeManager --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.resource.cpu-vcores&lt;/name&gt;
+        &lt;value&gt;4&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Scheduler à utiliser --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.resourcemanager.scheduler.class&lt;/name&gt;
+        &lt;value&gt;org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Mémoire minimum par conteneur --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.scheduler.minimum-allocation-mb&lt;/name&gt;
+        &lt;value&gt;1024&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Mémoire maximum par conteneur --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.scheduler.maximum-allocation-mb&lt;/name&gt;
+        &lt;value&gt;8192&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📝 Résumé de la Partie 4</h2>
+                <div class="key-points">
+                    <h3>Points Clés à Retenir</h3>
+                    <ul>
+                        <li>YARN sépare la gestion des ressources du traitement des données</li>
+                        <li>Architecture : ResourceManager (maître) + NodeManagers (workers)</li>
+                        <li>Chaque application a son propre ApplicationMaster</li>
+                        <li>Les Containers sont les unités d'allocation de ressources</li>
+                        <li>3 schedulers : FIFO (simple), Capacity (queues), Fair (équitable)</li>
+                        <li>YARN permet de faire cohabiter plusieurs frameworks (MapReduce, Spark, etc.)</li>
+                        <li>Monitoring via Web UI (port 8088) et commandes yarn CLI</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success" style="margin-top: 40px;">
+                <h4>✅ Prêt pour la Suite ?</h4>
+                <p>Vous maîtrisez maintenant YARN ! Dans la partie suivante, nous explorerons <strong>l'écosystème Hadoop</strong> avec des outils comme Hive, Pig, HBase et plus encore.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+            <p><a href="partie5.html">Partie 5 : Écosystème Hadoop →</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>

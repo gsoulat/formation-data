@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Hadoop - Data Engineering</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐘 Formation Hadoop</h1>
+            <p class="subtitle">Maîtrisez le framework Big Data pour le traitement distribué de données massives</p>
+            <div class="duration">⏱️ Durée : 3-4 jours (23 heures de cours + pratique)</div>
+        </header>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs de la Formation</h2>
+                <ul>
+                    <li>Comprendre l'architecture et les composants de l'écosystème Hadoop</li>
+                    <li>Maîtriser HDFS pour le stockage distribué de données</li>
+                    <li>Utiliser MapReduce pour le traitement parallèle</li>
+                    <li>Découvrir YARN et la gestion des ressources</li>
+                    <li>Manipuler les outils de l'écosystème Hadoop (Hive, Pig, HBase)</li>
+                    <li>Installer et configurer un cluster Hadoop</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>📚 Programme de la Formation</h2>
+
+                <div class="module-card">
+                    <h3>Jour 1 : Fondamentaux Hadoop</h3>
+                    <p><strong>⏱️ Durée :</strong> 7 heures</p>
+
+                    <h4>🔹 Partie 1 : Introduction à Hadoop (1h30)</h4>
+                    <ul>
+                        <li>Qu'est-ce que le Big Data ?</li>
+                        <li>Historique et origine de Hadoop</li>
+                        <li>Architecture générale de Hadoop</li>
+                        <li>Les 3 V du Big Data</li>
+                        <li>Cas d'usage et entreprises utilisatrices</li>
+                    </ul>
+                    <a href="parties/partie1.html">Commencer la Partie 1 →</a>
+
+                    <h4>🔹 Partie 2 : Architecture HDFS (2h)</h4>
+                    <ul>
+                        <li>Principes du système de fichiers distribué</li>
+                        <li>Architecture NameNode / DataNode</li>
+                        <li>Réplication et tolérance aux pannes</li>
+                        <li>Commandes HDFS essentielles</li>
+                        <li>TP : Manipulation de fichiers dans HDFS</li>
+                    </ul>
+                    <a href="parties/partie2.html">Commencer la Partie 2 →</a>
+
+                    <h4>🔹 Partie 3 : MapReduce (3h30)</h4>
+                    <ul>
+                        <li>Paradigme de programmation MapReduce</li>
+                        <li>Phases Map, Shuffle et Reduce</li>
+                        <li>Écriture de jobs MapReduce en Python avec Hadoop Streaming</li>
+                        <li>Optimisation des performances</li>
+                        <li>TP : Créer un job WordCount en Python</li>
+                    </ul>
+                    <a href="parties/partie3.html">Commencer la Partie 3 →</a>
+                </div>
+
+                <div class="module-card">
+                    <h3>Jour 2 : Écosystème et Pratique</h3>
+                    <p><strong>⏱️ Durée :</strong> 7 heures</p>
+
+                    <h4>🔹 Partie 4 : YARN - Yet Another Resource Negotiator (1h30)</h4>
+                    <ul>
+                        <li>Architecture de YARN</li>
+                        <li>ResourceManager et NodeManager</li>
+                        <li>Gestion des applications et des conteneurs</li>
+                        <li>Scheduling et allocation de ressources</li>
+                        <li>Monitoring avec YARN UI</li>
+                    </ul>
+                    <a href="parties/partie4.html">Commencer la Partie 4 →</a>
+
+                    <h4>🔹 Partie 5 : Écosystème Hadoop (3h)</h4>
+                    <ul>
+                        <li>Apache Hive : SQL sur Hadoop</li>
+                        <li>Apache Pig : Langage de scripting</li>
+                        <li>Apache HBase : Base de données NoSQL</li>
+                        <li>Apache Sqoop : Import/Export de données</li>
+                        <li>Apache Flume : Collecte de logs</li>
+                        <li>TP : Requêtes Hive et scripts Pig</li>
+                    </ul>
+                    <a href="parties/partie5.html">Commencer la Partie 5 →</a>
+
+                    <h4>🔹 Partie 6 : Installation et Configuration (2h30)</h4>
+                    <ul>
+                        <li>Modes de déploiement (Standalone, Pseudo-distribué, Distribué)</li>
+                        <li>Installation d'Hadoop sur Linux</li>
+                        <li>Configuration des fichiers core-site.xml, hdfs-site.xml</li>
+                        <li>Configuration de YARN</li>
+                        <li>Sécurité et bonnes pratiques</li>
+                        <li>TP : Installer un cluster Hadoop</li>
+                    </ul>
+                    <a href="parties/partie6.html">Commencer la Partie 6 →</a>
+                </div>
+
+                <div class="module-card">
+                    <h3>Jour 3 : Cloud et Pratique Avancée</h3>
+                    <p><strong>⏱️ Durée :</strong> 6h30</p>
+
+                    <h4>🔹 Partie 7 : Déploiement Hadoop sur Azure (2h30)</h4>
+                    <ul>
+                        <li>Introduction à Azure HDInsight</li>
+                        <li>Création d'un cluster Hadoop sur Azure pas à pas</li>
+                        <li>Configuration du stockage Azure pour HDFS</li>
+                        <li>Exécution de jobs MapReduce sur Azure</li>
+                        <li>Monitoring et gestion du cluster</li>
+                        <li>TP : Déployer et utiliser Hadoop sur Azure</li>
+                    </ul>
+                    <a href="parties/partie7.html">Commencer la Partie 7 →</a>
+
+                    <h4>🔹 Partie 8 : Exercices Pratiques Guidés (4h)</h4>
+                    <ul>
+                        <li>Exercice 1 : Manipulation avancée HDFS</li>
+                        <li>Exercice 2 : Job MapReduce - Analyse de logs</li>
+                        <li>Exercice 3 : Analyse avec Hive (requêtes SQL)</li>
+                        <li>Exercice 4 : Job MapReduce avancé - Top N</li>
+                        <li>Exercice 5 : Dépannage et résolution de problèmes</li>
+                        <li>TP : Pratique pas à pas complète</li>
+                    </ul>
+                    <a href="parties/partie8.html">Commencer la Partie 8 →</a>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>💼 Public Cible</h2>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>👨‍💻 Data Engineers</h4>
+                        <p>Développez vos compétences en traitement distribué de données massives</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📊 Data Analysts</h4>
+                        <p>Comprenez l'infrastructure qui alimente vos analyses Big Data</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🏗️ Architectes Data</h4>
+                        <p>Concevez des solutions Big Data scalables et performantes</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>⚙️ DevOps</h4>
+                        <p>Maîtrisez le déploiement et la maintenance de clusters Hadoop</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔧 Prérequis</h2>
+                <div class="alert alert-info">
+                    <h4>Connaissances requises</h4>
+                    <ul>
+                        <li>Bases de Linux et ligne de commande</li>
+                        <li>Notions de programmation Python (recommandé)</li>
+                        <li>Compréhension des concepts de bases de données</li>
+                        <li>Connaissance de base en SQL (pour la partie Hive)</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Configuration matérielle recommandée</h4>
+                    <ul>
+                        <li>8 Go de RAM minimum (16 Go recommandé)</li>
+                        <li>20 Go d'espace disque libre</li>
+                        <li>Processeur multi-cœurs</li>
+                        <li>VM ou environnement Linux</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📖 Méthodologie Pédagogique</h2>
+                <div class="key-points">
+                    <h3>🎓 Approche Pratique</h3>
+                    <ul>
+                        <li>40% théorie / 60% pratique</li>
+                        <li>Travaux pratiques guidés après chaque partie</li>
+                        <li>Projet fil rouge : Pipeline de traitement de données</li>
+                        <li>Exercices inspirés de cas réels d'entreprise</li>
+                        <li>Documentation et ressources complémentaires</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🎯 Évaluation</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type d'évaluation</th>
+                            <th>Format</th>
+                            <th>Coefficient</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Travaux pratiques</td>
+                            <td>Exercices tout au long de la formation</td>
+                            <td>40%</td>
+                        </tr>
+                        <tr>
+                            <td>Projet final</td>
+                            <td>Brief pratique - Pipeline Big Data complet</td>
+                            <td>60%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>🚀 Pour Commencer</h2>
+                <div class="alert alert-warning">
+                    <h4>Avant de débuter</h4>
+                    <p>Assurez-vous d'avoir accès à un environnement Linux (VM, WSL, ou Linux natif) pour les travaux pratiques. Un guide d'installation sera fourni dans la Partie 6.</p>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <a href="parties/partie1.html" class="module-card" style="display: block; text-decoration: none; color: inherit;">
+                        <h3>🎬 Commencer la Formation</h3>
+                        <p>Partie 1 : Introduction à Hadoop et au Big Data</p>
+                        <span style="color: var(--primary-color); font-weight: 600;">Commencer →</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>

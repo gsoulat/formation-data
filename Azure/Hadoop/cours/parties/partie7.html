@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 7 : Déploiement Hadoop sur Azure - Formation Hadoop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>☁️ Partie 7 : Déploiement Hadoop sur Azure</h1>
+            <p class="subtitle">Déployer un cluster Hadoop dans le cloud Microsoft Azure</p>
+            <div class="duration">⏱️ Durée : 2h30</div>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie6.html">← Partie 6</a></li>
+                <li><a href="partie7.html" class="active">Partie 7</a></li>
+                <li><a href="partie8.html">Partie 8 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs d'Apprentissage</h2>
+                <ul>
+                    <li>Comprendre HDInsight, le service Hadoop managé d'Azure</li>
+                    <li>Créer un cluster Hadoop sur Azure pas à pas</li>
+                    <li>Configurer le stockage Azure pour HDFS</li>
+                    <li>Exécuter des jobs MapReduce sur Azure</li>
+                    <li>Monitorer et gérer le cluster</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>☁️ 1. Introduction à Azure HDInsight</h2>
+
+                <h3>Qu'est-ce que HDInsight ?</h3>
+                <p>
+                    <strong>Azure HDInsight</strong> est un service cloud managé qui facilite le déploiement et la gestion
+                    de clusters Hadoop, Spark, Hive, HBase, et d'autres frameworks Big Data sur Microsoft Azure.
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>✅ Avantages</h4>
+                        <ul>
+                            <li>Déploiement rapide (minutes vs heures)</li>
+                            <li>Scalabilité élastique</li>
+                            <li>Paiement à l'usage</li>
+                            <li>Maintenance simplifiée</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💰 Modèle de Tarification</h4>
+                        <ul>
+                            <li>Facturation par nœud/heure</li>
+                            <li>Arrêt du cluster pour économiser</li>
+                            <li>Stockage Azure facturé séparément</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔧 Types de Clusters</h4>
+                        <ul>
+                            <li>Hadoop (MapReduce, HDFS, YARN)</li>
+                            <li>Spark (traitement in-memory)</li>
+                            <li>HBase (NoSQL)</li>
+                            <li>Interactive Query (Hive LLAP)</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💾 Stockage</h4>
+                        <ul>
+                            <li>Azure Blob Storage</li>
+                            <li>Azure Data Lake Storage Gen2</li>
+                            <li>Compatible HDFS</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Prérequis</h4>
+                    <ul>
+                        <li>Un compte Microsoft Azure (essai gratuit disponible)</li>
+                        <li>Crédits Azure (200$ offerts pour les nouveaux comptes)</li>
+                        <li>Un abonnement Azure actif</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🚀 2. Création d'un Compte Azure (si nécessaire)</h2>
+
+                <h3>Étape 1 : S'inscrire sur Azure</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 1. Aller sur https://azure.microsoft.com/free/
+# 2. Cliquer sur "Commencer gratuitement"
+# 3. Se connecter avec un compte Microsoft (ou en créer un)
+# 4. Remplir les informations de facturation (carte requise mais pas débitée)
+# 5. Vérifier votre identité par téléphone
+# 6. Accepter les conditions</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Crédits Gratuits</h4>
+                    <p>Nouveau compte Azure = <strong>200$ de crédits valables 30 jours</strong> + services gratuits 12 mois</p>
+                </div>
+
+                <h3>Étape 2 : Accéder au Portail Azure</h3>
+                <ol>
+                    <li>Se connecter sur <a href="https://portal.azure.com">https://portal.azure.com</a></li>
+                    <li>Vérifier que votre abonnement est actif (menu "Abonnements")</li>
+                    <li>Vous êtes prêt à créer votre cluster !</li>
+                </ol>
+            </section>
+
+            <section class="section">
+                <h2>🔧 3. Création d'un Cluster HDInsight - Pas à Pas</h2>
+
+                <h3>Étape 1 : Créer un Groupe de Ressources</h3>
+
+                <div class="alert alert-info">
+                    <h4>Qu'est-ce qu'un Groupe de Ressources ?</h4>
+                    <p>
+                        Un conteneur logique qui regroupe toutes les ressources Azure liées (cluster, stockage, réseau).
+                        Permet de gérer et supprimer facilement toutes les ressources d'un projet.
+                    </p>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Dans le Portail Azure :
+
+1. Cliquer sur "Groupes de ressources" dans le menu
+2. Cliquer sur "+ Créer"
+3. Remplir les informations :
+   - Abonnement : Votre abonnement Azure
+   - Nom du groupe : hadoop-formation-rg
+   - Région : France Central (ou la plus proche)
+4. Cliquer sur "Vérifier + créer"
+5. Cliquer sur "Créer"</code></pre>
+                </div>
+
+                <h3>Étape 2 : Créer un Compte de Stockage Azure</h3>
+
+                <p>Le cluster HDInsight a besoin d'un stockage pour HDFS.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Dans le Portail Azure :
+
+1. Cliquer sur "+ Créer une ressource"
+2. Rechercher "Compte de stockage"
+3. Cliquer sur "Créer"
+4. Remplir :
+   - Groupe de ressources : hadoop-formation-rg
+   - Nom du compte : hadoopstorage[votreID] (doit être unique)
+   - Région : France Central
+   - Performances : Standard
+   - Redondance : LRS (Stockage localement redondant)
+5. Cliquer sur "Vérifier + créer"
+6. Cliquer sur "Créer"
+7. Attendre la fin du déploiement (1-2 minutes)</code></pre>
+                </div>
+
+                <h3>Étape 3 : Créer un Conteneur Blob</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Une fois le compte de stockage créé :
+
+1. Aller dans le compte de stockage créé
+2. Dans le menu à gauche, cliquer sur "Conteneurs"
+3. Cliquer sur "+ Conteneur"
+4. Nom : hadoop-data
+5. Niveau d'accès public : Privé
+6. Cliquer sur "Créer"</code></pre>
+                </div>
+
+                <h3>Étape 4 : Créer le Cluster HDInsight</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Dans le Portail Azure :
+
+1. Cliquer sur "+ Créer une ressource"
+2. Rechercher "HDInsight"
+3. Cliquer sur "Azure HDInsight"
+4. Cliquer sur "Créer"
+
+# Onglet "Informations de base" :
+─────────────────────────────────────
+- Abonnement : Votre abonnement
+- Groupe de ressources : hadoop-formation-rg
+- Nom du cluster : hadoop-cluster-[votreID]
+- Région : France Central
+- Type de cluster : Hadoop
+- Version : Hadoop 3.1.1 (ou la plus récente)
+- Nom d'utilisateur du cluster : admin
+- Mot de passe : [Créer un mot de passe fort]
+  (ex: Hadoop@2025!)
+- Nom d'utilisateur SSH : sshuser
+- Utiliser le même mot de passe : Oui
+
+Cliquer sur "Suivant : Stockage"
+
+# Onglet "Stockage" :
+─────────────────────────────────────
+- Type de stockage principal : Azure Storage
+- Méthode de sélection : Sélectionner dans la liste
+- Compte de stockage : hadoopstorage[votreID]
+- Conteneur : hadoop-data
+- Identité managée : (laisser par défaut)
+
+Cliquer sur "Suivant : Sécurité + réseau"
+
+# Onglet "Sécurité + réseau" :
+─────────────────────────────────────
+- Laisser les paramètres par défaut
+Cliquer sur "Suivant : Configuration + tarification"
+
+# Onglet "Configuration + tarification" :
+─────────────────────────────────────
+- Type de nœud : Standard_D3_v2 (ou Standard_D4_v2)
+- Nombre de nœuds Worker : 2
+- Nombre de nœuds Head : 2 (défaut)
+
+Cliquer sur "Suivant : Étiquettes" (optionnel)
+Cliquer sur "Suivant : Vérifier + créer"
+Vérifier le récapitulatif
+Cliquer sur "Créer"</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>⏱️ Temps de Création</h4>
+                    <p>
+                        La création du cluster prend entre <strong>15 et 30 minutes</strong>.
+                        Vous pouvez suivre la progression dans les notifications (icône cloche en haut à droite).
+                    </p>
+                </div>
+
+                <div class="alert alert-danger">
+                    <h4>💰 Attention aux Coûts</h4>
+                    <p>
+                        Un cluster HDInsight avec 2 nœuds worker coûte environ <strong>5-10€/jour</strong>.
+                        Pensez à <strong>supprimer le cluster</strong> après vos tests pour éviter les frais !
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔌 4. Connexion au Cluster</h2>
+
+                <h3>Méthode 1 : Interface Web Ambari</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Une fois le cluster créé :
+
+1. Aller dans votre cluster HDInsight
+2. Dans le menu à gauche, cliquer sur "Tableaux de bord du cluster"
+3. Cliquer sur "Ambari home"
+4. Se connecter avec :
+   - Utilisateur : admin
+   - Mot de passe : [le mot de passe que vous avez créé]
+
+# URL directe :
+https://hadoop-cluster-[votreID].azurehdinsight.net</code></pre>
+                </div>
+
+                <h3>Méthode 2 : SSH vers le Nœud Head</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Depuis votre terminal local :
+
+ssh sshuser@hadoop-cluster-[votreID]-ssh.azurehdinsight.net
+
+# Entrer le mot de passe SSH
+# Vous êtes maintenant connecté au nœud Head du cluster !
+
+# Vérifier Hadoop
+hadoop version
+
+# Vérifier HDFS
+hdfs dfs -ls /
+
+# Vérifier YARN
+yarn node -list</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📂 5. Utiliser le Stockage Azure avec Hadoop</h2>
+
+                <h3>Azure Blob Storage comme HDFS</h3>
+
+                <p>
+                    HDInsight utilise Azure Blob Storage comme système de fichiers par défaut,
+                    compatible avec les commandes HDFS.
+                </p>
+
+                <h4>Format des Chemins</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Format WASB (Windows Azure Storage Blob)
+wasb://[conteneur]@[compte-stockage].blob.core.windows.net/[chemin]
+
+# Exemple :
+wasb://hadoop-data@hadoopstorage123.blob.core.windows.net/user/data
+
+# Format court (si c'est le stockage par défaut)
+/user/data</code></pre>
+                </div>
+
+                <h4>Commandes HDFS sur Azure Storage</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lister les fichiers
+hdfs dfs -ls /
+
+# Créer un répertoire
+hdfs dfs -mkdir /user/sshuser/test
+
+# Créer un fichier local et le copier
+echo "Hello Azure Hadoop" > test.txt
+hdfs dfs -put test.txt /user/sshuser/
+
+# Lire le fichier
+hdfs dfs -cat /user/sshuser/test.txt
+
+# Le fichier est stocké dans Azure Blob Storage !
+# Vous pouvez le voir dans le Portail Azure :
+# Compte de stockage → Conteneurs → hadoop-data</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🎯 6. Exécuter un Job MapReduce sur Azure</h2>
+
+                <h3>Exemple : WordCount en Python</h3>
+
+                <h4>Étape 1 : Créer les Scripts Python</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Connecté en SSH au cluster
+
+# Créer mapper.py
+cat > mapper.py << 'EOF'
+#!/usr/bin/env python3
+import sys
+
+for line in sys.stdin:
+    line = line.strip()
+    words = line.split()
+    for word in words:
+        print(f"{word}\t1")
+EOF
+
+# Créer reducer.py
+cat > reducer.py << 'EOF'
+#!/usr/bin/env python3
+import sys
+
+current_word = None
+current_count = 0
+
+for line in sys.stdin:
+    line = line.strip()
+    word, count = line.split('\t')
+    count = int(count)
+
+    if current_word == word:
+        current_count += count
+    else:
+        if current_word:
+            print(f"{current_word}\t{current_count}")
+        current_word = word
+        current_count = count
+
+if current_word:
+    print(f"{current_word}\t{current_count}")
+EOF
+
+# Rendre exécutables
+chmod +x mapper.py reducer.py</code></pre>
+                </div>
+
+                <h4>Étape 2 : Préparer les Données</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un fichier de test
+cat > input.txt << EOF
+Azure Hadoop HDInsight
+Cloud Computing with Hadoop
+Big Data on Azure
+EOF
+
+# Créer le répertoire dans HDFS (Azure Storage)
+hdfs dfs -mkdir -p /user/sshuser/wordcount/input
+
+# Copier le fichier
+hdfs dfs -put input.txt /user/sshuser/wordcount/input/
+
+# Vérifier
+hdfs dfs -cat /user/sshuser/wordcount/input/input.txt</code></pre>
+                </div>
+
+                <h4>Étape 3 : Lancer le Job</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lancer le job Hadoop Streaming
+hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-streaming.jar \
+    -input /user/sshuser/wordcount/input \
+    -output /user/sshuser/wordcount/output \
+    -mapper mapper.py \
+    -reducer reducer.py \
+    -file mapper.py \
+    -file reducer.py
+
+# Voir les résultats
+hdfs dfs -cat /user/sshuser/wordcount/output/part-00000</code></pre>
+                </div>
+
+                <h4>Étape 4 : Suivre le Job dans YARN</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># URL YARN ResourceManager :
+https://hadoop-cluster-[votreID].azurehdinsight.net/yarnui
+
+# Se connecter avec :
+- Utilisateur : admin
+- Mot de passe : [votre mot de passe]</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📊 7. Utiliser Hive sur HDInsight</h2>
+
+                <h3>Connexion à Hive</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Depuis SSH sur le cluster
+beeline -u 'jdbc:hive2://localhost:10001/;transportMode=http'
+
+# Ou connectez-vous à Hive View dans Ambari</code></pre>
+                </div>
+
+                <h3>Exemple de Requêtes Hive</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-sql">-- Créer une table
+CREATE TABLE sales (
+    product STRING,
+    quantity INT,
+    price DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+-- Charger des données depuis Azure Storage
+LOAD DATA INPATH '/user/sshuser/sales.csv' INTO TABLE sales;
+
+-- Requête
+SELECT product, SUM(quantity * price) as revenue
+FROM sales
+GROUP BY product
+ORDER BY revenue DESC;</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔍 8. Monitoring et Gestion</h2>
+
+                <h3>Interfaces de Monitoring</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Interface</th>
+                            <th>URL</th>
+                            <th>Utilisation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ambari</td>
+                            <td>https://[cluster].azurehdinsight.net</td>
+                            <td>Gestion complète du cluster</td>
+                        </tr>
+                        <tr>
+                            <td>YARN UI</td>
+                            <td>https://[cluster].azurehdinsight.net/yarnui</td>
+                            <td>Suivi des jobs YARN</td>
+                        </tr>
+                        <tr>
+                            <td>Job History</td>
+                            <td>https://[cluster].azurehdinsight.net/jobhistory</td>
+                            <td>Historique des jobs</td>
+                        </tr>
+                        <tr>
+                            <td>Portail Azure</td>
+                            <td>portal.azure.com</td>
+                            <td>Métriques et alertes</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Scaler le Cluster</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Dans le Portail Azure :
+
+1. Aller dans votre cluster HDInsight
+2. Menu à gauche → "Taille du cluster"
+3. Modifier le nombre de nœuds Worker (2 à 10+)
+4. Cliquer sur "Enregistrer"
+5. Le scaling prend 5-10 minutes</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🗑️ 9. Nettoyage et Suppression</h2>
+
+                <div class="alert alert-danger">
+                    <h4>⚠️ Important : Éviter les Frais</h4>
+                    <p>
+                        Après vos tests, <strong>supprimez le cluster</strong> pour arrêter la facturation !
+                        Le stockage Azure (quelques centimes) peut être conservé si vous voulez garder vos données.
+                    </p>
+                </div>
+
+                <h3>Supprimer le Cluster</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Méthode 1 : Portail Azure
+1. Aller dans votre cluster HDInsight
+2. Cliquer sur "Supprimer" en haut
+3. Taper le nom du cluster pour confirmer
+4. Cliquer sur "Supprimer"
+
+# Méthode 2 : Azure CLI
+az hdinsight delete --name hadoop-cluster-[votreID] --resource-group hadoop-formation-rg
+
+# Pour tout supprimer (cluster + stockage + groupe de ressources) :
+az group delete --name hadoop-formation-rg --yes</code></pre>
+                </div>
+
+                <h3>Vérifier les Coûts</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Dans le Portail Azure :
+
+1. Menu → "Cost Management + Billing"
+2. → "Cost analysis"
+3. Vérifier les coûts par ressource
+4. Vérifier qu'aucune ressource n'est en cours d'exécution</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📝 Résumé de la Partie 7</h2>
+                <div class="key-points">
+                    <h3>Points Clés à Retenir</h3>
+                    <ul>
+                        <li>Azure HDInsight = Hadoop managé dans le cloud</li>
+                        <li>Création d'un cluster en 15-30 minutes via le Portail Azure</li>
+                        <li>Azure Blob Storage remplace HDFS (compatible)</li>
+                        <li>Même commandes Hadoop que sur un cluster local</li>
+                        <li>Interfaces Ambari et YARN pour la gestion et le monitoring</li>
+                        <li>Scaling facile du nombre de nœuds</li>
+                        <li>⚠️ Supprimer le cluster après usage pour éviter les frais</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success" style="margin-top: 40px;">
+                <h4>✅ Prêt pour la Suite ?</h4>
+                <p>Vous savez maintenant déployer Hadoop sur Azure ! Dans la partie suivante, nous allons pratiquer pas à pas avec des exercices guidés.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+            <p><a href="partie8.html">Partie 8 : Exercices Pratiques Guidés →</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>

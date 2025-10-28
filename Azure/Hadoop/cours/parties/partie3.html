@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 : MapReduce - Formation Hadoop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Partie 3 : MapReduce</h1>
+            <p class="subtitle">Le paradigme de traitement distribué des données</p>
+            <div class="duration">⏱️ Durée : 3h30</div>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie2.html">← Partie 2</a></li>
+                <li><a href="partie3.html" class="active">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs d'Apprentissage</h2>
+                <ul>
+                    <li>Comprendre le paradigme de programmation MapReduce</li>
+                    <li>Maîtriser les phases Map, Shuffle et Reduce</li>
+                    <li>Écrire un job MapReduce en Java</li>
+                    <li>Optimiser les performances MapReduce</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>📚 1. Qu'est-ce que MapReduce ?</h2>
+
+                <p>
+                    <strong>MapReduce</strong> est un modèle de programmation pour traiter et générer de grands ensembles
+                    de données de manière parallèle et distribuée sur un cluster.
+                </p>
+
+                <div class="alert alert-info">
+                    <h4>Principe Fondamental</h4>
+                    <p>
+                        L'idée : <strong>"Diviser pour régner"</strong> (Divide and Conquer)
+                    </p>
+                    <ul>
+                        <li>Découper un gros problème en petits problèmes indépendants</li>
+                        <li>Traiter ces petits problèmes en parallèle</li>
+                        <li>Combiner les résultats pour obtenir le résultat final</li>
+                    </ul>
+                </div>
+
+                <h3>Les Deux Fonctions Principales</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>🗺️ Map</h4>
+                        <p>Traite les données d'entrée et produit des paires clé-valeur intermédiaires</p>
+                        <code>map: (K1, V1) → list(K2, V2)</code>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔽 Reduce</h4>
+                        <p>Regroupe les valeurs par clé et produit le résultat final</p>
+                        <code>reduce: (K2, list(V2)) → list(K3, V3)</code>
+                    </div>
+                </div>
+
+                <h3>Exemple Conceptuel : Compter des Mots</h3>
+                <div class="workflow-diagram">
+                    <pre>
+Entrée :
+  "Hello World"
+  "Hello Hadoop"
+  "Hadoop MapReduce"
+
+Phase MAP :
+  Hello → 1
+  World → 1
+  Hello → 1
+  Hadoop → 1
+  Hadoop → 1
+  MapReduce → 1
+
+Phase SHUFFLE & SORT :
+  Hadoop → [1, 1]
+  Hello → [1, 1]
+  MapReduce → [1]
+  World → [1]
+
+Phase REDUCE :
+  Hadoop → 2
+  Hello → 2
+  MapReduce → 1
+  World → 1
+                    </pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔄 2. Architecture et Flux d'Exécution</h2>
+
+                <h3>Vue d'Ensemble</h3>
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                      HDFS INPUT DATA                            │
+│        Fichiers découpés en blocs (splits)                      │
+└────────────┬────────────────────────────────────────────────────┘
+             ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                     MAP PHASE                                   │
+│  Mapper 1   Mapper 2   Mapper 3   Mapper N                     │
+│  (K1,V1)    (K1,V1)    (K1,V1)    (K1,V1)                      │
+│    ↓          ↓          ↓          ↓                           │
+│  (K2,V2)    (K2,V2)    (K2,V2)    (K2,V2)                      │
+└────────────┬────────────────────────────────────────────────────┘
+             ↓
+┌─────────────────────────────────────────────────────────────────┐
+│              SHUFFLE & SORT PHASE                               │
+│    Regroupement et tri des paires par clé                       │
+│         (K2, list(V2))                                          │
+└────────────┬────────────────────────────────────────────────────┘
+             ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                     REDUCE PHASE                                │
+│  Reducer 1  Reducer 2  Reducer 3  Reducer M                    │
+│  (K2,[V2])  (K2,[V2])  (K2,[V2])  (K2,[V2])                    │
+│    ↓          ↓          ↓          ↓                           │
+│  (K3,V3)    (K3,V3)    (K3,V3)    (K3,V3)                      │
+└────────────┬────────────────────────────────────────────────────┘
+             ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                    HDFS OUTPUT DATA                             │
+│              Résultats finaux stockés                           │
+└─────────────────────────────────────────────────────────────────┘
+                    </pre>
+                </div>
+
+                <h3>Les Phases en Détail</h3>
+
+                <h4>1️⃣ Input Splits</h4>
+                <div class="card">
+                    <p>Les données d'entrée sont divisées en <strong>splits</strong> (morceaux) logiques.</p>
+                    <ul>
+                        <li>Par défaut, 1 split = 1 bloc HDFS (128 MB)</li>
+                        <li>Chaque split est traité par un mapper</li>
+                        <li>Les mappers s'exécutent là où les données sont stockées (data locality)</li>
+                    </ul>
+                </div>
+
+                <h4>2️⃣ Map Phase</h4>
+                <div class="card">
+                    <p>Chaque mapper traite un split de données :</p>
+                    <ul>
+                        <li>Lit les données ligne par ligne (ou enregistrement par enregistrement)</li>
+                        <li>Applique la fonction <code>map()</code> définie par l'utilisateur</li>
+                        <li>Émet des paires clé-valeur intermédiaires</li>
+                        <li>Les résultats sont écrits dans un buffer en mémoire</li>
+                    </ul>
+                </div>
+
+                <h4>3️⃣ Shuffle & Sort Phase</h4>
+                <div class="card">
+                    <p>Phase critique gérée automatiquement par Hadoop :</p>
+                    <ul>
+                        <li><strong>Partitioning</strong> : Les paires (K2,V2) sont partitionnées par clé vers les reducers</li>
+                        <li><strong>Sorting</strong> : Les clés sont triées</li>
+                        <li><strong>Grouping</strong> : Les valeurs avec la même clé sont regroupées</li>
+                        <li><strong>Transfer</strong> : Les données sont transférées via le réseau vers les reducers</li>
+                    </ul>
+                    <p><em>Cette phase consomme beaucoup de ressources réseau et disque.</em></p>
+                </div>
+
+                <h4>4️⃣ Reduce Phase</h4>
+                <div class="card">
+                    <p>Chaque reducer traite un ensemble de clés :</p>
+                    <ul>
+                        <li>Reçoit les paires (K2, list(V2)) triées</li>
+                        <li>Applique la fonction <code>reduce()</code> définie par l'utilisateur</li>
+                        <li>Émet les paires clé-valeur finales (K3, V3)</li>
+                        <li>Écrit les résultats dans HDFS</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>💻 3. WordCount : L'Exemple Classique avec Python</h2>
+
+                <p>Le "Hello World" de MapReduce : compter les occurrences de chaque mot dans un corpus de texte.</p>
+
+                <div class="alert alert-info">
+                    <h4>Hadoop Streaming</h4>
+                    <p>
+                        <strong>Hadoop Streaming</strong> permet d'écrire des jobs MapReduce en Python (ou tout autre langage).
+                        Les scripts lisent depuis stdin et écrivent vers stdout.
+                    </p>
+                </div>
+
+                <h3>Code Python Complet</h3>
+
+                <h4>mapper.py</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">#!/usr/bin/env python3
+"""
+Mapper pour WordCount
+Lit les lignes depuis stdin, découpe en mots et émet (mot, 1)
+"""
+import sys
+
+def main():
+    # Lire depuis stdin
+    for line in sys.stdin:
+        # Supprimer les espaces en début/fin
+        line = line.strip()
+
+        # Découper la ligne en mots
+        words = line.split()
+
+        # Émettre (mot, 1) pour chaque mot
+        for word in words:
+            # Format: clé\tvaleur
+            print(f"{word}\t1")
+
+if __name__ == "__main__":
+    main()</code></pre>
+                </div>
+
+                <h4>reducer.py</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">#!/usr/bin/env python3
+"""
+Reducer pour WordCount
+Reçoit les paires (mot, 1) triées par clé et calcule la somme
+"""
+import sys
+
+def main():
+    current_word = None
+    current_count = 0
+
+    # Lire depuis stdin
+    for line in sys.stdin:
+        # Supprimer les espaces
+        line = line.strip()
+
+        # Parser la ligne (format: mot\t1)
+        try:
+            word, count = line.split('\t')
+            count = int(count)
+        except ValueError:
+            # Ignorer les lignes mal formées
+            continue
+
+        # Hadoop trie les clés, donc les mêmes mots sont consécutifs
+        if current_word == word:
+            current_count += count
+        else:
+            # Nouveau mot rencontré
+            if current_word:
+                # Émettre le résultat pour le mot précédent
+                print(f"{current_word}\t{current_count}")
+
+            current_word = word
+            current_count = count
+
+    # Émettre le dernier mot
+    if current_word:
+        print(f"{current_word}\t{current_count}")
+
+if __name__ == "__main__":
+    main()</code></pre>
+                </div>
+
+                <h3>Test Local (avant Hadoop)</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Rendre les scripts exécutables
+chmod +x mapper.py reducer.py
+
+# Test du mapper seul
+echo "Hello World Hello Hadoop" | ./mapper.py
+
+# Sortie attendue:
+# Hello   1
+# World   1
+# Hello   1
+# Hadoop  1
+
+# Test complet avec tri (simule Hadoop)
+echo "Hello World Hello Hadoop" | ./mapper.py | sort -k1,1 | ./reducer.py
+
+# Sortie attendue:
+# Hadoop  1
+# Hello   2
+# World   1</code></pre>
+                </div>
+
+                <h3>Exécution sur Hadoop</h3>
+
+                <h4>Préparer les Données</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un fichier de test
+cat > input.txt << EOF
+Hello World Hello Hadoop
+Hadoop is powerful
+Python and Hadoop
+EOF
+
+# Créer le répertoire dans HDFS
+hdfs dfs -mkdir -p /user/$USER/wordcount/input
+
+# Copier le fichier dans HDFS
+hdfs dfs -put input.txt /user/$USER/wordcount/input/
+
+# Vérifier
+hdfs dfs -cat /user/$USER/wordcount/input/input.txt</code></pre>
+                </div>
+
+                <h4>Lancer le Job MapReduce avec Hadoop Streaming</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Exécuter le job Hadoop Streaming
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+    -input /user/$USER/wordcount/input \
+    -output /user/$USER/wordcount/output \
+    -mapper mapper.py \
+    -reducer reducer.py \
+    -file mapper.py \
+    -file reducer.py
+
+# Voir les résultats
+hdfs dfs -cat /user/$USER/wordcount/output/part-00000
+
+# Résultat attendu :
+# Hadoop  3
+# Hello   2
+# Python  1
+# World   1
+# and     1
+# is      1
+# powerful 1</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Avantages de Python avec Hadoop</h4>
+                    <ul>
+                        <li>✅ Code plus simple et lisible que Java</li>
+                        <li>✅ Pas de compilation nécessaire</li>
+                        <li>✅ Riche écosystème de librairies Python</li>
+                        <li>✅ Test facile en local avant Hadoop</li>
+                        <li>✅ Idéal pour le prototypage rapide</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>⚡ 4. Optimisations MapReduce</h2>
+
+                <h3>Combiner</h3>
+                <div class="card">
+                    <h4>Qu'est-ce qu'un Combiner ?</h4>
+                    <p>
+                        Un <strong>Combiner</strong> est comme un "mini-reducer" qui s'exécute localement sur chaque mapper
+                        pour réduire la quantité de données transférées durant la phase Shuffle.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-java">// Dans le Driver
+job.setCombinerClass(WordCountReducer.class);</code></pre>
+                    </div>
+                    <p>
+                        <strong>Avantage :</strong> Pour WordCount, au lieu de transférer ["Hello"→1, "Hello"→1, "Hello"→1],
+                        on transfère juste ["Hello"→3].
+                    </p>
+                </div>
+
+                <h3>Partitioner Personnalisé</h3>
+                <div class="card">
+                    <p>
+                        Le <strong>Partitioner</strong> décide quel reducer recevra quelle clé.
+                        Par défaut : <code>HashPartitioner</code> utilise le hashcode de la clé.
+                    </p>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-java">public class CustomPartitioner extends Partitioner&lt;Text, IntWritable&gt; {
+    @Override
+    public int getPartition(Text key, IntWritable value, int numPartitions) {
+        // Exemple : mots commençant par A-M → Reducer 0
+        //           mots commençant par N-Z → Reducer 1
+        char firstLetter = key.toString().charAt(0);
+        if (firstLetter >= 'A' && firstLetter <= 'M') {
+            return 0 % numPartitions;
+        } else {
+            return 1 % numPartitions;
+        }
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <h3>Compression</h3>
+                <div class="card">
+                    <p>Compresser les données intermédiaires et de sortie réduit l'utilisation disque et réseau.</p>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-java">// Compression des données intermédiaires (Map output)
+conf.setBoolean("mapreduce.map.output.compress", true);
+conf.setClass("mapreduce.map.output.compress.codec",
+              SnappyCodec.class, CompressionCodec.class);
+
+// Compression de la sortie finale
+FileOutputFormat.setCompressOutput(job, true);
+FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);</code></pre>
+                    </div>
+                </div>
+
+                <h3>Autres Optimisations</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Technique</th>
+                            <th>Description</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Augmenter le nombre de reducers</strong></td>
+                            <td>Plus de reducers = plus de parallélisme</td>
+                            <td>⚡ Performance accrue si le cluster le permet</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Réutiliser la JVM</strong></td>
+                            <td>Éviter le coût de démarrage de JVM pour chaque tâche</td>
+                            <td>⏱️ Réduction du temps de lancement</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Exécution spéculative</strong></td>
+                            <td>Relancer les tâches lentes sur d'autres nœuds</td>
+                            <td>🚀 Réduit l'impact des "stragglers"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Buffer d'écriture Map</strong></td>
+                            <td>Augmenter <code>mapreduce.task.io.sort.mb</code></td>
+                            <td>💾 Moins de spills sur disque</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>📊 5. Patterns MapReduce Courants</h2>
+
+                <h3>1. Filtering (Filtrage)</h3>
+                <div class="card">
+                    <p>Garder seulement les enregistrements qui répondent à un critère.</p>
+                    <p><strong>Exemple :</strong> Filtrer les logs d'erreur</p>
+                    <ul>
+                        <li>Map : Si ligne contient "ERROR" → émettre</li>
+                        <li>Reduce : Peut être omis (identity reducer)</li>
+                    </ul>
+                </div>
+
+                <h3>2. Summarization (Agrégation)</h3>
+                <div class="card">
+                    <p>Calculer des statistiques agrégées (count, sum, avg, min, max).</p>
+                    <p><strong>Exemple :</strong> Statistiques par utilisateur</p>
+                    <ul>
+                        <li>Map : (user_id, metric) → émettre</li>
+                        <li>Reduce : Calculer somme, moyenne, etc.</li>
+                    </ul>
+                </div>
+
+                <h3>3. Joining (Jointure)</h3>
+                <div class="card">
+                    <p>Joindre deux datasets sur une clé commune.</p>
+                    <p><strong>Reduce-side join :</strong></p>
+                    <ul>
+                        <li>Map : Émettre (clé_commune, valeur_avec_tag)</li>
+                        <li>Reduce : Regrouper et joindre les valeurs avec la même clé</li>
+                    </ul>
+                </div>
+
+                <h3>4. Sorting (Tri)</h3>
+                <div class="card">
+                    <p>Trier des données à grande échelle.</p>
+                    <ul>
+                        <li>Map : Émettre (clé_de_tri, enregistrement)</li>
+                        <li>Reduce : Peut être identity (le tri est fait durant Shuffle)</li>
+                    </ul>
+                </div>
+
+                <h3>5. Top N</h3>
+                <div class="card">
+                    <p>Trouver les N premiers éléments.</p>
+                    <ul>
+                        <li>Map : Garder top N localement, émettre</li>
+                        <li>Reduce : Fusionner et garder top N global</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>⚠️ 6. Limites de MapReduce</h2>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>🐌 Latence Élevée</h4>
+                        <p>Pas adapté au temps réel. Temps de démarrage et I/O disque importants.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💾 I/O Intensif</h4>
+                        <p>Écrit et lit beaucoup sur disque (HDFS), pas en mémoire.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔗 Jobs Chaînés Complexes</h4>
+                        <p>Difficile de chaîner plusieurs jobs MapReduce efficacement.</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📈 Pas Adapté aux Graphes</h4>
+                        <p>Algorithmes itératifs (ML, graphes) sont inefficaces.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Alternative : Apache Spark</h4>
+                    <p>
+                        <strong>Spark</strong> a été créé pour pallier les limites de MapReduce :
+                    </p>
+                    <ul>
+                        <li>Traitement en mémoire (100x plus rapide)</li>
+                        <li>API plus simple et expressive</li>
+                        <li>Support natif du streaming, ML, graphes</li>
+                        <li>Compatible avec HDFS et YARN</li>
+                    </ul>
+                    <p><em>Cependant, MapReduce reste utilisé pour certains cas d'usage batch intensifs.</em></p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📝 Résumé de la Partie 3</h2>
+                <div class="key-points">
+                    <h3>Points Clés à Retenir</h3>
+                    <ul>
+                        <li>MapReduce suit le paradigme "Diviser pour régner"</li>
+                        <li>3 phases principales : Map, Shuffle & Sort, Reduce</li>
+                        <li>WordCount est l'exemple canonique de MapReduce</li>
+                        <li>Les Combiners réduisent le trafic réseau</li>
+                        <li>La compression améliore les performances</li>
+                        <li>MapReduce est excellent pour le batch mais pas pour le temps réel</li>
+                        <li>Spark est souvent préféré pour les nouveaux projets</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success" style="margin-top: 40px;">
+                <h4>✅ Prêt pour la Suite ?</h4>
+                <p>Vous maîtrisez maintenant MapReduce ! Dans la partie suivante, nous découvrirons <strong>YARN</strong>, le gestionnaire de ressources qui orchestre l'exécution des applications Hadoop.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+            <p><a href="partie4.html">Partie 4 : YARN →</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>

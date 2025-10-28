@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 6 : Installation et Configuration - Formation Hadoop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Partie 6 : Installation et Configuration</h1>
+            <p class="subtitle">Déployer votre propre cluster Hadoop</p>
+            <div class="duration">⏱️ Durée : 2h30</div>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie5.html">← Partie 5</a></li>
+                <li><a href="partie6.html" class="active">Partie 6</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs d'Apprentissage</h2>
+                <ul>
+                    <li>Comprendre les modes de déploiement Hadoop</li>
+                    <li>Installer Hadoop en mode Pseudo-distribué</li>
+                    <li>Configurer HDFS et YARN</li>
+                    <li>Démarrer et arrêter les services Hadoop</li>
+                    <li>Vérifier l'installation</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>🔧 1. Modes de Déploiement</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Description</th>
+                            <th>Cas d'Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Standalone</strong></td>
+                            <td>Processus unique, pas de HDFS ni YARN</td>
+                            <td>Développement, débogage local</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pseudo-distribué</strong></td>
+                            <td>Tous les démons sur une seule machine</td>
+                            <td>Apprentissage, tests, développement</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distribué</strong></td>
+                            <td>Cluster multi-nœuds (production)</td>
+                            <td>Production, environnements réels</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <h4>Pour ce TP</h4>
+                    <p>
+                        Nous allons installer Hadoop en <strong>mode Pseudo-distribué</strong> sur une machine Linux unique.
+                        C'est le meilleur mode pour apprendre car il simule un vrai cluster avec tous les démons Hadoop.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📋 2. Prérequis</h2>
+
+                <h3>Environnement Requis</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>💻 Système d'Exploitation</h4>
+                        <p>Linux (Ubuntu, CentOS, Debian) ou macOS</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>☕ Java</h4>
+                        <p>OpenJDK 8 ou 11 (JDK 8 recommandé pour Hadoop 3.x)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔑 SSH</h4>
+                        <p>OpenSSH installé et configuré</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💾 Ressources</h4>
+                        <p>Minimum 4 GB RAM, 20 GB disque</p>
+                    </div>
+                </div>
+
+                <h3>Installation de Java</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Ubuntu/Debian
+sudo apt update
+sudo apt install openjdk-8-jdk -y
+
+# CentOS/RHEL
+sudo yum install java-1.8.0-openjdk-devel -y
+
+# Vérifier l'installation
+java -version
+
+# Configurer JAVA_HOME
+echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.bashrc
+echo 'export PATH=$PATH:$JAVA_HOME/bin' >> ~/.bashrc
+source ~/.bashrc</code></pre>
+                </div>
+
+                <h3>Configuration SSH sans mot de passe</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installer SSH (si nécessaire)
+sudo apt install openssh-server openssh-client -y
+
+# Générer une clé SSH
+ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+
+# Autoriser la connexion sans mot de passe
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+chmod 0600 ~/.ssh/authorized_keys
+
+# Tester
+ssh localhost
+# Tapez 'exit' pour quitter</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📥 3. Téléchargement et Installation de Hadoop</h2>
+
+                <h3>Télécharger Hadoop</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Aller dans le répertoire home
+cd ~
+
+# Télécharger Hadoop 3.3.6 (version stable)
+wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
+
+# Extraire l'archive
+tar -xzvf hadoop-3.3.6.tar.gz
+
+# Renommer pour simplifier
+mv hadoop-3.3.6 hadoop
+
+# Supprimer l'archive
+rm hadoop-3.3.6.tar.gz</code></pre>
+                </div>
+
+                <h3>Configurer les Variables d'Environnement</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Ajouter à ~/.bashrc
+cat >> ~/.bashrc << 'EOF'
+# Hadoop Environment Variables
+export HADOOP_HOME=$HOME/hadoop
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+EOF
+
+# Recharger le fichier
+source ~/.bashrc
+
+# Vérifier
+hadoop version</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>⚙️ 4. Configuration de Hadoop</h2>
+
+                <p>Les fichiers de configuration se trouvent dans <code>$HADOOP_HOME/etc/hadoop/</code></p>
+
+                <h3>1. hadoop-env.sh</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Éditer le fichier
+nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
+# Ajouter/modifier cette ligne :
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64</code></pre>
+                </div>
+
+                <h3>2. core-site.xml</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;
+&lt;configuration&gt;
+    &lt;!-- URI du système de fichiers par défaut (HDFS NameNode) --&gt;
+    &lt;property&gt;
+        &lt;name&gt;fs.defaultFS&lt;/name&gt;
+        &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Répertoire temporaire --&gt;
+    &lt;property&gt;
+        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+        &lt;value&gt;/home/&lt;votreuser&gt;/hadoop_tmp&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Important</h4>
+                    <p>Remplacez <code>&lt;votreuser&gt;</code> par votre nom d'utilisateur Linux.</p>
+                </div>
+
+                <h3>3. hdfs-site.xml</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;
+&lt;configuration&gt;
+    &lt;!-- Facteur de réplication (1 car une seule machine) --&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.replication&lt;/name&gt;
+        &lt;value&gt;1&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Répertoire du NameNode --&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+        &lt;value&gt;/home/&lt;votreuser&gt;/hadoop_data/namenode&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Répertoire du DataNode --&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+        &lt;value&gt;/home/&lt;votreuser&gt;/hadoop_data/datanode&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;</code></pre>
+                </div>
+
+                <h3>4. mapred-site.xml</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;
+&lt;configuration&gt;
+    &lt;!-- Framework MapReduce utilise YARN --&gt;
+    &lt;property&gt;
+        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+        &lt;value&gt;yarn&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- ApplicationMaster pour MapReduce --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.app.mapreduce.am.env&lt;/name&gt;
+        &lt;value&gt;HADOOP_MAPRED_HOME=$HADOOP_HOME&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;property&gt;
+        &lt;name&gt;mapreduce.map.env&lt;/name&gt;
+        &lt;value&gt;HADOOP_MAPRED_HOME=$HADOOP_HOME&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;property&gt;
+        &lt;name&gt;mapreduce.reduce.env&lt;/name&gt;
+        &lt;value&gt;HADOOP_MAPRED_HOME=$HADOOP_HOME&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;</code></pre>
+                </div>
+
+                <h3>5. yarn-site.xml</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configuration&gt;
+    &lt;!-- Classe du shuffle handler pour MapReduce --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- ResourceManager hostname --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;
+        &lt;value&gt;localhost&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- Mémoire disponible pour YARN (ajuster selon vos ressources) --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.resource.memory-mb&lt;/name&gt;
+        &lt;value&gt;4096&lt;/value&gt;
+    &lt;/property&gt;
+
+    &lt;!-- VCores disponibles --&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.resource.cpu-vcores&lt;/name&gt;
+        &lt;value&gt;2&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;</code></pre>
+                </div>
+
+                <h3>Créer les Répertoires</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer les répertoires de données
+mkdir -p ~/hadoop_tmp
+mkdir -p ~/hadoop_data/namenode
+mkdir -p ~/hadoop_data/datanode</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🚀 5. Démarrage de Hadoop</h2>
+
+                <h3>Formater le NameNode</h3>
+                <div class="alert alert-danger">
+                    <h4>⚠️ Attention</h4>
+                    <p>Ne formater qu'à la <strong>première installation</strong>. Formater à nouveau supprime toutes les données HDFS !</p>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Formater le NameNode
+hdfs namenode -format
+
+# Vous devriez voir : "Storage directory ... has been successfully formatted."</code></pre>
+                </div>
+
+                <h3>Démarrer HDFS</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Démarrer NameNode et DataNode
+start-dfs.sh
+
+# Vérifier les processus actifs
+jps
+
+# Vous devriez voir :
+# - NameNode
+# - DataNode
+# - SecondaryNameNode
+# - Jps</code></pre>
+                </div>
+
+                <h3>Démarrer YARN</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Démarrer ResourceManager et NodeManager
+start-yarn.sh
+
+# Vérifier avec jps
+jps
+
+# Vous devriez maintenant voir en plus :
+# - ResourceManager
+# - NodeManager</code></pre>
+                </div>
+
+                <h3>Arrêter Hadoop</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Arrêter YARN
+stop-yarn.sh
+
+# Arrêter HDFS
+stop-dfs.sh
+
+# Ou tout arrêter d'un coup
+stop-all.sh</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>✅ 6. Vérification de l'Installation</h2>
+
+                <h3>1. Interfaces Web</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>URL</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>NameNode</td>
+                            <td><a href="http://localhost:9870">http://localhost:9870</a></td>
+                            <td>Interface HDFS</td>
+                        </tr>
+                        <tr>
+                            <td>ResourceManager</td>
+                            <td><a href="http://localhost:8088">http://localhost:8088</a></td>
+                            <td>Interface YARN</td>
+                        </tr>
+                        <tr>
+                            <td>Secondary NameNode</td>
+                            <td><a href="http://localhost:9868">http://localhost:9868</a></td>
+                            <td>Checkpoint NameNode</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>2. Tests en Ligne de Commande</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un répertoire dans HDFS
+hdfs dfs -mkdir -p /user/$USER
+
+# Créer un fichier de test local
+echo "Hello Hadoop World" > test.txt
+
+# Copier le fichier dans HDFS
+hdfs dfs -put test.txt /user/$USER/
+
+# Lister les fichiers
+hdfs dfs -ls /user/$USER/
+
+# Afficher le contenu
+hdfs dfs -cat /user/$USER/test.txt
+
+# Voir l'espace disque HDFS
+hdfs dfs -df -h
+
+# Rapport HDFS
+hdfs dfsadmin -report</code></pre>
+                </div>
+
+                <h3>3. Test avec un Job MapReduce</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Préparer les données d'entrée
+hdfs dfs -mkdir -p /user/$USER/wordcount/input
+echo "Hello Hadoop Hello World" > words.txt
+echo "Hadoop is powerful" >> words.txt
+hdfs dfs -put words.txt /user/$USER/wordcount/input/
+
+# Exécuter l'exemple WordCount fourni avec Hadoop
+hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar \
+    wordcount \
+    /user/$USER/wordcount/input \
+    /user/$USER/wordcount/output
+
+# Voir les résultats
+hdfs dfs -cat /user/$USER/wordcount/output/part-r-00000
+
+# Résultat attendu :
+# Hadoop  2
+# Hello   2
+# World   1
+# is      1
+# powerful 1</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🛠️ 7. Dépannage</h2>
+
+                <h3>Problèmes Courants</h3>
+
+                <h4>Les démons ne démarrent pas</h4>
+                <div class="card">
+                    <p><strong>Vérifier les logs :</strong></p>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-bash"># Logs dans $HADOOP_HOME/logs/
+tail -f $HADOOP_HOME/logs/hadoop-*-namenode-*.log</code></pre>
+                    </div>
+                    <p><strong>Causes fréquentes :</strong></p>
+                    <ul>
+                        <li>JAVA_HOME mal configuré</li>
+                        <li>Ports déjà utilisés</li>
+                        <li>SSH sans mot de passe non configuré</li>
+                        <li>Permissions incorrectes sur les répertoires</li>
+                    </ul>
+                </div>
+
+                <h4>DataNode ne se connecte pas au NameNode</h4>
+                <div class="card">
+                    <p><strong>Solutions :</strong></p>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-bash"># Arrêter tout
+stop-all.sh
+
+# Nettoyer les données
+rm -rf ~/hadoop_data/*
+rm -rf ~/hadoop_tmp/*
+
+# Reformater
+hdfs namenode -format
+
+# Redémarrer
+start-dfs.sh
+start-yarn.sh</code></pre>
+                    </div>
+                </div>
+
+                <h4>Commandes Utiles de Diagnostic</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Vérifier les processus Java en cours
+jps
+
+# Tester la connectivité SSH
+ssh localhost
+
+# Vérifier les ports ouverts
+netstat -tuln | grep -E '9870|8088|9000'
+
+# Voir la version de Hadoop
+hadoop version
+
+# Rapport détaillé HDFS
+hdfs dfsadmin -report</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🔒 8. Bonnes Pratiques et Sécurité</h2>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📊 Monitoring</h4>
+                        <ul>
+                            <li>Consulter régulièrement les UI web</li>
+                            <li>Surveiller les logs</li>
+                            <li>Vérifier l'espace disque HDFS</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💾 Backups</h4>
+                        <ul>
+                            <li>Sauvegarder les données critiques</li>
+                            <li>Exporter les métadonnées du NameNode</li>
+                            <li>Documenter la configuration</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔐 Sécurité</h4>
+                        <ul>
+                            <li>Configurer Kerberos en production</li>
+                            <li>Utiliser des ACLs HDFS</li>
+                            <li>Sécuriser les ports avec firewall</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>⚡ Performance</h4>
+                        <ul>
+                            <li>Ajuster la mémoire YARN</li>
+                            <li>Optimiser le facteur de réplication</li>
+                            <li>Utiliser la compression</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📝 Résumé de la Partie 6</h2>
+                <div class="key-points">
+                    <h3>Points Clés à Retenir</h3>
+                    <ul>
+                        <li>3 modes de déploiement : Standalone, Pseudo-distribué, Distribué</li>
+                        <li>Prérequis : Java, SSH, ressources système suffisantes</li>
+                        <li>Configuration principale via 5 fichiers XML dans etc/hadoop/</li>
+                        <li>Formater le NameNode uniquement à la première installation</li>
+                        <li>Démarrage : start-dfs.sh puis start-yarn.sh</li>
+                        <li>Vérification via interfaces web (ports 9870 et 8088) et commandes CLI</li>
+                        <li>Les logs sont essentiels pour le dépannage</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success" style="margin-top: 40px;">
+                <h4>🎉 Félicitations !</h4>
+                <p>
+                    Vous avez terminé le cours Hadoop ! Vous êtes maintenant capable d'installer, configurer et utiliser
+                    un cluster Hadoop. Pour mettre en pratique vos connaissances, passez au <strong>Brief pratique</strong>
+                    qui vous guidera dans la création d'un pipeline Big Data complet.
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>
