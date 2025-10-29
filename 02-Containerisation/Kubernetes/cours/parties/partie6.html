@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 6 - ConfigMaps et Secrets</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 6</h1>
+            <p class="subtitle">ConfigMaps et Secrets</p>
+            <span class="duration">⏱️ Durée : 20 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+                <li><a href="partie8.html">Partie 8</a></li>
+                <li><a href="partie9.html">Partie 9</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>6. ConfigMaps et Secrets</h2>
+
+                <h3>ConfigMaps</h3>
+
+                <p>
+                    Les <strong>ConfigMaps</strong> permettent de stocker des données de configuration non confidentielles
+                    (fichiers de config, variables d'environnement).
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  # Variables simples
+  DATABASE_HOST: "postgres.default.svc.cluster.local"
+  DATABASE_PORT: "5432"
+  APP_ENV: "production"
+
+  # Fichier de configuration
+  app.conf: |
+    server {
+      listen 80;
+      server_name example.com;
+    }</code></pre>
+                </div>
+
+                <h4>Utiliser un ConfigMap dans un Pod</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+spec:
+  containers:
+  - name: app
+    image: myapp:1.0
+    # Méthode 1: Variables d'environnement
+    env:
+    - name: DATABASE_HOST
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: DATABASE_HOST
+
+    # Méthode 2: Toutes les clés en variables d'env
+    envFrom:
+    - configMapRef:
+        name: app-config
+
+    # Méthode 3: Monter comme fichiers
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+
+  volumes:
+  - name: config-volume
+    configMap:
+      name: app-config</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un ConfigMap depuis kubectl
+kubectl create configmap app-config \
+  --from-literal=DATABASE_HOST=postgres \
+  --from-literal=DATABASE_PORT=5432
+
+# Depuis un fichier
+kubectl create configmap nginx-config --from-file=nginx.conf
+
+# Voir les ConfigMaps
+kubectl get configmaps
+kubectl describe configmap app-config
+
+# Supprimer
+kubectl delete configmap app-config</code></pre>
+                </div>
+
+                <h3>Secrets</h3>
+
+                <p>
+                    Les <strong>Secrets</strong> stockent des données sensibles (mots de passe, tokens, clés SSH).
+                    Les données sont encodées en base64 (pas chiffrées par défaut !).
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+type: Opaque
+data:
+  # Valeurs en base64
+  username: YWRtaW4=       # admin
+  password: cGFzc3dvcmQ=   # password</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un Secret depuis kubectl
+kubectl create secret generic db-credentials \
+  --from-literal=username=admin \
+  --from-literal=password=secret123
+
+# Encoder/décoder base64
+echo -n "admin" | base64      # YWRtaW4=
+echo "YWRtaW4=" | base64 -d   # admin
+
+# Voir les Secrets (valeurs cachées)
+kubectl get secrets
+kubectl describe secret db-credentials
+
+# Voir les valeurs (nécessite les permissions)
+kubectl get secret db-credentials -o yaml</code></pre>
+                </div>
+
+                <h4>Utiliser un Secret dans un Pod</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+spec:
+  containers:
+  - name: app
+    image: myapp:1.0
+    env:
+    - name: DB_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: db-credentials
+          key: username
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: db-credentials
+          key: password
+
+    # Ou monter comme fichiers
+    volumeMounts:
+    - name: secret-volume
+      mountPath: /etc/secrets
+      readOnly: true
+
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: db-credentials</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Sécurité des Secrets</h4>
+                    <p>
+                        Par défaut, les Secrets sont encodés en base64, pas chiffrés !
+                        En production, utilisez :
+                    </p>
+                    <ul>
+                        <li>Encryption at rest (chiffrement dans etcd)</li>
+                        <li>Azure Key Vault, AWS Secrets Manager, ou HashiCorp Vault</li>
+                        <li>Sealed Secrets pour versionner les secrets de manière sécurisée</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points clés à retenir</h3>
+                <ul>
+                    <li>ConfigMaps stockent les configurations non sensibles</li>
+                    <li>Secrets stockent les données sensibles (encodées en base64)</li>
+                    <li>On peut injecter les configs via variables d'env ou volumes</li>
+                    <li>Les Secrets ne sont PAS chiffrés par défaut dans etcd</li>
+                    <li>En production, utilisez des solutions externes (Key Vault, Vault)</li>
+                </ul>
+            </div>
+
+            <nav class="section-nav" style="display: flex; justify-content: space-between; margin-top: 40px;">
+                <a href="partie5.html" style="display: inline-block; padding: 12px 25px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    ← Partie 5
+                </a>
+                <a href="partie7.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Partie 7 →
+                </a>
+            </nav>
+        </div>
+
+        <footer>
+            <p>Formation Kubernetes pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

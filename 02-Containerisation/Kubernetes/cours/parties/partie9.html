@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 9 - Déploiement sur Azure (AKS)</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 9</h1>
+            <p class="subtitle">Déploiement sur Azure (AKS)</p>
+            <span class="duration">⏱️ Durée : 25 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+                <li><a href="partie8.html">Partie 8</a></li>
+                <li><a href="partie9.html">Partie 9</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>9. Déploiement sur Azure (AKS)</h2>
+
+                <h3>Azure Kubernetes Service (AKS)</h3>
+
+                <p>
+                    <strong>AKS</strong> est le service Kubernetes managé d'Azure. Le Control Plane est entièrement géré par Microsoft,
+                    vous ne payez que pour les Worker Nodes.
+                </p>
+
+                <h3>Créer un cluster AKS</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installer Azure CLI
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Se connecter
+az login
+
+# Créer un resource group
+az group create --name myResourceGroup --location francecentral
+
+# Créer un cluster AKS
+az aks create \
+  --resource-group myResourceGroup \
+  --name myAKSCluster \
+  --node-count 3 \
+  --node-vm-size Standard_D2s_v3 \
+  --enable-managed-identity \
+  --generate-ssh-keys
+
+# Récupérer les credentials
+az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+
+# Vérifier la connexion
+kubectl get nodes
+kubectl cluster-info</code></pre>
+                </div>
+
+                <h3>Déployer une application sur AKS</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml"># deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: myregistry.azurecr.io/myapp:v1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: myapp
+  ports:
+  - port: 80
+    targetPort: 80</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Déployer
+kubectl apply -f deployment.yaml
+
+# Attendre le Load Balancer
+kubectl get service myapp-service --watch
+
+# Une fois l'EXTERNAL-IP disponible
+curl http://&lt;EXTERNAL-IP&gt;</code></pre>
+                </div>
+
+                <h3>Azure Container Registry (ACR)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un Azure Container Registry
+az acr create \
+  --resource-group myResourceGroup \
+  --name myRegistry \
+  --sku Basic
+
+# Lier AKS à ACR
+az aks update \
+  --resource-group myResourceGroup \
+  --name myAKSCluster \
+  --attach-acr myRegistry
+
+# Build et push une image
+az acr build \
+  --registry myRegistry \
+  --image myapp:v1 \
+  .
+
+# Vérifier
+az acr repository list --name myRegistry --output table</code></pre>
+                </div>
+
+                <div class="key-points">
+                    <h3>Best Practices AKS</h3>
+                    <ul>
+                        <li>Utilisez des Managed Identities plutôt que des Service Principals</li>
+                        <li>Activez Azure Monitor pour les logs et métriques</li>
+                        <li>Configurez autoscaling des Pods (HPA) et des Nodes (Cluster Autoscaler)</li>
+                        <li>Utilisez Azure Key Vault pour les secrets sensibles</li>
+                        <li>Mettez en place des Network Policies pour la sécurité</li>
+                        <li>Configurez des resource quotas par namespace</li>
+                        <li>Utilisez GitOps (Flux, ArgoCD) pour les déploiements</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- RESSOURCES -->
+            <section class="section">
+                <h2>Ressources et liens utiles</h2>
+
+                <div class="resources">
+                    <a href="https://kubernetes.io/docs/" target="_blank" class="resource-link">
+                        <strong>Documentation officielle Kubernetes</strong>
+                        <p>Documentation complète, concepts et références</p>
+                    </a>
+
+                    <a href="https://kubernetes.io/docs/tutorials/" target="_blank" class="resource-link">
+                        <strong>Kubernetes Tutorials</strong>
+                        <p>Tutorials interactifs pour apprendre K8s</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/azure/aks/" target="_blank" class="resource-link">
+                        <strong>Azure AKS Documentation</strong>
+                        <p>Guide complet pour AKS</p>
+                    </a>
+
+                    <a href="https://helm.sh/" target="_blank" class="resource-link">
+                        <strong>Helm</strong>
+                        <p>Package manager pour Kubernetes</p>
+                    </a>
+
+                    <a href="https://github.com/kelseyhightower/kubernetes-the-hard-way" target="_blank" class="resource-link">
+                        <strong>Kubernetes The Hard Way</strong>
+                        <p>Comprendre K8s en profondeur</p>
+                    </a>
+
+                    <a href="https://www.cncf.io/" target="_blank" class="resource-link">
+                        <strong>CNCF</strong>
+                        <p>Cloud Native Computing Foundation</p>
+                    </a>
+                </div>
+
+                <div class="alert alert-info" style="margin-top: 40px;">
+                    <h4>Prochaines étapes</h4>
+                    <p>Maintenant que vous maîtrisez Kubernetes, explorez :</p>
+                    <ul>
+                        <li><strong>Helm</strong> : Package manager pour simplifier les déploiements</li>
+                        <li><strong>Kustomize</strong> : Gestion des configurations Kubernetes</li>
+                        <li><strong>ArgoCD/Flux</strong> : GitOps pour déploiements automatiques</li>
+                        <li><strong>Prometheus + Grafana</strong> : Monitoring et alerting</li>
+                        <li><strong>Istio/Linkerd</strong> : Service Mesh pour microservices</li>
+                        <li><strong>Cert-Manager</strong> : Gestion automatique des certificats SSL</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points clés à retenir</h3>
+                <ul>
+                    <li>AKS est le service Kubernetes managé d'Azure</li>
+                    <li>Le Control Plane est géré par Microsoft, vous payez uniquement les Nodes</li>
+                    <li>Azure Container Registry (ACR) pour stocker vos images Docker</li>
+                    <li>Utilisez des Managed Identities pour la sécurité</li>
+                    <li>Activez le monitoring avec Azure Monitor</li>
+                    <li>Configurez l'autoscaling pour la production</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-success">
+                <h4>Félicitations ! Formation terminée</h4>
+                <p>
+                    Vous avez maintenant une compréhension complète de Kubernetes, de l'installation locale
+                    au déploiement en production sur Azure. Continuez à pratiquer et explorez les outils
+                    avancés pour devenir un expert Kubernetes !
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="../index.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Retour à l'accueil
+                    </a>
+                </p>
+            </div>
+
+            <nav class="section-nav" style="display: flex; justify-content: space-between; margin-top: 40px;">
+                <a href="partie8.html" style="display: inline-block; padding: 12px 25px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    ← Partie 8
+                </a>
+                <a href="../index.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    🏠 Accueil
+                </a>
+            </nav>
+        </div>
+
+        <footer>
+            <p>Formation Kubernetes pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

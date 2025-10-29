@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 : Maîtriser les Images et Conteneurs - Formation Docker</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Partie 3 : Maîtriser les Images et Conteneurs</h1>
+            <p class="subtitle">Architecture en couches et inspection</p>
+            <span class="duration">⏱️ Durée : 10 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html" class="active">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Comprendre l'architecture en couches des images Docker</li>
+                    <li>Utiliser correctement les tags et versions</li>
+                    <li>Inspecter et debugger des images et conteneurs</li>
+                    <li>Optimiser l'utilisation du cache Docker</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>3.1 Anatomie d'une Image Docker</h2>
+
+                <div class="concept">
+                    <p>Les images Docker sont composées de <strong>layers (couches)</strong> empilées :</p>
+                    <ul>
+                        <li>Chaque instruction du Dockerfile crée une nouvelle couche</li>
+                        <li>Les couches sont en lecture seule et partagées entre images</li>
+                        <li>Seule la dernière couche (conteneur) est en écriture</li>
+                        <li>Système de cache pour optimiser les builds</li>
+                    </ul>
+                </div>
+
+                <div class="diagram">
+                    <img src="https://docs.docker.com/build/guide/images/layers.png" alt="Docker Layers"
+                        style="max-width: 600px;">
+                    <div class="diagram-caption">Architecture en couches d'une image Docker</div>
+                </div>
+
+                <h2>3.2 Tags et Versions</h2>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Format: repository:tag
+docker pull python:3.11        # Version spécifique
+docker pull python:3.11-slim   # Version légère
+docker pull python:3.11-alpine # Version ultra-légère
+docker pull python:latest      # Dernière version (à éviter en prod!)
+
+# Taguer une image localement
+docker tag mon-app:v1 mon-app:latest
+docker tag mon-app:v1 registry.example.com/mon-app:v1</code></pre>
+                </div>
+
+                <div class="warning">
+                    <strong>⚠️ Attention :</strong> N'utilisez jamais le tag <code>:latest</code> en production !
+                    Spécifiez toujours une version précise pour garantir la reproductibilité.
+                </div>
+
+                <h2>3.3 Inspection et Debugging</h2>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Inspecter un conteneur (format JSON)
+docker inspect mon-conteneur
+
+# Extraire une information spécifique
+docker inspect -f '{{.State.Status}}' mon-conteneur
+docker inspect -f '{{.NetworkSettings.IPAddress}}' mon-conteneur
+
+# Voir les processus en cours
+docker top mon-conteneur
+
+# Voir les changements du système de fichiers
+docker diff mon-conteneur
+
+# Voir les logs avec timestamps
+docker logs --timestamps mon-app
+
+# Suivre les logs en temps réel
+docker logs -f mon-app
+
+# Inspecter la santé d'un conteneur
+docker inspect --format='{{.State.Health.Status}}' mon-app</code></pre>
+                </div>
+
+                <h2>3.4 Comprendre les Couches</h2>
+
+                <div class="example">
+                    <h4>📝 Exemple : Analyser les couches d'une image</h4>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-bash"># Voir l'historique des couches
+docker history python:3.11-slim
+
+# Voir les couches d'une image spécifique
+docker inspect python:3.11-slim | grep -A 20 "Layers"
+
+# Analyser la taille de chaque couche
+docker history --no-trunc --human python:3.11-slim</code></pre>
+                    </div>
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Optimisation du Cache :</strong> Docker met en cache chaque couche. Si vous modifiez une
+                    instruction dans votre Dockerfile, toutes les couches suivantes seront reconstruites. Placez les
+                    instructions qui changent rarement au début du Dockerfile.
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Les images Docker sont composées de couches en lecture seule</li>
+                    <li>Utilisez des tags spécifiques en production, jamais <code>:latest</code></li>
+                    <li><code>docker inspect</code> fournit toutes les informations sur un conteneur ou une image</li>
+                    <li>Le système de cache optimise les temps de build</li>
+                    <li>Les variantes slim et alpine réduisent la taille des images</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vous comprenez maintenant l'architecture des images ! Passons à la <strong>Partie 4</strong> pour
+                    apprendre à créer vos propres images avec Dockerfile.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie2.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 2 : Premiers pas
+                </a>
+                <a href="partie4.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 4 : Dockerfile →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Docker pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+supplier_id,supplier_name,contact_name,contact_email,phone,country,city,address
+1,TechCorp Solutions,Mark Johnson,mark@techcorp.com,+1-800-555-0001,USA,San Jose,1234 Tech Ave
+2,Fashion Forward Ltd,Sarah Williams,sarah@fashionforward.com,+1-800-555-0002,USA,New York,5678 Fashion St
+3,HomeMax Industries,David Brown,david@homemax.com,+1-800-555-0003,USA,Chicago,9012 Industrial Blvd
+4,BookWorld Publishers,Lisa Chen,lisa@bookworld.com,+1-800-555-0004,USA,Boston,3456 Literary Lane
+5,SportsPro Equipment,Mike Rodriguez,mike@sportspro.com,+1-800-555-0005,USA,Denver,7890 Sports Dr
+6,HealthPlus Supply,Jennifer Kim,jennifer@healthplus.com,+1-800-555-0006,USA,Los Angeles,2345 Wellness Way
+7,ToyLand Manufacturing,Robert Taylor,robert@toyland.com,+1-800-555-0007,USA,Atlanta,6789 Fun Street
+8,FreshMart Distributors,Emily Davis,emily@freshmart.com,+1-800-555-0008,USA,Seattle,1357 Fresh Ave
+9,AutoParts Direct,Christopher Lee,chris@autoparts.com,+1-800-555-0009,USA,Detroit,2468 Motor Pkwy
+10,MediaMax Entertainment,Amanda Wilson,amanda@mediamax.com,+1-800-555-0010,USA,Hollywood,3691 Entertainment Blvd

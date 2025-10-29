@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 - Premiers pas avec Git</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 Partie 3</h1>
+            <p class="subtitle">Premiers pas : Créer et gérer un dépôt</p>
+            <span class="duration">⏱️ Durée : 30 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie2.html">← Partie 2</a></li>
+                <li><a href="partie4.html">Partie 4 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>3. Premiers pas : Créer et gérer un dépôt</h2>
+
+                <h3>Initialiser un nouveau dépôt</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un nouveau dossier et initialiser Git
+mkdir mon-projet-data
+cd mon-projet-data
+git init
+
+# Résultat : Initialized empty Git repository in .../mon-projet-data/.git/
+
+# Voir le contenu du dossier .git
+ls -la
+# Vous verrez un dossier .git/ qui contient toute la base de données Git</code></pre>
+                </div>
+
+                <h3>Cloner un dépôt existant</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Cloner un dépôt depuis GitHub
+git clone https://github.com/username/projet.git
+
+# Cloner avec un nom de dossier personnalisé
+git clone https://github.com/username/projet.git mon-dossier
+
+# Cloner via SSH (recommandé pour l'authentification)
+git clone git@github.com:username/projet.git</code></pre>
+                </div>
+
+                <h3>Workflow de base : Le cycle de vie d'un fichier</h3>
+
+                <div class="workflow-diagram">
+                    <pre>
+    Untracked ──────┐
+        ↓           │
+    Unmodified      │
+        ↓           │       git add
+    Modified ───────┴──────────────▶ Staged
+        ↑                               │
+        │         git commit            │
+        └───────────────────────────────┘
+</pre>
+                </div>
+
+                <h3>Vérifier l'état du dépôt</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Voir l'état actuel
+git status
+
+# Version courte (plus concise)
+git status -s
+# ?? = untracked
+# A  = staged
+# M  = modified
+# D  = deleted</code></pre>
+                </div>
+
+                <h3>Exemple pratique : Premier commit</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 1. Créer un fichier Python pour un pipeline ETL
+echo "# Pipeline ETL Sales Data" > etl_sales.py
+echo "import pandas as pd" >> etl_sales.py
+
+# 2. Vérifier le statut
+git status
+# On branch main
+# Untracked files:
+#   etl_sales.py
+
+# 3. Ajouter le fichier à la staging area
+git add etl_sales.py
+
+# 4. Vérifier à nouveau
+git status
+# Changes to be committed:
+#   new file:   etl_sales.py
+
+# 5. Créer le commit
+git commit -m "Initial commit: Add sales ETL pipeline skeleton"
+
+# 6. Vérifier l'historique
+git log</code></pre>
+                </div>
+
+                <h3>Ajouter des fichiers : Les différentes méthodes</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Ajouter un fichier spécifique
+git add fichier.py
+
+# Ajouter plusieurs fichiers
+git add fichier1.py fichier2.py config.yaml
+
+# Ajouter tous les fichiers Python
+git add *.py
+
+# Ajouter tous les fichiers modifiés/nouveaux
+git add .
+
+# Ajouter tous les fichiers d'un dossier
+git add src/
+
+# Mode interactif (choisir fichier par fichier)
+git add -i
+
+# Ajouter par morceaux (patch mode)
+git add -p
+# Vous permet de choisir quelles parties d'un fichier ajouter</code></pre>
+                </div>
+
+                <h3>Créer des commits efficaces</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Commit simple avec message court
+git commit -m "Fix data validation bug in ETL pipeline"
+
+# Commit avec message détaillé (ouvre l'éditeur)
+git commit
+
+# Ajouter tous les fichiers modifiés ET committer (ne fonctionne pas pour les nouveaux fichiers)
+git commit -am "Update database connection string"
+
+# Modifier le dernier commit (ajouter des fichiers oubliés ou corriger le message)
+git commit --amend
+
+# Commit avec un message multi-ligne
+git commit -m "Add data quality checks" -m "- Check for null values
+- Validate email format
+- Ensure date consistency"</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Convention de messages de commit</h4>
+                    <p>Suivez le format <strong>Conventional Commits</strong> :</p>
+                    <ul>
+                        <li><code>feat:</code> Nouvelle fonctionnalité</li>
+                        <li><code>fix:</code> Correction de bug</li>
+                        <li><code>docs:</code> Modification de documentation</li>
+                        <li><code>style:</code> Formatage, points-virgules manquants, etc.</li>
+                        <li><code>refactor:</code> Refactorisation du code</li>
+                        <li><code>test:</code> Ajout de tests</li>
+                        <li><code>chore:</code> Mise à jour de dépendances, config, etc.</li>
+                    </ul>
+                    <p><strong>Exemple :</strong> <code>feat: Add MongoDB data extraction module</code></p>
+                </div>
+
+                <h3>Consulter l'historique</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Voir tous les commits
+git log
+
+# Format condensé (une ligne par commit)
+git log --oneline
+
+# Voir les modifications de chaque commit
+git log -p
+
+# Limiter aux N derniers commits
+git log -5
+
+# Voir l'historique avec un graphe des branches
+git log --oneline --graph --all --decorate
+
+# Filtrer par auteur
+git log --author="John Doe"
+
+# Filtrer par date
+git log --since="2 weeks ago"
+git log --after="2024-01-01" --before="2024-12-31"
+
+# Rechercher dans les messages de commit
+git log --grep="ETL"
+
+# Voir quels fichiers ont été modifiés
+git log --stat
+
+# Format personnalisé
+git log --pretty=format:"%h - %an, %ar : %s"</code></pre>
+                </div>
+
+                <h3>Voir les détails d'un commit spécifique</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Afficher un commit spécifique
+git show <commit-hash>
+
+# Exemple
+git show a3f5b21
+
+# Voir uniquement les fichiers modifiés
+git show --name-only a3f5b21</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Attention aux commits trop gros</h4>
+                    <p>
+                        Évitez de créer des commits qui contiennent trop de modifications différentes.
+                        Préférez des commits atomiques (une modification logique = un commit).
+                        Cela facilite la revue de code et le débogage.
+                    </p>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 3 terminée !</h4>
+                <p>
+                    Vous savez maintenant créer un dépôt, faire vos premiers commits et consulter l'historique.
+                    Prêt pour les branches !
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="../exercices.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                        🎯 Faire les exercices
+                    </a>
+                    <a href="partie4.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 4 →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>

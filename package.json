@@ -1,0 +1,22 @@
+{
+  "name": "formation-simplon",
+  "version": "1.0.0",
+  "description": "Formation Simplon - Cours DevOps, Cloud et Data Engineering",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VOTRE_USERNAME/Formation.git"
+  },
+  "keywords": [
+    "formation",
+    "devops",
+    "cloud",
+    "data-engineering",
+    "terraform",
+    "kubernetes",
+    "azure",
+    "docker"
+  ],
+  "author": "Guillaume - Simplon",
+  "license": "MIT",
+  "private": true
+}

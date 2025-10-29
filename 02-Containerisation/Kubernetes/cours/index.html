@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Kubernetes Modulaire - Data Engineering</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>☸️ Formation Kubernetes Modulaire</h1>
+            <p class="subtitle">De Zéro à Hero - Orchestrez vos conteneurs avec Kubernetes (K8s)</p>
+            <span class="duration">⏱️ Durée totale : 1 heure | 9 modules</span>
+        </header>
+
+        <div class="content">
+            <div class="intro">
+                <h2>Bienvenue dans la Formation Kubernetes</h2>
+                <p>
+                    Cette formation complète vous permettra de maîtriser <strong>Kubernetes</strong>, la plateforme
+                    d'orchestration de conteneurs la plus populaire. Apprenez à déployer, scaler et gérer des
+                    applications conteneurisées en production.
+                </p>
+
+                <h3>🎯 Objectifs de la formation</h3>
+                <ul>
+                    <li>Comprendre Kubernetes et son architecture</li>
+                    <li>Maîtriser les concepts de base (Pods, Services, Deployments)</li>
+                    <li>Déployer et gérer des applications dans Kubernetes</li>
+                    <li>Gérer la configuration, les secrets et le stockage persistant</li>
+                    <li>Configurer le networking et l'exposition externe avec Ingress</li>
+                    <li>Mettre en production sur Azure Kubernetes Service (AKS)</li>
+                </ul>
+
+                <h3>📋 Prérequis</h3>
+                <ul>
+                    <li>Avoir suivi la formation Docker (ou connaissances équivalentes)</li>
+                    <li>Comprendre les conteneurs et les images Docker</li>
+                    <li>Notions de ligne de commande (bash/terminal)</li>
+                    <li>Concepts de base en réseaux et systèmes distribués</li>
+                </ul>
+
+                <h3>🔧 Configuration requise</h3>
+                <ul>
+                    <li>Un ordinateur avec au moins 8 Go de RAM</li>
+                    <li>Docker installé et fonctionnel</li>
+                    <li>15 Go d'espace disque libre</li>
+                    <li>Compte Azure (optionnel, pour la partie AKS)</li>
+                </ul>
+            </div>
+
+            <div class="modules-grid">
+                <!-- Partie 1 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">1</span>
+                        <span class="module-duration">10 min</span>
+                    </div>
+                    <h3>📚 Introduction à Kubernetes</h3>
+                    <p>Découvrez Kubernetes, ses avantages et pourquoi il est essentiel pour les applications modernes.
+                    </p>
+                    <ul>
+                        <li>Qu'est-ce que Kubernetes ?</li>
+                        <li>Pourquoi utiliser K8s ?</li>
+                        <li>Docker vs Kubernetes</li>
+                        <li>Concepts clés</li>
+                    </ul>
+                    <a href="parties/partie1.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 2 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">2</span>
+                        <span class="module-duration">8 min</span>
+                    </div>
+                    <h3>🏗️ Architecture de Kubernetes</h3>
+                    <p>Comprenez l'architecture de Kubernetes avec le Control Plane et les Worker Nodes.</p>
+                    <ul>
+                        <li>Architecture globale</li>
+                        <li>Control Plane (Master)</li>
+                        <li>Worker Nodes</li>
+                        <li>Composants essentiels</li>
+                    </ul>
+                    <a href="parties/partie2.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 3 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">3</span>
+                        <span class="module-duration">10 min</span>
+                    </div>
+                    <h3>🚀 Installation et premiers pas</h3>
+                    <p>Installez Kubernetes localement avec Minikube et lancez votre première application.</p>
+                    <ul>
+                        <li>Options d'installation</li>
+                        <li>Installer Minikube et kubectl</li>
+                        <li>Commandes essentielles</li>
+                        <li>Premier déploiement</li>
+                    </ul>
+                    <a href="parties/partie3.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 4 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">4</span>
+                        <span class="module-duration">12 min</span>
+                    </div>
+                    <h3>📦 Pods et Deployments</h3>
+                    <p>Maîtrisez les Pods, Deployments et ReplicaSets pour gérer vos applications.</p>
+                    <ul>
+                        <li>Qu'est-ce qu'un Pod ?</li>
+                        <li>Deployments et ReplicaSets</li>
+                        <li>Scaling et rolling updates</li>
+                        <li>Stratégies de déploiement</li>
+                    </ul>
+                    <a href="parties/partie4.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 5 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">5</span>
+                        <span class="module-duration">8 min</span>
+                    </div>
+                    <h3>🌐 Services et networking</h3>
+                    <p>Configurez les Services pour exposer vos applications et gérer le networking.</p>
+                    <ul>
+                        <li>Types de Services</li>
+                        <li>ClusterIP, NodePort, LoadBalancer</li>
+                        <li>DNS dans Kubernetes</li>
+                        <li>Communication inter-pods</li>
+                    </ul>
+                    <a href="parties/partie5.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 6 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">6</span>
+                        <span class="module-duration">8 min</span>
+                    </div>
+                    <h3>🔐 ConfigMaps et Secrets</h3>
+                    <p>Gérez la configuration et les secrets de vos applications de manière sécurisée.</p>
+                    <ul>
+                        <li>ConfigMaps pour la configuration</li>
+                        <li>Secrets pour les données sensibles</li>
+                        <li>Injection dans les Pods</li>
+                        <li>Bonnes pratiques de sécurité</li>
+                    </ul>
+                    <a href="parties/partie6.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 7 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">7</span>
+                        <span class="module-duration">8 min</span>
+                    </div>
+                    <h3>💾 Volumes et persistence</h3>
+                    <p>Gérez la persistance des données avec les Volumes, PV et PVC.</p>
+                    <ul>
+                        <li>Types de Volumes</li>
+                        <li>PersistentVolume (PV)</li>
+                        <li>PersistentVolumeClaim (PVC)</li>
+                        <li>StorageClass et provisionnement dynamique</li>
+                    </ul>
+                    <a href="parties/partie7.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 8 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">8</span>
+                        <span class="module-duration">6 min</span>
+                    </div>
+                    <h3>🌍 Ingress et exposition externe</h3>
+                    <p>Exposez vos applications sur Internet avec Ingress et SSL/TLS.</p>
+                    <ul>
+                        <li>Qu'est-ce qu'un Ingress ?</li>
+                        <li>Installer un Ingress Controller</li>
+                        <li>Routing HTTP/HTTPS</li>
+                        <li>Configuration SSL/TLS</li>
+                    </ul>
+                    <a href="parties/partie8.html" class="btn-primary">Commencer →</a>
+                </div>
+
+                <!-- Partie 9 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <span class="module-number">9</span>
+                        <span class="module-duration">10 min</span>
+                    </div>
+                    <h3>☁️ Déploiement sur Azure (AKS)</h3>
+                    <p>Mettez en production vos applications sur Azure Kubernetes Service.</p>
+                    <ul>
+                        <li>Azure Kubernetes Service (AKS)</li>
+                        <li>Créer un cluster AKS</li>
+                        <li>Azure Container Registry (ACR)</li>
+                        <li>Best practices production</li>
+                    </ul>
+                    <a href="parties/partie9.html" class="btn-primary">Commencer →</a>
+                </div>
+            </div>
+
+            <div class="progression-path">
+                <h2>🗺️ Parcours d'apprentissage</h2>
+                <div class="path-timeline">
+                    <div class="path-step">
+                        <div class="step-number">1-2</div>
+                        <div class="step-content">
+                            <h4>Fondamentaux</h4>
+                            <p>Comprendre Kubernetes</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Installation</h4>
+                            <p>Environnement local</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">4-5</div>
+                        <div class="step-content">
+                            <h4>Core Concepts</h4>
+                            <p>Pods et Services</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">6-7</div>
+                        <div class="step-content">
+                            <h4>Configuration</h4>
+                            <p>Config et stockage</p>
+                        </div>
+                    </div>
+                    <div class="path-connector">→</div>
+                    <div class="path-step">
+                        <div class="step-number">8-9</div>
+                        <div class="step-content">
+                            <h4>Production</h4>
+                            <p>Ingress et cloud</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tips-section">
+                <h2>💡 Conseils pour réussir</h2>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4>🎯 Pratiquez</h4>
+                        <p>Kubernetes s'apprend en pratiquant. Lancez un cluster local et testez chaque concept.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>📖 Lisez la doc</h4>
+                        <p>La documentation officielle Kubernetes est excellente. Consultez-la régulièrement.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>🔧 Utilisez kubectl</h4>
+                        <p>Maîtrisez kubectl, c'est votre outil principal pour interagir avec Kubernetes.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>☁️ Testez en cloud</h4>
+                        <p>Essayez un cluster managé (AKS, EKS, GKE) pour comprendre la production.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <h3>🎓 Prêt à commencer ?</h3>
+                <p>
+                    Suivez les modules dans l'ordre pour une progression optimale. Kubernetes est complexe mais
+                    très puissant une fois maîtrisé !
+                </p>
+                <p style="margin-top: 15px;">
+                    <a href="parties/partie1.html"
+                        style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                        Commencer la Partie 1 : Introduction →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Kubernetes pour Data Engineering - 2024</p>
+            <p style="margin-top: 15px;">Pour toute question ou suggestion : <a
+                    href="mailto:formation@example.com">formation@example.com</a></p>
+        </footer>
+    </div>
+</body>
+
+</html>

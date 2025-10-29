@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 5 : GitHub Actions - CI/CD - Formation GitHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Partie 5 : GitHub Actions - CI/CD</h1>
+            <p class="subtitle">Automatisez tests, déploiements et workflows</p>
+            <span class="duration">⏱️ Durée : 45 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html" class="active">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Comprendre GitHub Actions et ses concepts clés</li>
+                    <li>Créer des workflows d'automatisation</li>
+                    <li>Mettre en place tests automatiques Python</li>
+                    <li>Configurer le linting et formatage de code</li>
+                    <li>Déployer des pipelines Data sur Azure</li>
+                    <li>Gérer les secrets en toute sécurité</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Qu'est-ce que GitHub Actions ?</h2>
+
+                <p>
+                    <strong>GitHub Actions</strong> est un système d'automatisation intégré à GitHub qui permet de :
+                </p>
+
+                <ul>
+                    <li>🧪 Exécuter des tests automatiquement</li>
+                    <li>🏗️ Builder et déployer des applications</li>
+                    <li>📦 Publier des packages</li>
+                    <li>🔍 Analyser la qualité du code</li>
+                    <li>🚀 Déployer des pipelines de données</li>
+                </ul>
+
+                <h3>Concepts clés</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concept</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Workflow</strong></td>
+                            <td>Processus automatisé défini dans un fichier YAML</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Job</strong></td>
+                            <td>Ensemble d'étapes qui s'exécutent sur le même runner</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Step</strong></td>
+                            <td>Commande ou action individuelle</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Runner</strong></td>
+                            <td>Machine virtuelle qui exécute les workflows (Ubuntu, macOS, Windows)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Action</strong></td>
+                            <td>Composant réutilisable (ex: checkout code, setup Python)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Exemple 1 : Tests automatiques Python</h3>
+
+                <p>Créez le fichier <code>.github/workflows/tests.yml</code> :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">name: Tests
+
+# Trigger: quand et comment le workflow s'exécute
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run tests
+      run: |
+        pytest tests/ --cov=src --cov-report=xml
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true</code></pre>
+                </div>
+
+                <h3>Exemple 2 : Linter et formateur de code</h3>
+
+                <p>Fichier <code>.github/workflows/lint.yml</code> :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">name: Code Quality
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install linters
+      run: |
+        pip install black flake8 mypy
+
+    - name: Check code formatting with Black
+      run: black --check src/ tests/
+
+    - name: Lint with Flake8
+      run: flake8 src/ tests/ --max-line-length=100
+
+    - name: Type check with MyPy
+      run: mypy src/</code></pre>
+                </div>
+
+                <h3>Exemple 3 : Déploiement d'un pipeline Data sur Azure</h3>
+
+                <p>Fichier <code>.github/workflows/deploy.yml</code> :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">name: Deploy to Azure Production
+
+on:
+  push:
+    tags:
+      - 'v*'  # Déclenche sur les tags comme v1.0.0
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Build and push Docker image to Azure Container Registry
+      run: |
+        az acr login --name myregistry
+        docker build -t myregistry.azurecr.io/data-pipeline:${{ github.ref_name }} .
+        docker push myregistry.azurecr.io/data-pipeline:${{ github.ref_name }}
+
+    - name: Deploy to Azure Container Instances
+      run: |
+        az container create \
+          --resource-group data-engineering-rg \
+          --name data-pipeline \
+          --image myregistry.azurecr.io/data-pipeline:${{ github.ref_name }} \
+          --cpu 2 --memory 4 \
+          --registry-login-server myregistry.azurecr.io \
+          --registry-username ${{ secrets.AZURE_ACR_USERNAME }} \
+          --registry-password ${{ secrets.AZURE_ACR_PASSWORD }} \
+          --restart-policy OnFailure
+
+    - name: Notify Slack
+      uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: 'Deployment to Azure production completed!'
+        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+      if: always()</code></pre>
+                </div>
+
+                <h3>Secrets : Gérer les credentials</h3>
+
+                <p>Pour stocker des informations sensibles (API keys, passwords, Azure credentials) :</p>
+
+                <ol>
+                    <li>Allez dans <strong>Settings</strong> → <strong>Secrets and variables</strong> →
+                        <strong>Actions</strong>
+                    </li>
+                    <li>Cliquez sur <strong>New repository secret</strong></li>
+                    <li>Nom : <code>AZURE_CREDENTIALS</code></li>
+                    <li>Valeur : Votre JSON de credentials Azure (créé avec <code>az ad sp create-for-rbac</code>)
+                    </li>
+                    <li>Cliquez sur <strong>Add secret</strong></li>
+                </ol>
+
+                <p>Utilisation dans le workflow :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">- name: Use secret
+  run: echo ${{ secrets.AZURE_CREDENTIALS }}  # Masqué dans les logs</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Sécurité des secrets</h4>
+                    <p>
+                        Les secrets sont automatiquement masqués dans les logs. Ne les affichez jamais explicitement.
+                    </p>
+                </div>
+
+                <h3>Marketplace GitHub Actions</h3>
+
+                <p>
+                    Le <a href="https://github.com/marketplace?type=actions" target="_blank">GitHub Actions
+                        Marketplace</a>
+                    contient des milliers d'actions prêtes à l'emploi :
+                </p>
+
+                <ul>
+                    <li><strong>actions/checkout</strong> : Cloner le repository</li>
+                    <li><strong>actions/setup-python</strong> : Configurer Python</li>
+                    <li><strong>docker/build-push-action</strong> : Builder et pusher une image Docker</li>
+                    <li><strong>aws-actions/configure-aws-credentials</strong> : Configurer AWS CLI</li>
+                    <li><strong>codecov/codecov-action</strong> : Uploader la couverture de code</li>
+                </ul>
+
+                <div class="key-points">
+                    <h3>Bonnes pratiques GitHub Actions</h3>
+                    <ul>
+                        <li>Utilisez des actions du marketplace plutôt que de réinventer</li>
+                        <li>Vérifiez les versions des actions (utilisez @v4, pas @main)</li>
+                        <li>Cachez les dépendances avec <code>actions/cache</code></li>
+                        <li>Limitez les déclencheurs (pas besoin de CI sur chaque push)</li>
+                        <li>Divisez les workflows longs en jobs parallèles</li>
+                        <li>Utilisez des matrix builds pour tester sur plusieurs versions</li>
+                        <li>Ne jamais hardcoder de secrets dans les fichiers YAML</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vous savez maintenant automatiser avec GitHub Actions ! Passons à la <strong>Partie 6</strong> pour
+                    sécuriser vos projets.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie4.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 4 : Issues et Projects
+                </a>
+                <a href="partie6.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 6 : Sécurité →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation GitHub pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4: Framework d'Agregation - Formation MongoDB</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Module 4: Framework d'Agregation</h1>
+            <p class="subtitle">Pipelines et operations complexes</p>
+            <span class="duration">Duree: 10 minutes</span>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="01-introduction.html">M1: Introduction</a></li>
+                <li><a href="02-installation.html">M2: Installation</a></li>
+                <li><a href="03-crud.html">M3: CRUD</a></li>
+                <li><a href="04-aggregation.html" class="active">M4: Agregation</a></li>
+                <li><a href="05-index-performance.html">M5: Index</a></li>
+                <li><a href="06-modelisation.html">M6: Modelisation</a></li>
+                <li><a href="07-data-engineering.html">M7: Data Engineering</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs du module</h2>
+                <ul>
+                    <li>Comprendre le framework d'agregation</li>
+                    <li>Utiliser $match, $group, $project, $sort</li>
+                    <li>Maitriser $lookup (JOIN) et $unwind</li>
+                    <li>Creer des pipelines complexes</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Qu'est-ce que l'agregation ?</h2>
+
+                <p>
+                    Le <strong>framework d'agregation</strong> de MongoDB est un pipeline de traitement de donnees puissant
+                    qui permet de transformer et combiner des documents. C'est l'equivalent des GROUP BY, JOIN et sous-requetes SQL.
+                </p>
+
+                <div class="workflow-diagram">
+                    <pre>
+Documents     Pipeline Stage 1     Pipeline Stage 2     Pipeline Stage 3     Resultat
+   ↓               ↓                    ↓                    ↓                  ↓
+[{...}]  →    $match (filter)  →  $group (aggregate)  →  $sort (order)  →  [{result}]
+[{...}]            ↓                    ↓                    ↓
+[{...}]      Keep only matching    Group and calculate   Sort by field
+                documents               statistics
+</pre>
+                </div>
+
+                <h3>Stages d'agregation courants</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stage</th>
+                            <th>Description</th>
+                            <th>Equivalent SQL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>$match</code></td>
+                            <td>Filtrer les documents</td>
+                            <td>WHERE</td>
+                        </tr>
+                        <tr>
+                            <td><code>$group</code></td>
+                            <td>Grouper et agreger</td>
+                            <td>GROUP BY</td>
+                        </tr>
+                        <tr>
+                            <td><code>$sort</code></td>
+                            <td>Trier les resultats</td>
+                            <td>ORDER BY</td>
+                        </tr>
+                        <tr>
+                            <td><code>$project</code></td>
+                            <td>Selectionner/transformer les champs</td>
+                            <td>SELECT</td>
+                        </tr>
+                        <tr>
+                            <td><code>$limit</code></td>
+                            <td>Limiter le nombre de resultats</td>
+                            <td>LIMIT</td>
+                        </tr>
+                        <tr>
+                            <td><code>$skip</code></td>
+                            <td>Sauter des documents</td>
+                            <td>OFFSET</td>
+                        </tr>
+                        <tr>
+                            <td><code>$lookup</code></td>
+                            <td>Jointure avec une autre collection</td>
+                            <td>JOIN</td>
+                        </tr>
+                        <tr>
+                            <td><code>$unwind</code></td>
+                            <td>Derouler un tableau</td>
+                            <td>UNNEST</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>Exemples d'agregation</h2>
+
+                <h3>Exemple 1 : Compter les utilisateurs par departement</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">db.users.aggregate([
+  {
+    $group: {
+      _id: "$department",
+      count: { $sum: 1 },
+      avgAge: { $avg: "$age" }
+    }
+  },
+  {
+    $sort: { count: -1 }
+  }
+])
+
+// Resultat
+[
+  { _id: "Data", count: 15, avgAge: 29.5 },
+  { _id: "Backend", count: 12, avgAge: 27.8 },
+  { _id: "Frontend", count: 10, avgAge: 26.3 }
+]</code></pre>
+                </div>
+
+                <p><strong>Equivalent SQL :</strong></p>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-sql">SELECT
+  department AS _id,
+  COUNT(*) AS count,
+  AVG(age) AS avgAge
+FROM users
+GROUP BY department
+ORDER BY count DESC;</code></pre>
+                </div>
+
+                <h3>Exemple 2 : Pipeline complexe avec filtres</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">db.users.aggregate([
+  // Stage 1: Filtrer les utilisateurs > 25 ans
+  {
+    $match: {
+      age: { $gt: 25 }
+    }
+  },
+  // Stage 2: Projeter certains champs et creer des champs calcules
+  {
+    $project: {
+      name: 1,
+      age: 1,
+      department: 1,
+      yearsOfExperience: { $subtract: [{ $year: new Date() }, { $year: "$created_at" }] }
+    }
+  },
+  // Stage 3: Grouper par departement
+  {
+    $group: {
+      _id: "$department",
+      avgAge: { $avg: "$age" },
+      avgExperience: { $avg: "$yearsOfExperience" },
+      employees: { $push: "$name" }
+    }
+  },
+  // Stage 4: Trier par experience moyenne
+  {
+    $sort: { avgExperience: -1 }
+  },
+  // Stage 5: Limiter aux 3 premiers
+  {
+    $limit: 3
+  }
+])</code></pre>
+                </div>
+
+                <h3>Exemple 3 : $lookup (JOIN)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Collection users et collection orders
+db.users.aggregate([
+  {
+    $lookup: {
+      from: "orders",              // Collection a joindre
+      localField: "_id",           // Champ dans users
+      foreignField: "user_id",     // Champ dans orders
+      as: "user_orders"            // Nom du tableau resultant
+    }
+  },
+  {
+    $project: {
+      name: 1,
+      email: 1,
+      totalOrders: { $size: "$user_orders" },
+      orders: "$user_orders"
+    }
+  }
+])</code></pre>
+                </div>
+
+                <h3>Exemple 4 : $unwind (Derouler un tableau)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Utilisateur avec competences
+{
+  name: "Alice",
+  skills: ["Python", "MongoDB", "Docker"]
+}
+
+// Derouler les competences
+db.users.aggregate([
+  { $unwind: "$skills" },
+  {
+    $group: {
+      _id: "$skills",
+      count: { $sum: 1 }
+    }
+  },
+  { $sort: { count: -1 } }
+])
+
+// Resultat : competences les plus repandues
+[
+  { _id: "Python", count: 25 },
+  { _id: "MongoDB", count: 18 },
+  { _id: "Docker", count: 15 }
+]</code></pre>
+                </div>
+
+                <h3>Avec Python (PyMongo)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['mydb']
+collection = db['users']
+
+# Pipeline d'agregation
+pipeline = [
+    {
+        "$match": {
+            "age": {"$gt": 25}
+        }
+    },
+    {
+        "$group": {
+            "_id": "$department",
+            "count": {"$sum": 1},
+            "avgAge": {"$avg": "$age"},
+            "employees": {"$push": "$name"}
+        }
+    },
+    {
+        "$sort": {"count": -1}
+    }
+]
+
+# Executer l'agregation
+results = collection.aggregate(pipeline)
+
+for result in results:
+    print(result)</code></pre>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Operateurs d'agregation courants</h3>
+                <ul>
+                    <li><strong>$sum</strong> : Somme des valeurs</li>
+                    <li><strong>$avg</strong> : Moyenne des valeurs</li>
+                    <li><strong>$min</strong> / <strong>$max</strong> : Minimum / Maximum</li>
+                    <li><strong>$first</strong> / <strong>$last</strong> : Premier / Dernier element</li>
+                    <li><strong>$push</strong> : Ajouter a un tableau</li>
+                    <li><strong>$addToSet</strong> : Ajouter sans doublons</li>
+                    <li><strong>$count</strong> : Compter les documents</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="03-crud.html" class="nav-button prev">Module 3: CRUD</a>
+                <a href="05-index-performance.html" class="nav-button next">Module 5: Index et Performance</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Module 4/7 - Formation MongoDB pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+</body>
+</html>

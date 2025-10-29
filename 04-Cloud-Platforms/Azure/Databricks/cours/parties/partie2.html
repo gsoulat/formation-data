@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 2 : Configuration et Workspace</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Partie 2 : Configuration et Workspace</h1>
+            <p class="subtitle">Créez et configurez votre workspace Databricks</p>
+            <span class="duration">⏱️ Durée : 40 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">← Partie 1</a></li>
+                <li><a href="partie2.html" class="active">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="objectives">
+                <h2>🎯 Objectifs d'apprentissage</h2>
+                <ul>
+                    <li>Créer un workspace Azure Databricks</li>
+                    <li>Comprendre les différentes options de configuration</li>
+                    <li>Configurer la sécurité réseau et les accès</li>
+                    <li>Créer et gérer des clusters Spark</li>
+                    <li>Optimiser les coûts avec autoscaling et terminaison automatique</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>1. Création d'un workspace Databricks</h2>
+
+                <h3>Prérequis</h3>
+                <ul>
+                    <li>Un abonnement Azure actif</li>
+                    <li>Les permissions pour créer des ressources (Contributor ou Owner)</li>
+                    <li>Un groupe de ressources Azure</li>
+                </ul>
+
+                <h3>Étapes de création via le portail Azure</h3>
+
+                <div class="exercise">
+                    <h4>Création d'un workspace</h4>
+                    <ol>
+                        <li><strong>Accédez au portail Azure</strong> (portal.azure.com)</li>
+                        <li>Cliquez sur <code>+ Créer une ressource</code></li>
+                        <li>Recherchez "Azure Databricks"</li>
+                        <li>Cliquez sur <code>Créer</code></li>
+                        <li>Remplissez les informations de base :
+                            <ul>
+                                <li><strong>Abonnement :</strong> Sélectionnez votre abonnement</li>
+                                <li><strong>Groupe de ressources :</strong> Créez ou sélectionnez un groupe existant</li>
+                                <li><strong>Nom du workspace :</strong> Par exemple "databricks-prod-workspace"</li>
+                                <li><strong>Région :</strong> Choisissez une région proche de vos données (ex: West Europe)</li>
+                                <li><strong>Niveau tarifaire :</strong> Standard, Premium ou Trial</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <h3>Niveaux tarifaires</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Niveau</th>
+                            <th>Fonctionnalités</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Trial</strong></td>
+                            <td>
+                                • 14 jours gratuits<br>
+                                • Fonctionnalités Premium<br>
+                                • Limité en ressources
+                            </td>
+                            <td>Tests et POC</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Standard</strong></td>
+                            <td>
+                                • Clusters Spark<br>
+                                • Notebooks<br>
+                                • Jobs scheduling<br>
+                                • RBAC basique
+                            </td>
+                            <td>Data Engineering de base</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Premium</strong></td>
+                            <td>
+                                • Tout du Standard +<br>
+                                • RBAC avancé<br>
+                                • Azure AD intégration<br>
+                                • Audit logs<br>
+                                • Secrets management
+                            </td>
+                            <td>Production enterprise</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <h4>Recommandation</h4>
+                    <p>Pour un usage en production, choisissez toujours le niveau <strong>Premium</strong> qui offre des fonctionnalités de sécurité et gouvernance essentielles.</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>2. Configuration réseau et sécurité</h2>
+
+                <h3>Options de déploiement réseau</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Déploiement standard</h4>
+                        <p><strong>VNet managé par Databricks</strong></p>
+                        <ul>
+                            <li>Configuration automatique</li>
+                            <li>Rapide à déployer</li>
+                            <li>Moins de contrôle</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>VNet Injection</h4>
+                        <p><strong>Votre propre VNet Azure</strong></p>
+                        <ul>
+                            <li>Contrôle total du réseau</li>
+                            <li>Intégration avec infrastructure existante</li>
+                            <li>Configuration NSG personnalisée</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Configuration VNet Injection</h3>
+                <div class="exercise">
+                    <h4>Prérequis pour VNet Injection</h4>
+                    <ol>
+                        <li><strong>Créer un VNet avec au moins 2 subnets via le portail Azure :</strong>
+                            <ul>
+                                <li><strong>Subnet privé pour les workers :</strong> minimum /26 (ex: 10.0.1.0/26)</li>
+                                <li><strong>Subnet public pour le control plane :</strong> minimum /26 (ex: 10.0.2.0/26)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Déléguer les subnets à Databricks :</strong>
+                            <ul>
+                                <li>Dans chaque subnet, aller dans "Délégations de service"</li>
+                                <li>Sélectionner "Microsoft.Databricks/workspaces"</li>
+                            </ul>
+                        </li>
+                        <li><strong>Lors de la création du workspace Databricks :</strong>
+                            <ul>
+                                <li>Cocher "Déployer Azure Databricks dans votre réseau virtuel"</li>
+                                <li>Sélectionner le VNet et les subnets créés</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Important : Taille des subnets</h4>
+                    <p>Chaque subnet doit avoir au moins un préfixe /26 (64 adresses) pour permettre la création de clusters. Pour les environnements de production, utilisez au minimum /24.</p>
+                </div>
+
+                <h3>Sécurité avec Azure AD</h3>
+                <div class="alert alert-info">
+                    <h4>Configuration de l'authentification</h4>
+                    <p>En niveau Premium, l'authentification Azure AD est activée automatiquement. Les utilisateurs se connectent avec leurs identifiants Azure AD existants.</p>
+                    <p>L'attribution des rôles et permissions se fait via le portail Azure dans la section "Contrôle d'accès (IAM)" de votre workspace Databricks.</p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>3. Gestion des clusters</h2>
+
+                <h3>Types de clusters</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>All-Purpose Cluster</strong></td>
+                            <td>
+                                • Cluster interactif<br>
+                                • Partagé entre utilisateurs<br>
+                                • Persiste entre exécutions
+                            </td>
+                            <td>
+                                • Développement<br>
+                                • Exploration de données<br>
+                                • Notebooks interactifs
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Job Cluster</strong></td>
+                            <td>
+                                • Créé automatiquement<br>
+                                • Terminé après le job<br>
+                                • Optimisé pour une tâche
+                            </td>
+                            <td>
+                                • Jobs automatisés<br>
+                                • Pipelines de production<br>
+                                • Optimisation des coûts
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Création d'un cluster via l'interface</h3>
+                <div class="exercise">
+                    <h4>Créer un cluster All-Purpose</h4>
+                    <ol>
+                        <li>Dans votre workspace, cliquez sur <code>Compute</code> dans la barre latérale</li>
+                        <li>Cliquez sur <code>Create Cluster</code></li>
+                        <li>Configurez :
+                            <ul>
+                                <li><strong>Cluster name :</strong> "dev-cluster"</li>
+                                <li><strong>Cluster mode :</strong> Standard</li>
+                                <li><strong>Databricks Runtime Version :</strong> 13.3 LTS (ou plus récent)</li>
+                                <li><strong>Node type :</strong> Standard_DS3_v2 (ou selon vos besoins)</li>
+                                <li><strong>Workers :</strong> Min 2, Max 8 (avec autoscaling)</li>
+                                <li><strong>Auto Termination :</strong> 20 minutes</li>
+                            </ul>
+                        </li>
+                        <li>Cliquez sur <code>Create Cluster</code></li>
+                    </ol>
+                </div>
+
+                <h3>Configuration via l'API Databricks</h3>
+                <pre><code class="language-python"># Création de cluster via l'API Databricks
+import requests
+import json
+
+DATABRICKS_HOST = "https://&lt;workspace-url&gt;"
+DATABRICKS_TOKEN = "&lt;your-token&gt;"
+
+cluster_config = {
+    "cluster_name": "production-cluster",
+    "spark_version": "13.3.x-scala2.12",
+    "node_type_id": "Standard_DS3_v2",
+    "num_workers": 2,
+    "autoscale": {
+        "min_workers": 2,
+        "max_workers": 8
+    },
+    "auto_termination_minutes": 30,
+    "enable_elastic_disk": True,
+    "cluster_source": "API"
+}
+
+headers = {
+    "Authorization": f"Bearer {DATABRICKS_TOKEN}",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(
+    f"{DATABRICKS_HOST}/api/2.0/clusters/create",
+    headers=headers,
+    json=cluster_config
+)
+
+cluster_id = response.json()["cluster_id"]
+print(f"Cluster créé avec l'ID : {cluster_id}")
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>4. Configurations de cluster avancées</h2>
+
+                <h3>Types de VMs recommandés</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Workload</th>
+                            <th>VM Type</th>
+                            <th>Caractéristiques</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Data Engineering général</td>
+                            <td>Standard_DS3_v2</td>
+                            <td>4 vCPU, 14 GB RAM - Équilibré</td>
+                        </tr>
+                        <tr>
+                            <td>Calcul intensif</td>
+                            <td>Standard_F8s_v2</td>
+                            <td>8 vCPU, 16 GB RAM - Optimisé CPU</td>
+                        </tr>
+                        <tr>
+                            <td>Machine Learning</td>
+                            <td>Standard_NC6s_v3</td>
+                            <td>6 vCPU, GPU V100 - Accélération GPU</td>
+                        </tr>
+                        <tr>
+                            <td>Mémoire intensive</td>
+                            <td>Standard_E8s_v3</td>
+                            <td>8 vCPU, 64 GB RAM - Haute mémoire</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Spark Configuration</h3>
+                <pre><code class="language-python"># Configuration Spark personnalisée dans le cluster
+spark_conf = {
+    "spark.sql.adaptive.enabled": "true",
+    "spark.sql.adaptive.coalescePartitions.enabled": "true",
+    "spark.databricks.delta.preview.enabled": "true",
+    "spark.sql.shuffle.partitions": "auto"
+}
+
+# Variables d'environnement
+env_vars = {
+    "PYSPARK_PYTHON": "/databricks/python3/bin/python3",
+    "ENV": "production"
+}
+
+# Init Scripts pour installer des dépendances
+init_scripts = [{
+    "dbfs": {
+        "destination": "dbfs:/databricks/init-scripts/install-libs.sh"
+    }
+}]
+</code></pre>
+
+                <h3>Autoscaling</h3>
+                <p>L'autoscaling permet d'ajuster automatiquement le nombre de workers en fonction de la charge :</p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Avantages</h4>
+                        <ul>
+                            <li>Optimisation automatique des coûts</li>
+                            <li>Performance adaptée à la charge</li>
+                            <li>Pas de sur-provisionnement</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Configuration recommandée</h4>
+                        <ul>
+                            <li>Min workers : 2 (haute disponibilité)</li>
+                            <li>Max workers : 8-16 (selon budget)</li>
+                            <li>Scale down : 10 minutes d'inactivité</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <pre><code class="language-json">{
+  "autoscale": {
+    "min_workers": 2,
+    "max_workers": 10
+  },
+  "auto_termination_minutes": 30
+}
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>5. Optimisation des coûts</h2>
+
+                <h3>Stratégies d'optimisation</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stratégie</th>
+                            <th>Description</th>
+                            <th>Économies potentielles</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Auto-termination</strong></td>
+                            <td>Arrêter les clusters inactifs automatiquement</td>
+                            <td>30-50% sur clusters de dev</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Job Clusters</strong></td>
+                            <td>Utiliser des job clusters au lieu d'all-purpose</td>
+                            <td>20-40% sur workloads batch</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Instance Pools</strong></td>
+                            <td>Réutiliser des VMs pré-provisionnées</td>
+                            <td>Démarrage 4x plus rapide</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spot VMs</strong></td>
+                            <td>Utiliser des VMs Azure Spot pour workers</td>
+                            <td>60-80% sur coût compute</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Photon Engine</strong></td>
+                            <td>Moteur vectorisé C++ (Premium tier)</td>
+                            <td>Performances 2-4x meilleures</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-success">
+                    <h4>Bonnes pratiques de coûts</h4>
+                    <ul>
+                        <li>Toujours activer l'auto-termination (recommandé : 20-30 minutes)</li>
+                        <li>Utiliser des job clusters pour les pipelines de production</li>
+                        <li>Dimensionner les clusters en fonction de la charge réelle</li>
+                        <li>Monitorer l'utilisation avec Azure Cost Management</li>
+                        <li>Utiliser des tags pour tracker les coûts par projet/équipe</li>
+                    </ul>
+                </div>
+
+                <h3>Configuration Spot VMs</h3>
+                <pre><code class="language-python"># Configuration de cluster avec Spot VMs pour les workers
+cluster_config_spot = {
+    "cluster_name": "spot-cluster",
+    "spark_version": "13.3.x-scala2.12",
+    "node_type_id": "Standard_DS3_v2",
+    "driver_node_type_id": "Standard_DS3_v2",  # Driver on-demand
+    "num_workers": 4,
+    "autoscale": {
+        "min_workers": 2,
+        "max_workers": 10
+    },
+    "azure_attributes": {
+        "availability": "SPOT_WITH_FALLBACK_AZURE",  # Spot avec fallback on-demand
+        "first_on_demand": 1,  # Driver toujours on-demand
+        "spot_bid_max_price": -1  # Prix max = prix on-demand
+    }
+}
+</code></pre>
+            </section>
+
+            <section class="section">
+                <div class="key-points">
+                    <h3>📌 Points clés à retenir</h3>
+                    <ul>
+                        <li>Choisissez Premium tier pour la production (sécurité et gouvernance)</li>
+                        <li>VNet Injection offre un contrôle réseau complet</li>
+                        <li>All-Purpose clusters pour le dev, Job clusters pour la production</li>
+                        <li>Activez toujours l'autoscaling et auto-termination</li>
+                        <li>Utilisez Spot VMs pour réduire les coûts de 60-80%</li>
+                        <li>Dimensionnez vos clusters selon la charge réelle</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-warning">
+                <h4>Prochaine étape</h4>
+                <p>Votre workspace est configuré ! Dans la <strong>Partie 3</strong>, vous allez créer votre premier notebook et découvrir les différents langages supportés.</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">← Partie 1</a></li>
+                <li><a href="partie2.html" class="active">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3 : Notebooks →</a></li>
+            </ul>
+        </nav>
+
+        <footer>
+            <p>&copy; 2024 Formation Simplon - Azure Databricks</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+</body>
+</html>

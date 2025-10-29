@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 4 : Apache Spark et traitement de données</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔥 Partie 4 : Apache Spark et traitement de données</h1>
+            <p class="subtitle">Exploitez la puissance du traitement distribué</p>
+            <span class="duration">⏱️ Durée : 50 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie3.html">← Partie 3</a></li>
+                <li><a href="partie4.html" class="active">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="objectives">
+                <h2>🎯 Objectifs d'apprentissage</h2>
+                <ul>
+                    <li>Comprendre l'architecture et les concepts d'Apache Spark</li>
+                    <li>Maîtriser les DataFrames et Datasets</li>
+                    <li>Effectuer des transformations et actions sur les données</li>
+                    <li>Utiliser Spark SQL pour requêter les données</li>
+                    <li>Optimiser les performances des requêtes</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>1. Architecture Apache Spark</h2>
+
+                <h3>Concepts fondamentaux</h3>
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                   ARCHITECTURE SPARK                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌──────────────┐                                            │
+│  │   Driver     │   (Master Node)                            │
+│  │   Program    │   • SparkContext                           │
+│  │              │   • Planification des tâches               │
+│  └──────┬───────┘   • Distribution du code                   │
+│         │                                                     │
+│         │                                                     │
+│    ┌────▼─────────────────────────────────┐                  │
+│    │      Cluster Manager                 │                  │
+│    │  (YARN / Mesos / Kubernetes / Local) │                  │
+│    └────┬──────────────┬──────────────────┘                  │
+│         │              │                                      │
+│    ┌────▼────┐    ┌───▼─────┐    ┌─────────┐                │
+│    │ Worker  │    │ Worker  │    │ Worker  │                │
+│    │ Node 1  │    │ Node 2  │    │ Node 3  │                │
+│    │         │    │         │    │         │                │
+│    │ ┌─────┐ │    │ ┌─────┐ │    │ ┌─────┐ │                │
+│    │ │Task │ │    │ │Task │ │    │ │Task │ │                │
+│    │ └─────┘ │    │ └─────┘ │    │ └─────┘ │                │
+│    │ ┌─────┐ │    │ ┌─────┐ │    │ ┌─────┐ │                │
+│    │ │Task │ │    │ │Task │ │    │ │Task │ │                │
+│    │ └─────┘ │    │ └─────┘ │    │ └─────┘ │                │
+│    └─────────┘    └─────────┘    └─────────┘                │
+│                                                               │
+└─────────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Composant</th>
+                            <th>Rôle</th>
+                            <th>Responsabilités</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Driver</strong></td>
+                            <td>Nœud maître</td>
+                            <td>
+                                • Exécute le code utilisateur<br>
+                                • Crée le SparkContext<br>
+                                • Planifie les tâches
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cluster Manager</strong></td>
+                            <td>Gestionnaire de ressources</td>
+                            <td>
+                                • Alloue les ressources<br>
+                                • Gère les workers<br>
+                                • Monitore la santé du cluster
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Workers</strong></td>
+                            <td>Nœuds de calcul</td>
+                            <td>
+                                • Exécutent les tâches<br>
+                                • Stockent les données en cache<br>
+                                • Renvoient les résultats
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Executors</strong></td>
+                            <td>Processus sur workers</td>
+                            <td>
+                                • Exécutent le code<br>
+                                • Gèrent le cache<br>
+                                • Communiquent avec driver
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>2. DataFrames et Datasets</h2>
+
+                <h3>Qu'est-ce qu'un DataFrame ?</h3>
+                <p>Un DataFrame est une collection distribuée de données organisée en colonnes nommées, similaire à une table SQL ou un DataFrame pandas, mais optimisé pour le traitement distribué.</p>
+
+                <h3>Création de DataFrames</h3>
+                <pre><code class="language-python"># 1. Depuis une collection Python
+data = [
+    ("Alice", 34, "Engineering"),
+    ("Bob", 45, "Sales"),
+    ("Charlie", 29, "Marketing")
+]
+df = spark.createDataFrame(data, ["name", "age", "department"])
+df.show()
+
+# 2. Depuis un fichier CSV
+df_csv = spark.read.csv(
+    "/path/to/data.csv",
+    header=True,
+    inferSchema=True
+)
+
+# 3. Depuis un fichier Parquet
+df_parquet = spark.read.parquet("/path/to/data.parquet")
+
+# 4. Depuis une table Delta
+df_delta = spark.read.format("delta").load("/path/to/delta-table")
+
+# 5. Depuis JSON
+df_json = spark.read.json("/path/to/data.json")
+
+# 6. Depuis une requête SQL
+df_sql = spark.sql("SELECT * FROM my_table WHERE age > 30")
+</code></pre>
+
+                <h3>Schéma des DataFrames</h3>
+                <pre><code class="language-python">from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+
+# Définir un schéma explicitement
+schema = StructType([
+    StructField("name", StringType(), nullable=False),
+    StructField("age", IntegerType(), nullable=True),
+    StructField("department", StringType(), nullable=True)
+])
+
+# Créer DataFrame avec schéma
+df = spark.createDataFrame(data, schema=schema)
+
+# Afficher le schéma
+df.printSchema()
+# root
+#  |-- name: string (nullable = false)
+#  |-- age: integer (nullable = true)
+#  |-- department: string (nullable = true)
+
+# Obtenir le schéma sous forme de DDL
+print(df.schema.simpleString())
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>3. Transformations et Actions</h2>
+
+                <p>Spark utilise deux types d'opérations :</p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Transformations (Lazy)</h4>
+                        <p>Créent un nouveau DataFrame sans exécution immédiate</p>
+                        <ul>
+                            <li>select(), filter(), groupBy()</li>
+                            <li>join(), orderBy(), distinct()</li>
+                            <li>withColumn(), drop()</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Actions (Eager)</h4>
+                        <p>Déclenchent l'exécution et retournent un résultat</p>
+                        <ul>
+                            <li>show(), count(), collect()</li>
+                            <li>take(), first(), head()</li>
+                            <li>write.save(), foreach()</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Transformations courantes</h3>
+                <pre><code class="language-python">from pyspark.sql.functions import col, lit, when, avg, sum, count
+
+# SELECT : Sélectionner des colonnes
+df_select = df.select("name", "age")
+df_select = df.select(col("name"), col("age") + 1)
+
+# FILTER / WHERE : Filtrer les lignes
+df_filtered = df.filter(col("age") > 30)
+df_filtered = df.where("age > 30 AND department = 'Engineering'")
+
+# WITH COLUMN : Ajouter ou modifier une colonne
+df_with_senior = df.withColumn(
+    "is_senior",
+    when(col("age") >= 40, lit("Yes")).otherwise(lit("No"))
+)
+
+df_with_salary = df.withColumn("estimated_salary", col("age") * 1000)
+
+# DROP : Supprimer des colonnes
+df_dropped = df.drop("department")
+
+# DISTINCT : Valeurs uniques
+df_unique = df.select("department").distinct()
+
+# ORDER BY : Trier
+df_sorted = df.orderBy(col("age").desc())
+
+# LIMIT : Limiter le nombre de lignes
+df_limited = df.limit(10)
+</code></pre>
+
+                <h3>Agrégations</h3>
+                <pre><code class="language-python">from pyspark.sql.functions import avg, sum, count, min, max, stddev
+
+# Agrégations simples
+df.select(
+    avg("age").alias("avg_age"),
+    min("age").alias("min_age"),
+    max("age").alias("max_age")
+).show()
+
+# GROUP BY
+df_grouped = df.groupBy("department").agg(
+    count("*").alias("employee_count"),
+    avg("age").alias("avg_age"),
+    min("age").alias("youngest"),
+    max("age").alias("oldest")
+)
+df_grouped.show()
+
+# Multiple groupBy
+df.groupBy("department", "is_senior").agg(
+    count("*").alias("count")
+).show()
+</code></pre>
+
+                <h3>Jointures</h3>
+                <pre><code class="language-python"># Créer deux DataFrames
+employees = spark.createDataFrame([
+    (1, "Alice", "Engineering"),
+    (2, "Bob", "Sales"),
+    (3, "Charlie", "Engineering")
+], ["emp_id", "name", "dept"])
+
+salaries = spark.createDataFrame([
+    (1, 95000),
+    (2, 85000),
+    (3, 78000)
+], ["emp_id", "salary"])
+
+# INNER JOIN
+df_inner = employees.join(salaries, on="emp_id", how="inner")
+df_inner.show()
+
+# LEFT JOIN
+df_left = employees.join(salaries, on="emp_id", how="left")
+
+# RIGHT JOIN
+df_right = employees.join(salaries, on="emp_id", how="right")
+
+# FULL OUTER JOIN
+df_full = employees.join(salaries, on="emp_id", how="outer")
+
+# JOIN avec conditions multiples
+departments = spark.createDataFrame([
+    ("Engineering", "Building A"),
+    ("Sales", "Building B")
+], ["dept_name", "location"])
+
+df_complex_join = employees.join(
+    departments,
+    employees.dept == departments.dept_name,
+    how="left"
+).drop("dept_name")
+df_complex_join.show()
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>4. Spark SQL</h2>
+
+                <h3>Créer des vues temporaires</h3>
+                <pre><code class="language-python"># Créer une vue temporaire globale
+df.createOrReplaceGlobalTempView("employees_global")
+
+# Créer une vue temporaire locale (session)
+df.createOrReplaceTempView("employees")
+
+# Requêter avec SQL
+result = spark.sql("""
+    SELECT
+        department,
+        COUNT(*) as employee_count,
+        AVG(age) as avg_age,
+        MIN(age) as youngest,
+        MAX(age) as oldest
+    FROM employees
+    GROUP BY department
+    ORDER BY employee_count DESC
+""")
+result.show()
+</code></pre>
+
+                <h3>Requêtes SQL avancées</h3>
+                <pre><code class="language-sql">%sql
+-- Window functions
+SELECT
+  name,
+  age,
+  department,
+  AVG(age) OVER (PARTITION BY department) as dept_avg_age,
+  RANK() OVER (PARTITION BY department ORDER BY age DESC) as age_rank
+FROM employees;
+
+-- CTEs (Common Table Expressions)
+WITH dept_stats AS (
+  SELECT
+    department,
+    AVG(age) as avg_age,
+    COUNT(*) as emp_count
+  FROM employees
+  GROUP BY department
+)
+SELECT
+  e.name,
+  e.age,
+  e.department,
+  ds.avg_age,
+  ds.emp_count
+FROM employees e
+JOIN dept_stats ds ON e.department = ds.department
+WHERE e.age > ds.avg_age;
+
+-- Sous-requêtes
+SELECT *
+FROM employees
+WHERE age > (SELECT AVG(age) FROM employees);
+</code></pre>
+
+                <h3>Fonctions SQL utiles</h3>
+                <pre><code class="language-python">from pyspark.sql.functions import *
+
+df_advanced = df.select(
+    # Fonctions de chaîne
+    upper(col("name")).alias("name_upper"),
+    lower(col("name")).alias("name_lower"),
+    length(col("name")).alias("name_length"),
+    concat(col("name"), lit(" - "), col("department")).alias("full_desc"),
+
+    # Fonctions de date
+    current_date().alias("today"),
+    current_timestamp().alias("now"),
+    date_add(current_date(), 7).alias("next_week"),
+
+    # Fonctions conditionnelles
+    when(col("age") >= 40, "Senior")
+    .when(col("age") >= 30, "Mid")
+    .otherwise("Junior").alias("seniority"),
+
+    # Fonctions mathématiques
+    round(col("age") / 10, 2).alias("age_decades"),
+    abs(col("age") - 35).alias("distance_from_35")
+)
+df_advanced.show(truncate=False)
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>5. Optimisation des performances</h2>
+
+                <h3>Catalyst Optimizer</h3>
+                <p>Spark utilise Catalyst, un optimiseur de requêtes qui réorganise automatiquement vos opérations pour de meilleures performances.</p>
+
+                <pre><code class="language-python"># Voir le plan d'exécution logique
+df.explain(mode="simple")
+
+# Plan d'exécution détaillé
+df.explain(mode="extended")
+
+# Plan d'exécution formaté
+df.explain(mode="formatted")
+
+# Coût estimé
+df.explain(mode="cost")
+</code></pre>
+
+                <h3>Partitionnement</h3>
+                <pre><code class="language-python"># Vérifier le nombre de partitions
+print(f"Nombre de partitions : {df.rdd.getNumPartitions()}")
+
+# Repartitionner (shuffle)
+df_repartitioned = df.repartition(10)
+df_by_dept = df.repartition(10, "department")
+
+# Coalesce (pas de shuffle, réduction uniquement)
+df_coalesced = df.coalesce(5)
+
+# Optimal : partition par colonne fréquemment filtrée
+df_optimized = df.repartition("department")
+</code></pre>
+
+                <h3>Mise en cache</h3>
+                <pre><code class="language-python"># Cache en mémoire
+df.cache()  # ou df.persist()
+
+# Utiliser le DataFrame mis en cache
+df.count()  # Premier accès : calcul et mise en cache
+df.filter(col("age") > 30).count()  # Réutilise le cache
+
+# Retirer du cache
+df.unpersist()
+
+# Cache avec niveau de stockage personnalisé
+from pyspark import StorageLevel
+df.persist(StorageLevel.MEMORY_AND_DISK)
+</code></pre>
+
+                <h3>Bonnes pratiques d'optimisation</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Filtrage précoce</h4>
+                        <p>Filtrez les données le plus tôt possible pour réduire le volume traité</p>
+                        <pre><code class="language-python"># Bon
+df.filter(col("age") > 30) \
+  .select("name", "dept") \
+  .groupBy("dept").count()
+
+# Moins bon
+df.groupBy("dept").count() \
+  .filter(col("count") > 10)</code></pre>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Éviter collect()</h4>
+                        <p>collect() ramène toutes les données au driver, risque d'OutOfMemory</p>
+                        <pre><code class="language-python"># Dangereux sur big data
+# all_data = df.collect()
+
+# Préférer
+df.show(20)
+df.take(10)
+df.limit(100).toPandas()</code></pre>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Broadcast Join</h4>
+                        <p>Pour joindre une petite table avec une grande</p>
+                        <pre><code class="language-python">from pyspark.sql.functions import broadcast
+
+# Broadcast automatique si < 10MB
+df_large.join(
+    broadcast(df_small),
+    on="key"
+)</code></pre>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Adaptive Query Execution</h4>
+                        <p>Active par défaut dans Spark 3.x, optimise dynamiquement</p>
+                        <pre><code class="language-python">spark.conf.set(
+  "spark.sql.adaptive.enabled",
+  "true"
+)</code></pre>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Fonctionnalités spécifiques Databricks</h4>
+                    <ul>
+                        <li><strong>Photon Engine :</strong> Moteur vectorisé C++ jusqu'à 4x plus rapide (Premium tier)</li>
+                        <li><strong>Auto Optimize :</strong> Optimisation automatique des tables Delta</li>
+                        <li><strong>Adaptive Query Execution :</strong> Activé par défaut</li>
+                        <li><strong>Dynamic File Pruning :</strong> Réduit les fichiers lus lors des jointures</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>6. Exemple pratique complet</h2>
+
+                <pre><code class="language-python"># Scénario : Analyse de ventes e-commerce
+
+# 1. Charger les données
+orders = spark.read.parquet("/mnt/data/orders/")
+customers = spark.read.parquet("/mnt/data/customers/")
+products = spark.read.parquet("/mnt/data/products/")
+
+# 2. Créer des vues pour SQL
+orders.createOrReplaceTempView("orders")
+customers.createOrReplaceTempView("customers")
+products.createOrReplaceTempView("products")
+
+# 3. Analyse avec PySpark
+from pyspark.sql.functions import *
+
+# Jointure enrichie
+enriched_orders = orders \
+    .join(customers, on="customer_id", how="left") \
+    .join(products, on="product_id", how="left") \
+    .withColumn("order_date", to_date(col("timestamp"))) \
+    .withColumn("revenue", col("quantity") * col("unit_price"))
+
+# Agrégation par produit et mois
+monthly_sales = enriched_orders \
+    .withColumn("month", date_trunc("month", col("order_date"))) \
+    .groupBy("month", "product_name", "category") \
+    .agg(
+        sum("revenue").alias("total_revenue"),
+        sum("quantity").alias("total_quantity"),
+        count("order_id").alias("order_count"),
+        countDistinct("customer_id").alias("unique_customers")
+    ) \
+    .orderBy(col("month").desc(), col("total_revenue").desc())
+
+# 4. Ou avec SQL
+result = spark.sql("""
+    SELECT
+        DATE_TRUNC('month', o.order_date) as month,
+        p.product_name,
+        p.category,
+        SUM(o.quantity * o.unit_price) as total_revenue,
+        SUM(o.quantity) as total_quantity,
+        COUNT(o.order_id) as order_count,
+        COUNT(DISTINCT o.customer_id) as unique_customers
+    FROM orders o
+    LEFT JOIN products p ON o.product_id = p.product_id
+    GROUP BY month, p.product_name, p.category
+    ORDER BY month DESC, total_revenue DESC
+""")
+
+# 5. Sauvegarder les résultats
+result.write \
+    .format("delta") \
+    .mode("overwrite") \
+    .partitionBy("month") \
+    .save("/mnt/analytics/monthly_sales")
+
+# 6. Afficher les insights
+display(result.limit(20))
+</code></pre>
+            </section>
+
+            <section class="section">
+                <div class="key-points">
+                    <h3>📌 Points clés à retenir</h3>
+                    <ul>
+                        <li>Spark distribue le calcul sur plusieurs nœuds (Driver + Workers)</li>
+                        <li>DataFrames sont des collections distribuées avec schéma</li>
+                        <li>Transformations (lazy) vs Actions (eager) - comprenez la différence</li>
+                        <li>Spark SQL permet de requêter avec syntaxe SQL standard</li>
+                        <li>Catalyst optimizer optimise automatiquement vos requêtes</li>
+                        <li>Cache les DataFrames réutilisés, partitionnez intelligemment</li>
+                        <li>Évitez collect() sur de gros volumes, privilégiez show()/take()</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-warning">
+                <h4>Prochaine étape</h4>
+                <p>Vous maîtrisez Spark ! Dans la <strong>Partie 5</strong>, découvrez Delta Lake pour des données fiables et performantes.</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie3.html">← Partie 3</a></li>
+                <li><a href="partie4.html" class="active">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5 : Delta Lake →</a></li>
+            </ul>
+        </nav>
+
+        <footer>
+            <p>&copy; 2024 Formation Simplon - Azure Databricks</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+</body>
+</html>

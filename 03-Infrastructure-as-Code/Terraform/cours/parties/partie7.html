@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 7 : Modules Terraform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="../assets/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="terraform-logo">⚡</span> Module 7 : Modules Terraform</h1>
+            <p>Créer des composants d'infrastructure réutilisables</p>
+        </header>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs du Module</h2>
+                <ul>
+                    <li>Comprendre le concept de modules Terraform</li>
+                    <li>Créer un module personnalisé</li>
+                    <li>Utiliser des modules dans vos projets</li>
+                    <li>Découvrir les modules publics du Terraform Registry</li>
+                </ul>
+            </div>
+
+            <section id="modules">
+                <h2>📦 Modules Terraform</h2>
+
+                <h3>Qu'est-ce qu'un Module ?</h3>
+                <p>Un module est un conteneur pour plusieurs ressources utilisées ensemble. C'est le principal moyen de packager et réutiliser du code Terraform.</p>
+
+                <h3>Structure d'un Module</h3>
+
+                <div class="architecture-diagram">
+                    <pre>
+modules/
+└── virtual-machine/
+    ├── main.tf           # Ressources principales
+    ├── variables.tf      # Inputs du module
+    ├── outputs.tf        # Outputs du module
+    └── README.md         # Documentation
+</pre>
+                </div>
+
+                <h3>Créer un Module VM</h3>
+
+                <div class="example-box">
+                    <h4>📄 modules/virtual-machine/variables.tf</h4>
+                    <pre><code class="language-hcl">variable "name" {
+  description = "Nom de la VM"
+  type        = string
+}
+
+variable "resource_group_name" {
+  description = "Nom du Resource Group"
+  type        = string
+}
+
+variable "location" {
+  description = "Azure region"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "ID du subnet"
+  type        = string
+}
+
+variable "vm_size" {
+  description = "Taille de la VM"
+  type        = string
+  default     = "Standard_B2s"
+}
+
+variable "admin_username" {
+  description = "Username administrateur"
+  type        = string
+  default     = "azureuser"
+}
+
+variable "ssh_public_key" {
+  description = "Clé SSH publique"
+  type        = string
+}</code></pre>
+                </div>
+
+                <div class="example-box">
+                    <h4>📄 modules/virtual-machine/main.tf</h4>
+                    <pre><code class="language-hcl">resource "azurerm_public_ip" "main" {
+  name                = "pip-${var.name}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+resource "azurerm_network_interface" "main" {
+  name                = "nic-${var.name}"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = var.subnet_id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.main.id
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "main" {
+  name                = var.name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  size                = var.vm_size
+  admin_username      = var.admin_username
+
+  network_interface_ids = [
+    azurerm_network_interface.main.id,
+  ]
+
+  admin_ssh_key {
+    username   = var.admin_username
+    public_key = var.ssh_public_key
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
+  }
+}</code></pre>
+                </div>
+
+                <div class="example-box">
+                    <h4>📄 modules/virtual-machine/outputs.tf</h4>
+                    <pre><code class="language-hcl">output "vm_id" {
+  description = "ID de la VM"
+  value       = azurerm_linux_virtual_machine.main.id
+}
+
+output "public_ip" {
+  description = "IP publique de la VM"
+  value       = azurerm_public_ip.main.ip_address
+}
+
+output "private_ip" {
+  description = "IP privée de la VM"
+  value       = azurerm_network_interface.main.private_ip_address
+}</code></pre>
+                </div>
+
+                <h3>Utiliser le Module</h3>
+
+                <div class="example-box">
+                    <h4>📄 main.tf (root module)</h4>
+                    <pre><code class="language-hcl"># Appel du module pour créer une VM web
+module "web_vm" {
+  source = "./modules/virtual-machine"
+
+  name                = "vm-web-001"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  subnet_id           = azurerm_subnet.web.id
+  vm_size             = "Standard_B2s"
+  admin_username      = "webadmin"
+  ssh_public_key      = file("~/.ssh/id_rsa.pub")
+}
+
+# Appel du module pour créer une VM app
+module "app_vm" {
+  source = "./modules/virtual-machine"
+
+  name                = "vm-app-001"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  subnet_id           = azurerm_subnet.app.id
+  vm_size             = "Standard_D2s_v3"
+  admin_username      = "appadmin"
+  ssh_public_key      = file("~/.ssh/id_rsa.pub")
+}
+
+# Utiliser les outputs des modules
+output "web_vm_ip" {
+  value = module.web_vm.public_ip
+}
+
+output "app_vm_ip" {
+  value = module.app_vm.public_ip
+}</code></pre>
+                </div>
+
+                <h3>Modules Publics (Terraform Registry)</h3>
+                <p>Vous pouvez utiliser des modules partagés par la communauté :</p>
+
+                <pre><code class="language-hcl"># Module AKS officiel Azure
+module "aks" {
+  source  = "Azure/aks/azurerm"
+  version = "7.0.0"
+
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  cluster_name        = "aks-prod"
+
+  # Configuration...
+}
+
+# Module réseau
+module "network" {
+  source  = "Azure/network/azurerm"
+  version = "5.0.0"
+
+  resource_group_name = azurerm_resource_group.main.name
+  address_space       = ["10.0.0.0/16"]
+  subnet_prefixes     = ["10.0.1.0/24", "10.0.2.0/24"]
+  subnet_names        = ["subnet-web", "subnet-app"]
+}</code></pre>
+
+                <div class="info">
+                    <h4>💡 Rechercher des Modules</h4>
+                    <p>Visitez le <strong>Terraform Registry</strong> : <a href="https://registry.terraform.io/" target="_blank">registry.terraform.io</a></p>
+                </div>
+            </section>
+
+            <div style="margin-top: 50px; text-align: center;">
+                <a href="partie6.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">← Précédent : Module 6</a>
+                <a href="../index.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">🏠 Accueil</a>
+                <a href="partie8.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Suivant → Module 8</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Data Engineering - Simplon</p>
+            <p>Terraform avec Azure - Module 7 : Modules Terraform</p>
+            <p>&copy; 2025 - Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-hcl.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

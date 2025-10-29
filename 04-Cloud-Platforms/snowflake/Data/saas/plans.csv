@@ -1,0 +1,5 @@
+plan_id,plan_name,plan_type,monthly_price,annual_price,features,max_users,storage_gb
+BASIC,Basic Plan,BASIC,29.99,299.99,Basic features only,5,10
+STANDARD,Standard Plan,STANDARD,79.99,799.99,Standard features + integrations,25,100
+PREMIUM,Premium Plan,PREMIUM,149.99,1499.99,All features + priority support,100,500
+ENTERPRISE,Enterprise Plan,ENTERPRISE,299.99,2999.99,Enterprise features + dedicated support,unlimited,unlimited

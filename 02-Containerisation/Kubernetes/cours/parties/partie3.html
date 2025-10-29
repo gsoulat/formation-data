@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 - Installation et premiers pas</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 3</h1>
+            <p class="subtitle">Installation et premiers pas</p>
+            <span class="duration">⏱️ Durée : 20 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+                <li><a href="partie8.html">Partie 8</a></li>
+                <li><a href="partie9.html">Partie 9</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>3. Installation et premiers pas</h2>
+
+                <h3>Options d'installation</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>💻 Minikube</h4>
+                        <p>Cluster local sur votre machine, parfait pour le développement</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🐳 Docker Desktop</h4>
+                        <p>Kubernetes intégré à Docker Desktop (Mac/Windows)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🎯 Kind</h4>
+                        <p>Kubernetes in Docker, léger et rapide pour les tests</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>☁️ Cloud managé</h4>
+                        <p>AKS (Azure), EKS (AWS), GKE (Google)</p>
+                    </div>
+                </div>
+
+                <h3>Installation Minikube</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># macOS
+brew install minikube kubectl
+
+# Linux
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+# Windows (avec Chocolatey)
+choco install minikube kubernetes-cli
+
+# Démarrer Minikube
+minikube start
+
+# Vérifier l'installation
+kubectl version --client
+kubectl cluster-info
+kubectl get nodes</code></pre>
+                </div>
+
+                <h3>Installation kubectl</h3>
+
+                <p><strong>kubectl</strong> est l'outil en ligne de commande pour interagir avec Kubernetes :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># macOS
+brew install kubectl
+
+# Linux
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Windows (avec Chocolatey)
+choco install kubernetes-cli
+
+# Vérifier
+kubectl version --client
+
+# Configuration (pointe vers votre cluster)
+kubectl config view
+kubectl config get-contexts
+kubectl config use-context minikube</code></pre>
+                </div>
+
+                <h3>Commandes kubectl essentielles</h3>
+
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>kubectl get pods</code></td>
+                            <td>Lister tous les Pods</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl get services</code></td>
+                            <td>Lister tous les Services</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl get deployments</code></td>
+                            <td>Lister tous les Deployments</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl describe pod &lt;name&gt;</code></td>
+                            <td>Détails d'un Pod</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl logs &lt;pod&gt;</code></td>
+                            <td>Voir les logs d'un Pod</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl exec -it &lt;pod&gt; -- bash</code></td>
+                            <td>Se connecter à un Pod</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl apply -f &lt;file.yaml&gt;</code></td>
+                            <td>Appliquer une configuration</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl delete -f &lt;file.yaml&gt;</code></td>
+                            <td>Supprimer des ressources</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Premier déploiement</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Déployer nginx
+kubectl create deployment nginx --image=nginx:latest
+
+# Vérifier le déploiement
+kubectl get deployments
+kubectl get pods
+
+# Exposer via un Service
+kubectl expose deployment nginx --port=80 --type=NodePort
+
+# Obtenir l'URL du service (avec Minikube)
+minikube service nginx --url
+
+# Tester
+curl $(minikube service nginx --url)
+
+# Nettoyer
+kubectl delete service nginx
+kubectl delete deployment nginx</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Félicitations !</h4>
+                    <p>
+                        Vous venez de déployer votre première application sur Kubernetes !
+                        Kubernetes a automatiquement créé un Pod, l'a assigné à un Node, et l'a exposé via un Service.
+                    </p>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points clés à retenir</h3>
+                <ul>
+                    <li>Minikube est parfait pour développer en local</li>
+                    <li>kubectl est l'outil CLI pour interagir avec Kubernetes</li>
+                    <li>kubectl get, describe, logs, apply sont les commandes essentielles</li>
+                    <li>Un déploiement simple : create deployment → expose → test</li>
+                    <li>Kubernetes gère automatiquement la création et le placement des Pods</li>
+                </ul>
+            </div>
+
+            <nav class="section-nav" style="display: flex; justify-content: space-between; margin-top: 40px;">
+                <a href="partie2.html" style="display: inline-block; padding: 12px 25px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    ← Partie 2
+                </a>
+                <a href="partie4.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Partie 4 →
+                </a>
+            </nav>
+        </div>
+
+        <footer>
+            <p>Formation Kubernetes pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 1 : Introduction à Hadoop - Formation Hadoop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🐘 Partie 1 : Introduction à Hadoop</h1>
+            <p class="subtitle">Comprendre le Big Data et l'écosystème Hadoop</p>
+            <div class="duration">⏱️ Durée : 1h30</div>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html" class="active">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs d'Apprentissage</h2>
+                <ul>
+                    <li>Comprendre les enjeux du Big Data</li>
+                    <li>Découvrir l'historique et l'origine de Hadoop</li>
+                    <li>Identifier les composants de l'écosystème Hadoop</li>
+                    <li>Connaître les cas d'usage réels de Hadoop</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>📊 1. Qu'est-ce que le Big Data ?</h2>
+
+                <h3>Définition</h3>
+                <p>
+                    Le <strong>Big Data</strong> désigne des ensembles de données si volumineux et complexes qu'ils dépassent
+                    les capacités des outils traditionnels de gestion de bases de données pour les capturer, stocker, gérer et analyser.
+                </p>
+
+                <h3>Les 6 V du Big Data</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📈 Volume</h4>
+                        <p>Quantité massive de données générées chaque seconde (pétaoctets, exaoctets)</p>
+                        <ul>
+                            <li>Logs de serveurs</li>
+                            <li>Données IoT</li>
+                            <li>Transactions financières</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>⚡ Vélocité</h4>
+                        <p>Vitesse à laquelle les données sont générées et doivent être traitées</p>
+                        <ul>
+                            <li>Streaming en temps réel</li>
+                            <li>Flux de capteurs</li>
+                            <li>Réseaux sociaux</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🎨 Variété</h4>
+                        <p>Diversité des types et formats de données</p>
+                        <ul>
+                            <li>Structurées (SQL)</li>
+                            <li>Semi-structurées (JSON, XML)</li>
+                            <li>Non structurées (texte, images, vidéos)</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>✅ Véracité</h4>
+                        <p>Qualité et fiabilité des données</p>
+                        <ul>
+                            <li>Données bruitées</li>
+                            <li>Incohérences</li>
+                            <li>Validation nécessaire</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💰 Valeur</h4>
+                        <p>Capacité à extraire des insights utiles</p>
+                        <ul>
+                            <li>Analytics</li>
+                            <li>Machine Learning</li>
+                            <li>Décisions business</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔄 Variabilité</h4>
+                        <p>Évolution de la signification des données</p>
+                        <ul>
+                            <li>Contexte changeant</li>
+                            <li>Saisonnalité</li>
+                            <li>Tendances</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Exemple Concret</h4>
+                    <p>
+                        <strong>Facebook</strong> génère plus de 4 pétaoctets de données par jour, incluant :
+                        photos, vidéos, messages, likes, commentaires, données de localisation, etc.
+                        Ces données sont de types variés et arrivent en continu.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🕰️ 2. Historique et Origine de Hadoop</h2>
+
+                <h3>La Genèse</h3>
+                <div class="workflow-diagram">
+                    <pre>
+2003 : Google publie le papier sur GFS (Google File System)
+  ↓
+2004 : Google publie le papier sur MapReduce
+  ↓
+2005 : Doug Cutting et Mike Cafarella créent Hadoop
+  ↓
+2006 : Yahoo! engage Doug Cutting - Hadoop devient un projet Apache
+  ↓
+2008 : Hadoop devient un projet Apache de top niveau
+  ↓
+2011+ : Explosion de l'écosystème Hadoop (Hive, Pig, HBase, etc.)
+  ↓
+Aujourd'hui : Hadoop 3.x avec de nombreuses améliorations
+                    </pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Le saviez-vous ?</h4>
+                    <p>
+                        Le nom "Hadoop" vient du jouet en peluche en forme d'éléphant jaune du fils de Doug Cutting.
+                        C'est pourquoi le logo d'Hadoop est un éléphant jaune ! 🐘
+                    </p>
+                </div>
+
+                <h3>Influence de Google</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Technologie Google</th>
+                            <th>Équivalent Hadoop</th>
+                            <th>Fonction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>GFS (Google File System)</td>
+                            <td>HDFS (Hadoop Distributed File System)</td>
+                            <td>Stockage distribué</td>
+                        </tr>
+                        <tr>
+                            <td>MapReduce (Google)</td>
+                            <td>MapReduce (Hadoop)</td>
+                            <td>Traitement parallèle</td>
+                        </tr>
+                        <tr>
+                            <td>BigTable</td>
+                            <td>HBase</td>
+                            <td>Base de données NoSQL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>🏗️ 3. Architecture Générale de Hadoop</h2>
+
+                <h3>Les Composants Principaux</h3>
+                <p>Hadoop est composé de 4 modules fondamentaux :</p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📁 Hadoop Common</h4>
+                        <p>Bibliothèques et utilitaires communs nécessaires aux autres modules Hadoop</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>💾 HDFS</h4>
+                        <p>Système de fichiers distribué qui stocke les données sur plusieurs machines</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>⚙️ MapReduce</h4>
+                        <p>Framework de traitement parallèle pour traiter de grandes quantités de données</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🎯 YARN</h4>
+                        <p>Gestionnaire de ressources pour la planification et l'exécution des tâches</p>
+                    </div>
+                </div>
+
+                <h3>Architecture Simplifiée</h3>
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────┐
+│                    Écosystème Hadoop                    │
+├─────────────────────────────────────────────────────────┤
+│  Hive  │  Pig  │  HBase  │  Sqoop  │  Flume  │  Spark  │
+├─────────────────────────────────────────────────────────┤
+│                         YARN                            │
+│              (Gestion des Ressources)                   │
+├──────────────────────┬──────────────────────────────────┤
+│      MapReduce       │      Autres Applications         │
+│  (Traitement)        │      (Spark, Tez, etc.)         │
+├──────────────────────┴──────────────────────────────────┤
+│                         HDFS                            │
+│              (Stockage Distribué)                       │
+└─────────────────────────────────────────────────────────┘
+                    </pre>
+                </div>
+
+                <div class="key-points">
+                    <h3>🔑 Principes Fondamentaux</h3>
+                    <ul>
+                        <li><strong>Scalabilité horizontale</strong> : Ajout de machines pour augmenter la capacité</li>
+                        <li><strong>Tolérance aux pannes</strong> : Réplication des données et relance automatique des tâches</li>
+                        <li><strong>Traitement local</strong> : Le code est envoyé vers les données, pas l'inverse</li>
+                        <li><strong>Matériel standard</strong> : Fonctionne sur du matériel commodity (bon marché)</li>
+                        <li><strong>Open Source</strong> : Gratuit et communauté active</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🌐 4. L'Écosystème Hadoop</h2>
+
+                <p>Hadoop n'est pas qu'un seul logiciel, c'est tout un écosystème de projets complémentaires :</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Outil</th>
+                            <th>Catégorie</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Hive</strong></td>
+                            <td>Requêtage SQL</td>
+                            <td>Interface SQL pour interroger des données dans HDFS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pig</strong></td>
+                            <td>Scripting</td>
+                            <td>Langage de haut niveau pour traiter des données</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HBase</strong></td>
+                            <td>Base NoSQL</td>
+                            <td>Base de données orientée colonnes sur HDFS</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sqoop</strong></td>
+                            <td>Import/Export</td>
+                            <td>Transfert de données entre Hadoop et bases relationnelles</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flume</strong></td>
+                            <td>Ingestion</td>
+                            <td>Collecte et agrégation de logs en temps réel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spark</strong></td>
+                            <td>Traitement</td>
+                            <td>Moteur de traitement rapide en mémoire</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Oozie</strong></td>
+                            <td>Orchestration</td>
+                            <td>Planificateur de workflows pour jobs Hadoop</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ZooKeeper</strong></td>
+                            <td>Coordination</td>
+                            <td>Service de coordination pour applications distribuées</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>💼 5. Cas d'Usage et Entreprises Utilisatrices</h2>
+
+                <h3>Secteurs d'Application</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>🏦 Finance</h4>
+                        <p>Détection de fraude, analyse de risques, trading algorithmique</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🛒 E-commerce</h4>
+                        <p>Recommandations produits, analyse du comportement client, optimisation des prix</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🏥 Santé</h4>
+                        <p>Analyse génomique, dossiers médicaux électroniques, recherche médicale</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📱 Télécoms</h4>
+                        <p>Analyse des CDR (Call Detail Records), optimisation réseau, prévention du churn</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🎬 Médias</h4>
+                        <p>Recommandations de contenu, analyse d'audience, personnalisation</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🚗 Transport</h4>
+                        <p>Optimisation de routes, véhicules connectés, maintenance prédictive</p>
+                    </div>
+                </div>
+
+                <h3>Entreprises Utilisatrices</h3>
+                <div class="alert alert-info">
+                    <h4>Quelques exemples célèbres</h4>
+                    <ul>
+                        <li><strong>Yahoo!</strong> - Pionnier de l'utilisation de Hadoop (cluster de 42 000 machines)</li>
+                        <li><strong>Facebook</strong> - Stockage et analyse de données utilisateurs</li>
+                        <li><strong>LinkedIn</strong> - Recommandations et analytics</li>
+                        <li><strong>Twitter</strong> - Analyse de tweets et trending topics</li>
+                        <li><strong>eBay</strong> - Analyse des transactions et recommandations</li>
+                        <li><strong>Spotify</strong> - Recommandations musicales</li>
+                        <li><strong>Netflix</strong> - Recommandations de films et séries</li>
+                        <li><strong>Airbnb</strong> - Optimisation des prix et recherche</li>
+                    </ul>
+                </div>
+
+                <h3>Cas d'Usage Concret : Netflix</h3>
+                <div class="card">
+                    <h4>🎬 Système de Recommandation Netflix</h4>
+                    <p>
+                        Netflix utilise Hadoop pour analyser des milliards d'événements quotidiens :
+                    </p>
+                    <ul>
+                        <li>Quels films/séries sont regardés ?</li>
+                        <li>À quel moment l'utilisateur met en pause ou arrête ?</li>
+                        <li>Quel contenu est ajouté à la liste ?</li>
+                        <li>Quelles recherches sont effectuées ?</li>
+                        <li>Sur quels appareils le contenu est visionné ?</li>
+                    </ul>
+                    <p>
+                        Ces données alimentent des algorithmes de Machine Learning qui génèrent
+                        <strong>80% du contenu regardé via les recommandations</strong>.
+                    </p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>⚖️ 6. Hadoop vs Solutions Traditionnelles</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Critère</th>
+                            <th>SGBD Traditionnel</th>
+                            <th>Hadoop</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Type de données</strong></td>
+                            <td>Structurées</td>
+                            <td>Tous types (structurées, semi-structurées, non structurées)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Schéma</strong></td>
+                            <td>Schema-on-write</td>
+                            <td>Schema-on-read</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scalabilité</strong></td>
+                            <td>Verticale (scale-up)</td>
+                            <td>Horizontale (scale-out)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Coût</strong></td>
+                            <td>Élevé (matériel spécialisé)</td>
+                            <td>Faible (commodity hardware)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Traitement</strong></td>
+                            <td>OLTP (transactionnel)</td>
+                            <td>OLAP (analytique batch)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Latence</strong></td>
+                            <td>Faible (millisecondes)</td>
+                            <td>Élevée (minutes/heures)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-warning">
+                    <h4>Attention</h4>
+                    <p>
+                        Hadoop n'est <strong>pas</strong> un remplacement des bases de données traditionnelles !
+                        C'est un outil complémentaire pour des cas d'usage spécifiques nécessitant :
+                    </p>
+                    <ul>
+                        <li>Traitement de très gros volumes de données</li>
+                        <li>Analyse de données non structurées</li>
+                        <li>Traitement batch (non temps-réel)</li>
+                        <li>Coût de stockage réduit</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📝 Résumé de la Partie 1</h2>
+                <div class="key-points">
+                    <h3>Points Clés à Retenir</h3>
+                    <ul>
+                        <li>Le Big Data se caractérise par les 6 V : Volume, Vélocité, Variété, Véracité, Valeur, Variabilité</li>
+                        <li>Hadoop a été créé par Doug Cutting en s'inspirant des papiers de Google (GFS et MapReduce)</li>
+                        <li>Hadoop est composé de 4 modules : Common, HDFS, MapReduce, YARN</li>
+                        <li>L'écosystème Hadoop comprend de nombreux outils (Hive, Pig, HBase, Spark, etc.)</li>
+                        <li>Hadoop est utilisé par les plus grandes entreprises tech pour l'analyse Big Data</li>
+                        <li>Hadoop complète les bases de données traditionnelles, ne les remplace pas</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success" style="margin-top: 40px;">
+                <h4>✅ Prêt pour la Suite ?</h4>
+                <p>Vous avez maintenant une vue d'ensemble de Hadoop et du Big Data. Dans la partie suivante, nous plongerons dans <strong>HDFS</strong>, le système de fichiers distribué au cœur de Hadoop.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+            <p><a href="partie2.html">Partie 2 : Architecture HDFS →</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6 : Gestion du State</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="../assets/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="terraform-logo">⚡</span> Module 6 : Gestion du State</h1>
+            <p>Gérer l'état de votre infrastructure Terraform</p>
+        </header>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs du Module</h2>
+                <ul>
+                    <li>Comprendre le rôle du fichier State dans Terraform</li>
+                    <li>Différencier State local et State remote</li>
+                    <li>Configurer un backend Azure pour le State remote</li>
+                    <li>Maîtriser les commandes State essentielles</li>
+                </ul>
+            </div>
+
+            <section id="state-management">
+                <h2>💾 Gestion du State</h2>
+
+                <h3>Qu'est-ce que le State ?</h3>
+                <p>Le fichier <code>terraform.tfstate</code> contient l'état actuel de votre infrastructure. Terraform l'utilise pour :</p>
+                <ul>
+                    <li>Mapper les ressources réelles aux configurations</li>
+                    <li>Suivre les métadonnées</li>
+                    <li>Améliorer les performances pour les grandes infrastructures</li>
+                    <li>Collaborer en équipe</li>
+                </ul>
+
+                <div class="warning">
+                    <h4>⚠️ Sécurité du State</h4>
+                    <p>Le state file contient des informations sensibles (mots de passe, clés, etc.). Ne le committez JAMAIS dans Git !</p>
+                </div>
+
+                <h3>State Local vs Remote</h3>
+
+                <h4>State Local (par défaut)</h4>
+                <ul>
+                    <li>Stocké dans <code>terraform.tfstate</code> localement</li>
+                    <li>OK pour développement individuel</li>
+                    <li>Problèmes pour la collaboration</li>
+                    <li>Pas de locking</li>
+                </ul>
+
+                <h4>Remote State (production)</h4>
+                <ul>
+                    <li>Stocké dans un backend distant (Azure Storage, S3, Terraform Cloud)</li>
+                    <li>Collaboration d'équipe</li>
+                    <li>State locking pour éviter les conflits</li>
+                    <li>Backup et versioning</li>
+                </ul>
+
+                <h3>Configurer Remote State avec Azure</h3>
+
+                <div class="example-box">
+                    <h4>Étape 1 : Créer le Storage Account pour le State</h4>
+                    <pre><code class="language-bash"># Variables
+RESOURCE_GROUP_NAME="rg-terraform-state"
+STORAGE_ACCOUNT_NAME="sttfstate$(openssl rand -hex 4)"
+CONTAINER_NAME="tfstate"
+LOCATION="francecentral"
+
+# Créer Resource Group
+az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
+
+# Créer Storage Account
+az storage account create \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --name $STORAGE_ACCOUNT_NAME \
+  --sku Standard_LRS \
+  --encryption-services blob \
+  --min-tls-version TLS1_2
+
+# Créer Blob Container
+az storage container create \
+  --name $CONTAINER_NAME \
+  --account-name $STORAGE_ACCOUNT_NAME
+
+# Obtenir la clé d'accès
+ACCOUNT_KEY=$(az storage account keys list \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --account-name $STORAGE_ACCOUNT_NAME \
+  --query '[0].value' -o tsv)
+
+echo "Storage Account: $STORAGE_ACCOUNT_NAME"
+echo "Access Key: $ACCOUNT_KEY"</code></pre>
+                </div>
+
+                <div class="example-box">
+                    <h4>Étape 2 : Configurer le Backend dans Terraform</h4>
+                    <pre><code class="language-hcl"># providers.tf
+terraform {
+  required_version = ">= 1.0"
+
+  backend "azurerm" {
+    resource_group_name  = "rg-terraform-state"
+    storage_account_name = "sttfstate12345678"
+    container_name       = "tfstate"
+    key                  = "prod.terraform.tfstate"
+  }
+
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 3.0"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}</code></pre>
+                </div>
+
+                <div class="example-box">
+                    <h4>Étape 3 : Initialiser avec le Backend</h4>
+                    <pre><code class="language-bash"># Méthode 1 : Variables d'environnement
+export ARM_ACCESS_KEY="votre-storage-access-key"
+terraform init
+
+# Méthode 2 : Lors de l'init
+terraform init \
+  -backend-config="access_key=votre-storage-access-key"</code></pre>
+                </div>
+
+                <h3>Commandes State Utiles</h3>
+
+                <pre><code class="language-bash"># Lister les ressources dans le state
+terraform state list
+
+# Voir les détails d'une ressource
+terraform state show azurerm_resource_group.main
+
+# Déplacer une ressource
+terraform state mv azurerm_resource_group.old azurerm_resource_group.new
+
+# Supprimer une ressource du state (sans la détruire)
+terraform state rm azurerm_resource_group.main
+
+# Importer une ressource existante
+terraform import azurerm_resource_group.main /subscriptions/xxx/resourceGroups/rg-name
+
+# Pull du state distant
+terraform state pull > terraform.tfstate.backup
+
+# Push du state local vers distant
+terraform state push terraform.tfstate</code></pre>
+
+                <div class="info">
+                    <h4>💡 Best Practice</h4>
+                    <p>Utilisez toujours un remote state pour la production avec :</p>
+                    <ul>
+                        <li>State locking activé</li>
+                        <li>Versioning du blob storage</li>
+                        <li>Soft delete activé</li>
+                        <li>Accès restreint (RBAC)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div style="margin-top: 50px; text-align: center;">
+                <a href="partie5.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">← Précédent : Module 5</a>
+                <a href="../index.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">🏠 Accueil</a>
+                <a href="partie7.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Suivant → Module 7</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Data Engineering - Simplon</p>
+            <p>Terraform avec Azure - Module 6 : Gestion du State</p>
+            <p>&copy; 2025 - Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-hcl.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 8 - Ingress et exposition externe</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 8</h1>
+            <p class="subtitle">Ingress et exposition externe</p>
+            <span class="duration">⏱️ Durée : 15 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+                <li><a href="partie8.html">Partie 8</a></li>
+                <li><a href="partie9.html">Partie 9</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>8. Ingress et exposition externe</h2>
+
+                <h3>Qu'est-ce qu'un Ingress ?</h3>
+
+                <p>
+                    Un <strong>Ingress</strong> est un objet qui gère l'accès externe aux Services, typiquement HTTP/HTTPS.
+                    Il fournit du load balancing, SSL termination, et du routing basé sur le nom d'hôte ou le path.
+                </p>
+
+                <div class="workflow-diagram">
+                    <pre>
+Internet
+   │
+   ↓
+┌──────────────────┐
+│  Load Balancer   │  (Cloud provider ou Nginx)
+└──────────────────┘
+   │
+   ↓
+┌──────────────────┐
+│  Ingress         │  Routing rules
+└──────────────────┘
+   │
+   ├─────────────────┬─────────────────┐
+   ↓                 ↓                 ↓
+Service A        Service B        Service C
+(frontend)       (api)            (admin)
+</pre>
+                </div>
+
+                <h3>Installer un Ingress Controller</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Avec Minikube
+minikube addons enable ingress
+
+# Avec Helm (NGINX Ingress Controller)
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx
+
+# Vérifier
+kubectl get pods -n ingress-nginx</code></pre>
+                </div>
+
+                <h3>Exemple d'Ingress</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myapp-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 8080</code></pre>
+                </div>
+
+                <h4>Ingress avec SSL/TLS</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tls-ingress
+spec:
+  tls:
+  - hosts:
+    - myapp.example.com
+    secretName: tls-secret  # Secret contenant le certificat SSL
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: myapp-service
+            port:
+              number: 80</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un Secret TLS depuis des certificats
+kubectl create secret tls tls-secret \
+  --cert=path/to/tls.crt \
+  --key=path/to/tls.key
+
+# Appliquer l'Ingress
+kubectl apply -f ingress.yaml
+
+# Vérifier
+kubectl get ingress
+kubectl describe ingress myapp-ingress</code></pre>
+                </div>
+
+                <div class="key-points">
+                    <h3>Best Practices Ingress</h3>
+                    <ul>
+                        <li>Utilisez toujours HTTPS en production avec Let's Encrypt (cert-manager)</li>
+                        <li>Configurez des rate limits pour protéger vos APIs</li>
+                        <li>Utilisez des annotations pour personnaliser le comportement</li>
+                        <li>Mettez en place du monitoring sur votre Ingress Controller</li>
+                        <li>Utilisez plusieurs Ingress pour séparer les domaines</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points clés à retenir</h3>
+                <ul>
+                    <li>Ingress gère l'accès externe HTTP/HTTPS aux Services</li>
+                    <li>Il faut un Ingress Controller (NGINX, Traefik, etc.)</li>
+                    <li>Ingress offre du routing basé sur l'hôte et le path</li>
+                    <li>SSL/TLS termination via des Secrets contenant les certificats</li>
+                    <li>Utilisez cert-manager pour automatiser les certificats Let's Encrypt</li>
+                </ul>
+            </div>
+
+            <nav class="section-nav" style="display: flex; justify-content: space-between; margin-top: 40px;">
+                <a href="partie7.html" style="display: inline-block; padding: 12px 25px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    ← Partie 7
+                </a>
+                <a href="partie9.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Partie 9 →
+                </a>
+            </nav>
+        </div>
+
+        <footer>
+            <p>Formation Kubernetes pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

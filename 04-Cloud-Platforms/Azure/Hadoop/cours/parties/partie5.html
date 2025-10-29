@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 5 : Écosystème Hadoop - Formation Hadoop</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 Partie 5 : Écosystème Hadoop</h1>
+            <p class="subtitle">Découvrir les outils complémentaires de Hadoop</p>
+            <div class="duration">⏱️ Durée : 3h</div>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie4.html">← Partie 4</a></li>
+                <li><a href="partie5.html" class="active">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs d'Apprentissage</h2>
+                <ul>
+                    <li>Découvrir Apache Hive pour requêter avec SQL</li>
+                    <li>Utiliser Apache Pig pour le scripting de données</li>
+                    <li>Comprendre HBase comme base NoSQL</li>
+                    <li>Maîtriser Sqoop pour l'import/export de données</li>
+                    <li>Explorer Flume pour la collecte de logs</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>🗺️ 1. Vue d'Ensemble de l'Écosystème</h2>
+
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                  ÉCOSYSTÈME HADOOP                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  INGESTION          STOCKAGE        TRAITEMENT    ANALYSE  │
+│  ──────────         ────────        ──────────    ──────   │
+│  Flume              HDFS            MapReduce     Hive     │
+│  Sqoop              HBase           Spark         Pig      │
+│  Kafka                              Tez           Impala   │
+│                                                             │
+│  ORCHESTRATION      COORDINATION    MONITORING             │
+│  ──────────────     ────────────    ──────────             │
+│  Oozie              ZooKeeper       Ambari                 │
+│                                     Ganglia                │
+└─────────────────────────────────────────────────────────────┘
+                    </pre>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Outil</th>
+                            <th>Catégorie</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Hive</strong></td>
+                            <td>SQL/Analyse</td>
+                            <td>Entrepôt de données avec interface SQL (HiveQL)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pig</strong></td>
+                            <td>Scripting</td>
+                            <td>Langage de haut niveau pour flux de données</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HBase</strong></td>
+                            <td>Base NoSQL</td>
+                            <td>Base de données distribuée orientée colonnes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sqoop</strong></td>
+                            <td>Import/Export</td>
+                            <td>Transfert entre Hadoop et SGBD relationnels</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flume</strong></td>
+                            <td>Ingestion</td>
+                            <td>Collecte et agrégation de logs streaming</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Oozie</strong></td>
+                            <td>Orchestration</td>
+                            <td>Planificateur de workflows Hadoop</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ZooKeeper</strong></td>
+                            <td>Coordination</td>
+                            <td>Service de coordination distribuée</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spark</strong></td>
+                            <td>Traitement</td>
+                            <td>Moteur de traitement in-memory rapide</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>🐝 2. Apache Hive : SQL sur Hadoop</h2>
+
+                <h3>Qu'est-ce que Hive ?</h3>
+                <p>
+                    <strong>Apache Hive</strong> est un entrepôt de données construit sur Hadoop qui permet d'interroger
+                    et d'analyser de grandes quantités de données avec <strong>HiveQL</strong>, un langage similaire à SQL.
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>✅ Avantages</h4>
+                        <ul>
+                            <li>Syntaxe SQL familière</li>
+                            <li>Pas besoin d'écrire du MapReduce</li>
+                            <li>Support de gros volumes</li>
+                            <li>Optimiseur de requêtes</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>❌ Inconvénients</h4>
+                        <ul>
+                            <li>Latence élevée (batch, pas temps réel)</li>
+                            <li>Pas de modification en place (INSERT only)</li>
+                            <li>Pas idéal pour les petites requêtes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Architecture Hive</h3>
+                <div class="workflow-diagram">
+                    <pre>
+Client (Hive CLI / Beeline / JDBC)
+         ↓
+    Hive Server 2
+         ↓
+    Metastore (MySQL/PostgreSQL) ← Stocke les schémas
+         ↓
+    Driver (Query Compiler, Optimizer, Executor)
+         ↓
+    Execution Engine (MapReduce / Tez / Spark)
+         ↓
+    HDFS (Données)
+                    </pre>
+                </div>
+
+                <h3>Exemple de Requêtes HiveQL</h3>
+
+                <h4>Créer une Table</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-sql">CREATE TABLE IF NOT EXISTS employees (
+    id INT,
+    name STRING,
+    department STRING,
+    salary DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;</code></pre>
+                </div>
+
+                <h4>Charger des Données</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-sql">-- Charger depuis un fichier local
+LOAD DATA LOCAL INPATH '/tmp/employees.csv' INTO TABLE employees;
+
+-- Charger depuis HDFS
+LOAD DATA INPATH '/user/data/employees.csv' INTO TABLE employees;</code></pre>
+                </div>
+
+                <h4>Requêtes SELECT</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-sql">-- Sélection simple
+SELECT * FROM employees WHERE salary > 50000;
+
+-- Agrégation
+SELECT department, AVG(salary) as avg_salary
+FROM employees
+GROUP BY department
+HAVING avg_salary > 60000;
+
+-- Jointure
+SELECT e.name, d.department_name
+FROM employees e
+JOIN departments d ON e.department = d.dept_id;</code></pre>
+                </div>
+
+                <h4>Partitionnement</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-sql">-- Table partitionnée par année
+CREATE TABLE logs (
+    timestamp STRING,
+    level STRING,
+    message STRING
+)
+PARTITIONED BY (year INT, month INT)
+STORED AS PARQUET;
+
+-- Insérer dans une partition
+INSERT INTO TABLE logs PARTITION (year=2025, month=1)
+SELECT timestamp, level, message FROM raw_logs
+WHERE year(timestamp) = 2025 AND month(timestamp) = 1;</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Bonnes Pratiques Hive</h4>
+                    <ul>
+                        <li>Utiliser le partitionnement pour les grandes tables</li>
+                        <li>Préférer les formats colonnaires (Parquet, ORC) pour les performances</li>
+                        <li>Utiliser Tez ou Spark au lieu de MapReduce comme moteur</li>
+                        <li>Analyser les tables pour optimiser les requêtes (<code>ANALYZE TABLE</code>)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🐷 3. Apache Pig : Scripting de Données</h2>
+
+                <h3>Qu'est-ce que Pig ?</h3>
+                <p>
+                    <strong>Apache Pig</strong> est une plateforme pour analyser de grandes données avec
+                    <strong>Pig Latin</strong>, un langage de haut niveau orienté flux de données.
+                </p>
+
+                <div class="alert alert-info">
+                    <h4>Quand utiliser Pig plutôt que Hive ?</h4>
+                    <ul>
+                        <li><strong>Pig :</strong> Transformations complexes, ETL, traitement semi-structuré</li>
+                        <li><strong>Hive :</strong> Requêtes SQL classiques, reporting, analyses SQL</li>
+                    </ul>
+                </div>
+
+                <h3>Exemple de Script Pig Latin</h3>
+
+                <h4>WordCount en Pig</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-pig">-- Charger les données
+lines = LOAD '/user/data/input.txt' AS (line:chararray);
+
+-- Découper en mots
+words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) AS word;
+
+-- Grouper par mot
+grouped = GROUP words BY word;
+
+-- Compter
+word_counts = FOREACH grouped GENERATE group AS word, COUNT(words) AS count;
+
+-- Trier par compte décroissant
+sorted = ORDER word_counts BY count DESC;
+
+-- Stocker le résultat
+STORE sorted INTO '/user/data/output' USING PigStorage(',');</code></pre>
+                </div>
+
+                <h4>Filtrage et Transformation</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-pig">-- Charger les logs
+logs = LOAD '/logs/access.log' USING PigStorage(' ')
+       AS (ip:chararray, timestamp:chararray, method:chararray,
+           url:chararray, status:int, bytes:int);
+
+-- Filtrer les erreurs 404
+errors = FILTER logs BY status == 404;
+
+-- Extraire l'IP et l'URL
+result = FOREACH errors GENERATE ip, url;
+
+-- Grouper par URL
+grouped = GROUP result BY url;
+
+-- Compter les erreurs par URL
+error_counts = FOREACH grouped GENERATE group AS url, COUNT(result) AS count;
+
+-- Stocker
+STORE error_counts INTO '/output/404_errors';</code></pre>
+                </div>
+
+                <h4>Jointure en Pig</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-pig">-- Charger deux datasets
+users = LOAD '/data/users' AS (user_id:int, name:chararray);
+orders = LOAD '/data/orders' AS (order_id:int, user_id:int, amount:double);
+
+-- Jointure
+joined = JOIN users BY user_id, orders BY user_id;
+
+-- Stocker
+STORE joined INTO '/output/user_orders';</code></pre>
+                </div>
+
+                <h3>Exécuter un Script Pig</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Mode local (pour tester)
+pig -x local script.pig
+
+# Mode MapReduce
+pig -x mapreduce script.pig
+
+# Mode interactif (Grunt shell)
+pig</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>🗄️ 4. Apache HBase : Base de Données NoSQL</h2>
+
+                <h3>Qu'est-ce que HBase ?</h3>
+                <p>
+                    <strong>Apache HBase</strong> est une base de données NoSQL distribuée, orientée colonnes,
+                    construite sur HDFS. Inspirée de Google BigTable.
+                </p>
+
+                <h3>Caractéristiques</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📈 Scalabilité</h4>
+                        <p>Supporte des milliards de lignes et millions de colonnes</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>⚡ Accès Rapide</h4>
+                        <p>Lecture/écriture en temps réel (millisecondes)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔑 Clé-Valeur</h4>
+                        <p>Accès par clé primaire (row key)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>📊 Orienté Colonnes</h4>
+                        <p>Stockage en familles de colonnes</p>
+                    </div>
+                </div>
+
+                <h3>Modèle de Données</h3>
+                <div class="workflow-diagram">
+                    <pre>
+Table
+  ├─ Row Key (clé unique)
+  └─ Column Families
+       ├─ Family 1
+       │    ├─ Column 1:1 (avec timestamp)
+       │    └─ Column 1:2
+       └─ Family 2
+            └─ Column 2:1
+                    </pre>
+                </div>
+
+                <h3>Commandes HBase Shell</h3>
+
+                <h4>Créer et Gérer des Tables</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lancer HBase shell
+hbase shell
+
+# Créer une table avec deux familles de colonnes
+create 'users', 'profile', 'contacts'
+
+# Lister les tables
+list
+
+# Décrire une table
+describe 'users'
+
+# Désactiver et supprimer une table
+disable 'users'
+drop 'users'</code></pre>
+                </div>
+
+                <h4>Insérer et Lire des Données</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Insérer des données
+put 'users', 'user1', 'profile:name', 'Alice'
+put 'users', 'user1', 'profile:age', '30'
+put 'users', 'user1', 'contacts:email', 'alice@example.com'
+
+# Lire une ligne
+get 'users', 'user1'
+
+# Lire une colonne spécifique
+get 'users', 'user1', 'profile:name'
+
+# Scanner toute la table
+scan 'users'
+
+# Scanner avec filtre
+scan 'users', {FILTER => "ValueFilter(=, 'binary:Alice')"}
+
+# Supprimer une cellule
+delete 'users', 'user1', 'profile:age'</code></pre>
+                </div>
+
+                <h3>Cas d'Usage HBase</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Domaine</th>
+                            <th>Cas d'Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Réseaux Sociaux</td>
+                            <td>Profils utilisateurs, fils d'actualité, messages</td>
+                        </tr>
+                        <tr>
+                            <td>IoT</td>
+                            <td>Stockage de séries temporelles de capteurs</td>
+                        </tr>
+                        <tr>
+                            <td>Finance</td>
+                            <td>Historique de transactions en temps réel</td>
+                        </tr>
+                        <tr>
+                            <td>E-commerce</td>
+                            <td>Catalogue produits, historique des commandes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>🔄 5. Apache Sqoop : Import/Export de Données</h2>
+
+                <h3>Qu'est-ce que Sqoop ?</h3>
+                <p>
+                    <strong>Apache Sqoop</strong> (SQL to Hadoop) est un outil pour transférer des données
+                    entre Hadoop et des bases de données relationnelles (MySQL, PostgreSQL, Oracle, etc.).
+                </p>
+
+                <h3>Commandes Principales</h3>
+
+                <h4>Import depuis SGBD vers HDFS</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Importer une table entière
+sqoop import \
+  --connect jdbc:mysql://localhost/mydb \
+  --username root \
+  --password mypassword \
+  --table employees \
+  --target-dir /user/hadoop/employees
+
+# Importer avec une requête WHERE
+sqoop import \
+  --connect jdbc:mysql://localhost/mydb \
+  --username root \
+  --password mypassword \
+  --table employees \
+  --where "department = 'IT'" \
+  --target-dir /user/hadoop/it_employees
+
+# Importer toutes les tables d'une base
+sqoop import-all-tables \
+  --connect jdbc:mysql://localhost/mydb \
+  --username root \
+  --password mypassword \
+  --warehouse-dir /user/hadoop/warehouse</code></pre>
+                </div>
+
+                <h4>Export depuis HDFS vers SGBD</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Exporter vers une table MySQL
+sqoop export \
+  --connect jdbc:mysql://localhost/mydb \
+  --username root \
+  --password mypassword \
+  --table employees_export \
+  --export-dir /user/hadoop/employees_processed</code></pre>
+                </div>
+
+                <h4>Import Incrémental</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Import incrémental basé sur une colonne d'ID
+sqoop import \
+  --connect jdbc:mysql://localhost/mydb \
+  --username root \
+  --password mypassword \
+  --table orders \
+  --incremental append \
+  --check-column order_id \
+  --last-value 1000 \
+  --target-dir /user/hadoop/orders</code></pre>
+                </div>
+
+                <h4>Import Direct vers Hive</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">sqoop import \
+  --connect jdbc:mysql://localhost/mydb \
+  --username root \
+  --password mypassword \
+  --table employees \
+  --hive-import \
+  --hive-table employees \
+  --create-hive-table</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📡 6. Apache Flume : Collecte de Logs</h2>
+
+                <h3>Qu'est-ce que Flume ?</h3>
+                <p>
+                    <strong>Apache Flume</strong> est un service distribué pour collecter, agréger et déplacer
+                    efficacement de grandes quantités de données de logs vers HDFS.
+                </p>
+
+                <h3>Architecture Flume</h3>
+                <div class="workflow-diagram">
+                    <pre>
+Source → Channel → Sink
+
+Exemples:
+- Source : Netcat, Exec, Avro, Kafka
+- Channel : Memory, File, JDBC
+- Sink : HDFS, HBase, Logger, Avro
+                    </pre>
+                </div>
+
+                <h3>Exemple de Configuration</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-properties"># flume-conf.properties
+
+# Définir les composants
+agent1.sources = source1
+agent1.channels = channel1
+agent1.sinks = sink1
+
+# Configurer la source (écoute sur un port)
+agent1.sources.source1.type = netcat
+agent1.sources.source1.bind = localhost
+agent1.sources.source1.port = 44444
+
+# Configurer le channel (mémoire)
+agent1.channels.channel1.type = memory
+agent1.channels.channel1.capacity = 1000
+agent1.channels.channel1.transactionCapacity = 100
+
+# Configurer le sink (HDFS)
+agent1.sinks.sink1.type = hdfs
+agent1.sinks.sink1.hdfs.path = /user/flume/events/%Y-%m-%d
+agent1.sinks.sink1.hdfs.fileType = DataStream
+agent1.sinks.sink1.hdfs.rollInterval = 60
+agent1.sinks.sink1.hdfs.rollSize = 0
+agent1.sinks.sink1.hdfs.rollCount = 0
+
+# Relier les composants
+agent1.sources.source1.channels = channel1
+agent1.sinks.sink1.channel = channel1</code></pre>
+                </div>
+
+                <h4>Lancer Flume</h4>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">flume-ng agent \
+  --conf-file flume-conf.properties \
+  --name agent1 \
+  -Dflume.root.logger=INFO,console</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📝 Résumé de la Partie 5</h2>
+                <div class="key-points">
+                    <h3>Points Clés à Retenir</h3>
+                    <ul>
+                        <li><strong>Hive</strong> : SQL sur Hadoop, idéal pour analyses et reporting</li>
+                        <li><strong>Pig</strong> : Scripting pour ETL et transformations complexes</li>
+                        <li><strong>HBase</strong> : Base NoSQL temps réel sur HDFS</li>
+                        <li><strong>Sqoop</strong> : Import/Export entre Hadoop et SGBD relationnels</li>
+                        <li><strong>Flume</strong> : Ingestion de logs en streaming vers HDFS</li>
+                        <li>L'écosystème Hadoop est riche et chaque outil a son cas d'usage spécifique</li>
+                        <li>Ces outils peuvent être combinés pour créer des pipelines Big Data complets</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success" style="margin-top: 40px;">
+                <h4>✅ Prêt pour la Suite ?</h4>
+                <p>Vous connaissez maintenant l'écosystème Hadoop ! Dans la dernière partie, nous verrons comment <strong>installer et configurer</strong> un cluster Hadoop.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Formation Hadoop - Data Engineering | Simplon</p>
+            <p><a href="partie6.html">Partie 6 : Installation et Configuration →</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
+</body>
+</html>

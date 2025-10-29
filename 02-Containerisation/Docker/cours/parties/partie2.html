@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 2 : Premiers Pas avec Docker - Formation Docker</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Partie 2 : Premiers Pas avec Docker</h1>
+            <p class="subtitle">Installation et premières commandes</p>
+            <span class="duration">⏱️ Durée : 10 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html" class="active">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Installer Docker sur votre système d'exploitation</li>
+                    <li>Vérifier l'installation et lancer un premier conteneur</li>
+                    <li>Maîtriser les commandes Docker essentielles</li>
+                    <li>Comprendre les options de docker run</li>
+                    <li>Gérer les images et conteneurs localement</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>2.1 Installation de Docker</h2>
+
+                <h3>Windows & Mac</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Télécharger Docker Desktop depuis :
+https://www.docker.com/products/docker-desktop/
+
+# Vérifier l'installation
+docker --version
+docker version</code></pre>
+                </div>
+
+                <h3>Linux (Ubuntu/Debian)</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installer Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Ajouter votre utilisateur au groupe docker
+sudo usermod -aG docker $USER
+
+# Démarrer Docker
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Vérifier l'installation
+docker run hello-world</code></pre>
+                </div>
+
+                <h2>2.2 Votre Premier Conteneur</h2>
+
+                <div class="example">
+                    <h4>📝 Exemple : Lancer un serveur web Nginx</h4>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-bash"># Lancer Nginx en mode détaché
+docker run -d -p 8080:80 --name mon-nginx nginx
+
+# Explication des options :
+# -d          : Mode détaché (background)
+# -p 8080:80  : Mapper le port 8080 de l'hôte vers le port 80 du conteneur
+# --name      : Donner un nom au conteneur
+# nginx       : Nom de l'image à utiliser
+
+# Vérifier que le conteneur est actif
+docker ps
+
+# Tester dans le navigateur
+# Ouvrir http://localhost:8080</code></pre>
+                    </div>
+                </div>
+
+                <h2>2.3 Commandes Docker Essentielles</h2>
+
+                <h3>Gestion des Images</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Rechercher une image sur Docker Hub
+docker search python
+
+# Télécharger une image
+docker pull python:3.11
+
+# Lister toutes les images locales
+docker images
+
+# Afficher les détails d'une image
+docker inspect python:3.11
+
+# Supprimer une image
+docker rmi python:3.11
+
+# Supprimer toutes les images non utilisées
+docker image prune -a</code></pre>
+                </div>
+
+                <h3>Gestion des Conteneurs</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lancer un conteneur
+docker run -d --name mon-app -p 8000:8000 python:3.11
+
+# Lister les conteneurs actifs
+docker ps
+
+# Lister TOUS les conteneurs (actifs et arrêtés)
+docker ps -a
+
+# Arrêter un conteneur
+docker stop mon-app
+
+# Démarrer un conteneur arrêté
+docker start mon-app
+
+# Redémarrer un conteneur
+docker restart mon-app
+
+# Voir les logs d'un conteneur
+docker logs mon-app
+docker logs -f mon-app  # Suivre les logs en temps réel
+
+# Exécuter une commande dans un conteneur
+docker exec -it mon-app bash
+docker exec mon-app ls /app
+
+# Copier des fichiers
+docker cp fichier.txt mon-app:/app/
+docker cp mon-app:/app/resultat.txt ./
+
+# Voir les statistiques
+docker stats
+
+# Supprimer un conteneur
+docker rm mon-app
+
+# Supprimer tous les conteneurs arrêtés
+docker container prune</code></pre>
+                </div>
+
+                <h2>2.4 Options de docker run</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>-d, --detach</code></td>
+                            <td>Exécuter en arrière-plan</td>
+                            <td><code>docker run -d nginx</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-p, --publish</code></td>
+                            <td>Publier un port</td>
+                            <td><code>docker run -p 8080:80 nginx</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>--name</code></td>
+                            <td>Nommer le conteneur</td>
+                            <td><code>docker run --name web nginx</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-v, --volume</code></td>
+                            <td>Monter un volume</td>
+                            <td><code>docker run -v /host:/container nginx</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-e, --env</code></td>
+                            <td>Variable d'environnement</td>
+                            <td><code>docker run -e DB_HOST=localhost app</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>--rm</code></td>
+                            <td>Supprimer après arrêt</td>
+                            <td><code>docker run --rm python:3.11 python --version</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-it</code></td>
+                            <td>Mode interactif</td>
+                            <td><code>docker run -it python:3.11 bash</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>--network</code></td>
+                            <td>Connecter à un réseau</td>
+                            <td><code>docker run --network mon-reseau app</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>--restart</code></td>
+                            <td>Politique de redémarrage</td>
+                            <td><code>docker run --restart always nginx</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="tip">
+                    <strong>💡 Astuce :</strong> Utilisez <code>docker run --help</code> pour voir toutes les options
+                    disponibles. Vous pouvez combiner plusieurs options.
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Docker Desktop est la méthode d'installation recommandée pour Windows et Mac</li>
+                    <li><code>docker pull</code> télécharge des images, <code>docker run</code> lance des conteneurs
+                    </li>
+                    <li><code>docker ps</code> liste les conteneurs actifs, <code>docker ps -a</code> liste tous les
+                        conteneurs</li>
+                    <li><code>docker exec -it</code> permet d'accéder à l'intérieur d'un conteneur</li>
+                    <li>Les options de <code>docker run</code> se combinent pour configurer le conteneur</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vous savez maintenant lancer et gérer des conteneurs ! Passons à la <strong>Partie 3</strong> pour
+                    comprendre en profondeur les images et conteneurs Docker.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie1.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 1 : Fondamentaux
+                </a>
+                <a href="partie3.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 3 : Images et Conteneurs →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Docker pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 7 - Meilleures pratiques Git pour Data Engineering</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ Partie 7</h1>
+            <p class="subtitle">Meilleures pratiques Git pour Data Engineering</p>
+            <span class="duration">⏱️ Durée : 30 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie6.html">← Partie 6</a></li>
+                <li><a href="partie8.html">Partie 8 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>7. Meilleures pratiques Git pour Data Engineering</h2>
+
+                <h3>Le fichier .gitignore</h3>
+
+                <p>
+                    Le <strong>.gitignore</strong> indique à Git quels fichiers ne PAS versionner.
+                    C'est crucial en Data Engineering pour éviter de commiter des données sensibles ou volumineuses.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un .gitignore optimisé pour Data Engineering
+touch .gitignore
+
+# Ajouter des patterns
+cat >> .gitignore << 'EOF'
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebooks - CONFIGURATION IMPORTANTE
+.ipynb_checkpoints/
+# NE PAS exclure tous les *.ipynb !
+# Pour nettoyer les outputs avant commit, utilisez :
+# jupyter nbconvert --clear-output --inplace notebook.ipynb
+
+# OU installez nbstripout :
+# pip install nbstripout
+# nbstripout --install
+
+# Data files - NE JAMAIS VERSIONNER LES DONNÉES
+*.csv
+*.parquet
+*.json
+*.xlsx
+*.xls
+*.db
+*.sqlite
+*.sqlite3
+data/
+raw_data/
+processed_data/
+output/
+*.pickle
+*.pkl
+*.h5
+*.hdf5
+
+# Credentials et secrets - CRITIQUE !
+.env
+.env.*
+!.env.example
+credentials.json
+service-account.json
+*.pem
+*.key
+*.p12
+*.pfx
+config/secrets.yaml
+config/prod.yaml
+.aws/credentials
+.gcloud/
+
+# Logs
+*.log
+logs/
+airflow/logs/
+*.log.*
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+*.bak
+
+# DBT
+dbt_packages/
+target/
+dbt_modules/
+logs/
+.user.yml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+# Mais versionner :
+# !terraform.tfvars.example
+
+# Docker
+docker-compose.override.yml
+
+# Spark
+metastore_db/
+spark-warehouse/
+derby.log
+
+# Airflow
+airflow.db
+airflow.cfg
+webserver_config.py
+unittests.cfg
+
+# Kafka
+.kafka/
+
+# Great Expectations
+uncommitted/
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Prefect
+.prefect/
+EOF</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>⚠️ Notebooks Jupyter : Configuration correcte</h4>
+                    <p>
+                        <strong>NE PAS exclure tous les *.ipynb !</strong> Les notebooks contiennent du code qu'on veut versionner.
+                        Le problème, ce sont les <em>outputs</em> (résultats d'exécution) qui peuvent être volumineux.
+                    </p>
+                    <p><strong>Solution recommandée :</strong></p>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Option 1 : nbstripout (RECOMMANDÉ)
+# Installer nbstripout
+pip install nbstripout
+
+# Installer le hook Git qui nettoie automatiquement les outputs
+nbstripout --install
+
+# Maintenant, à chaque commit, les outputs seront automatiquement retirés !
+
+# Option 2 : Nettoyer manuellement avant commit
+jupyter nbconvert --clear-output --inplace mon_notebook.ipynb
+git add mon_notebook.ipynb
+git commit -m "feat: Add data exploration notebook"
+
+# Option 3 : Configuration Git globale avec nbstripout
+# Dans .git/config ou ~/.gitconfig
+git config filter.nbstripout.clean 'nbstripout'
+git config filter.nbstripout.smudge cat
+git config filter.nbstripout.required true
+
+# Puis dans .gitattributes :
+echo "*.ipynb filter=nbstripout" >> .gitattributes
+git add .gitattributes
+git commit -m "chore: Configure nbstripout for Jupyter notebooks"</code></pre>
+                </div>
+
+                <div class="alert alert-danger">
+                    <h4>🚨 Ne JAMAIS commiter</h4>
+                    <ul>
+                        <li><strong>Données brutes ou transformées</strong> : Utilisez S3, GCS, Azure Blob ou un data lake</li>
+                        <li><strong>Credentials et secrets</strong> : API keys, mots de passe, tokens, certificats</li>
+                        <li><strong>Fichiers volumineux</strong> : Utilisez Git LFS ou un système de stockage externe</li>
+                        <li><strong>Données personnelles (RGPD/GDPR)</strong> : Respectez les réglementations</li>
+                        <li><strong>Fichiers binaires générés</strong> : .pyc, .class, executables</li>
+                        <li><strong>Dépendances</strong> : node_modules/, venv/, packages (utilisez requirements.txt)</li>
+                    </ul>
+                </div>
+
+                <h3>Versionner quoi dans un projet Data ?</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>✅ À versionner</h4>
+                        <ul>
+                            <li>Code Python/SQL des pipelines</li>
+                            <li>Configuration DBT</li>
+                            <li>Scripts ETL/ELT</li>
+                            <li>Notebooks Jupyter (<strong>sans outputs</strong>)</li>
+                            <li>Schémas de données (Avro, Protobuf)</li>
+                            <li>Documentation (README, wiki)</li>
+                            <li>Tests unitaires et d'intégration</li>
+                            <li>IaC (Terraform, CloudFormation)</li>
+                            <li>Docker et docker-compose</li>
+                            <li>DAGs Airflow/Prefect</li>
+                            <li>Fichiers de config (YAML, TOML)</li>
+                            <li>Scripts de migration de DB</li>
+                            <li>Fichiers d'exemple (.env.example)</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>❌ À NE PAS versionner</h4>
+                        <ul>
+                            <li>Datasets (.csv, .parquet, .json)</li>
+                            <li>Credentials et secrets</li>
+                            <li>Fichiers de cache</li>
+                            <li>Modèles ML entraînés (>10MB)</li>
+                            <li>Logs applicatifs</li>
+                            <li>Bases de données locales</li>
+                            <li>Fichiers temporaires</li>
+                            <li>Dossiers de build</li>
+                            <li>Outputs de notebooks</li>
+                            <li>Fichiers IDE personnels</li>
+                            <li>Environnements virtuels</li>
+                            <li>Artefacts de compilation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Stratégie de branches pour Data Engineering</h3>
+
+                <div class="workflow-diagram">
+                    <pre>
+main (production) ─────●──────●──────●──────▶
+                        ↑      ↑      ↑
+                        │      │      │
+develop ────●────●──────┴──●───┴──●───┴──────▶
+            ↑    ↑         ↑      ↑
+            │    │         │      │
+feature/    │    │         │      │
+etl-sales ──┴────┘         │      │
+                            │      │
+feature/                    │      │
+dbt-models ─────────────────┴──────┘
+                    </pre>
+                </div>
+
+                <ul>
+                    <li><strong>main</strong> : Code déployé en production (toujours stable, protégé)</li>
+                    <li><strong>develop</strong> : Code en cours de développement (branche d'intégration)</li>
+                    <li><strong>feature/*</strong> : Nouvelles fonctionnalités (ex: feature/mongodb-connector)</li>
+                    <li><strong>fix/*</strong> : Corrections de bugs non urgents</li>
+                    <li><strong>hotfix/*</strong> : Corrections urgentes en production</li>
+                    <li><strong>release/*</strong> : Préparation des releases</li>
+                </ul>
+
+                <h3>Messages de commit pour Data Engineering</h3>
+
+                <div class="card">
+                    <h4>Convention Conventional Commits</h4>
+                    <p><code>&lt;type&gt;(&lt;scope&gt;): &lt;description&gt;</code></p>
+
+                    <table class="command-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Usage</th>
+                                <th>Exemple</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>feat</td>
+                                <td>Nouvelle fonctionnalité</td>
+                                <td>feat(etl): Add MongoDB data extractor</td>
+                            </tr>
+                            <tr>
+                                <td>fix</td>
+                                <td>Correction de bug</td>
+                                <td>fix(pipeline): Handle null values in transformation</td>
+                            </tr>
+                            <tr>
+                                <td>perf</td>
+                                <td>Amélioration de performance</td>
+                                <td>perf(query): Optimize PostgreSQL aggregation query</td>
+                            </tr>
+                            <tr>
+                                <td>refactor</td>
+                                <td>Refactorisation</td>
+                                <td>refactor(dbt): Restructure models directory</td>
+                            </tr>
+                            <tr>
+                                <td>docs</td>
+                                <td>Documentation</td>
+                                <td>docs(readme): Add setup instructions for Airflow</td>
+                            </tr>
+                            <tr>
+                                <td>test</td>
+                                <td>Ajout de tests</td>
+                                <td>test(etl): Add unit tests for data validation</td>
+                            </tr>
+                            <tr>
+                                <td>chore</td>
+                                <td>Maintenance</td>
+                                <td>chore(deps): Update pandas to 2.0.0</td>
+                            </tr>
+                            <tr>
+                                <td>ci</td>
+                                <td>CI/CD</td>
+                                <td>ci: Add GitHub Actions for automated tests</td>
+                            </tr>
+                            <tr>
+                                <td>build</td>
+                                <td>Build system</td>
+                                <td>build: Update Docker base image to Python 3.11</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>✅ Exemples de bons messages de commit</h4>
+                    <ul>
+                        <li><code>feat(etl): Add incremental load for customer dimension</code></li>
+                        <li><code>fix(dbt): Correct date partition logic in sales_daily model</code></li>
+                        <li><code>perf(spark): Optimize join strategy reducing runtime by 40%</code></li>
+                        <li><code>docs(airflow): Document DAG parameters and retry policy</code></li>
+                        <li><code>test(pipeline): Add integration tests for S3 to Snowflake flow</code></li>
+                    </ul>
+                </div>
+
+                <h3>Git Hooks pour automatiser les vérifications</h3>
+
+                <p>
+                    Les <strong>hooks</strong> sont des scripts exécutés automatiquement à certains moments
+                    (avant commit, avant push, etc.).
+                </p>
+
+                <h4>Utiliser pre-commit framework (RECOMMANDÉ)</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installer pre-commit
+pip install pre-commit
+
+# Créer .pre-commit-config.yaml pour Data Engineering
+cat > .pre-commit-config.yaml << 'EOF'
+repos:
+  # Hooks standards
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=1000']  # Bloque fichiers > 1MB
+      - id: detect-private-key  # Détecte les clés privées
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+
+  # Python formatting
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  # Python linting
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        args: ['--max-line-length=88', '--extend-ignore=E203']
+
+  # SQL formatting
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.0.0
+    hooks:
+      - id: sqlfluff-lint
+      - id: sqlfluff-fix
+
+  # Jupyter notebooks
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.7.1
+    hooks:
+      - id: nbqa-black
+      - id: nbqa-flake8
+
+  # Nettoyer outputs notebooks (IMPORTANT!)
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.6.1
+    hooks:
+      - id: nbstripout
+        files: "\\.ipynb$"
+
+  # Sécurité - Détecter secrets
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+
+  # YAML linting
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+
+  # Terraform
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.86.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+EOF
+
+# Installer les hooks
+pre-commit install
+
+# Lancer sur tous les fichiers
+pre-commit run --all-files
+
+# Les hooks s'exécuteront automatiquement à chaque commit!</code></pre>
+                </div>
+
+                <h3>Git LFS pour les fichiers volumineux</h3>
+
+                <p>
+                    <strong>Git Large File Storage (LFS)</strong> permet de versionner des fichiers volumineux
+                    sans alourdir le dépôt. Utile pour les petits datasets d'exemple ou modèles ML.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installer Git LFS
+# macOS
+brew install git-lfs
+# Ubuntu
+sudo apt-get install git-lfs
+# Windows : télécharger depuis https://git-lfs.github.com
+
+# Initialiser Git LFS dans le repo
+git lfs install
+
+# Tracker les fichiers parquet (datasets exemples)
+git lfs track "*.parquet"
+git lfs track "data/samples/*.csv"
+
+# Tracker les modèles ML
+git lfs track "models/*.pkl"
+git lfs track "models/*.h5"
+git lfs track "*.joblib"
+
+# Le fichier .gitattributes est créé automatiquement
+cat .gitattributes
+# *.parquet filter=lfs diff=lfs merge=lfs -text
+# models/*.pkl filter=lfs diff=lfs merge=lfs -text
+
+# Commiter normalement
+git add .gitattributes
+git add data/samples/example.parquet
+git commit -m "feat: Add sample data with Git LFS"
+git push
+
+# Voir les fichiers LFS
+git lfs ls-files
+
+# Cloner un repo avec LFS
+git clone <url>
+# Les fichiers LFS sont téléchargés automatiquement</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Quand utiliser Git LFS ?</h4>
+                    <ul>
+                        <li>✅ Datasets d'exemple de petite taille (&lt; 100MB)</li>
+                        <li>✅ Modèles ML de référence</li>
+                        <li>✅ Fichiers de documentation (PDF, images)</li>
+                        <li>❌ Gros datasets de production (utilisez S3/GCS)</li>
+                        <li>❌ Données sensibles (ne jamais versionner)</li>
+                    </ul>
+                </div>
+
+                <h3>Gérer les secrets avec Git</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un fichier .env.example (à versionner)
+cat > .env.example << 'EOF'
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=mydatabase
+DB_USER=your_username
+DB_PASSWORD=your_password
+
+# AWS Configuration
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+
+# API Keys
+OPENAI_API_KEY=your_api_key
+EOF
+
+# Copier et remplir avec les vraies valeurs (NE PAS VERSIONNER)
+cp .env.example .env
+
+# Vérifier que .env est dans .gitignore
+grep ".env" .gitignore
+
+# Utiliser des outils de gestion de secrets
+# Option 1 : AWS Secrets Manager
+# Option 2 : HashiCorp Vault
+# Option 3 : Azure Key Vault
+# Option 4 : Variables d'environnement CI/CD</code></pre>
+                </div>
+
+                <div class="key-points">
+                    <h3>💡 Points clés à retenir</h3>
+                    <ul>
+                        <li>Configurez un .gitignore complet DÈS LE DÉBUT du projet</li>
+                        <li>Utilisez nbstripout pour nettoyer automatiquement les notebooks</li>
+                        <li>NE JAMAIS commiter de credentials ou données sensibles</li>
+                        <li>Adoptez Conventional Commits pour des messages clairs</li>
+                        <li>Mettez en place pre-commit hooks pour automatiser les vérifications</li>
+                        <li>Utilisez Git LFS uniquement pour petits fichiers d'exemple</li>
+                        <li>Stockez les vrais datasets dans S3/GCS/Azure Blob</li>
+                        <li>Versionnez le code, pas les données</li>
+                        <li>Documentez votre workflow dans le README</li>
+                        <li>Protégez la branche main avec branch protection rules</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>✅ Partie 7 terminée !</h4>
+                    <p>
+                        Félicitations ! Vous maîtrisez maintenant les meilleures pratiques Git pour le Data Engineering.
+                        Passez à la Partie 8 pour découvrir les workflows professionnels avec Conventional Commits et Docker !
+                    </p>
+                    <p style="margin-top: 20px;">
+                        <a href="partie8.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                            Partie 8 : Workflows →
+                        </a>
+                        <a href="../exercices.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                            🎯 Faire les exercices
+                        </a>
+                    </p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

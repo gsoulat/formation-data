@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 8 : Best Practices et CI/CD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="../assets/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="terraform-logo">⚡</span> Module 8 : Best Practices et CI/CD</h1>
+            <p>Maîtriser les bonnes pratiques et l'automatisation</p>
+        </header>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs du Module</h2>
+                <ul>
+                    <li>Appliquer les best practices Terraform en production</li>
+                    <li>Mettre en place un workflow CI/CD avec Azure DevOps et GitHub Actions</li>
+                    <li>Déployer un projet complet 3-Tier sur Azure</li>
+                    <li>Résoudre les problèmes courants et accéder aux ressources</li>
+                </ul>
+            </div>
+
+            <section id="best-practices">
+                <h2>✅ Best Practices</h2>
+
+                <h3>1. Structure de Projet</h3>
+
+                <div class="architecture-diagram">
+                    <pre>
+terraform-project/
+├── environments/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   └── backend.tf
+│   ├── staging/
+│   │   └── ...
+│   └── prod/
+│       └── ...
+├── modules/
+│   ├── networking/
+│   ├── compute/
+│   └── database/
+├── .gitignore
+└── README.md
+</pre>
+                </div>
+
+                <h3>2. Nommage des Ressources</h3>
+
+                <pre><code class="language-hcl"># Convention Azure : type-workload-environment-region-instance
+resource "azurerm_resource_group" "main" {
+  name     = "rg-webapp-prod-frc-001"
+  location = "France Central"
+}
+
+resource "azurerm_virtual_network" "main" {
+  name = "vnet-webapp-prod-frc-001"
+  # ...
+}
+
+resource "azurerm_storage_account" "main" {
+  name = "stwebappprod001" # pas de tirets pour storage
+  # ...
+}</code></pre>
+
+                <h3>3. Tags Standardisés</h3>
+
+                <pre><code class="language-hcl">locals {
+  common_tags = {
+    environment  = var.environment
+    managed_by   = "terraform"
+    project      = "webapp"
+    cost_center  = "engineering"
+    owner        = "devops-team"
+  }
+}
+
+resource "azurerm_resource_group" "main" {
+  name     = "rg-webapp-prod"
+  location = "France Central"
+  tags     = local.common_tags
+}</code></pre>
+
+                <h3>4. .gitignore pour Terraform</h3>
+
+                <pre><code class="language-bash"># Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files (contiennent des secrets)
+*.tfvars
+*.tfvars.json
+
+# Ignore override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore Mac .DS_Store files
+.DS_Store
+
+# SSH keys
+*.pem
+*.key
+
+# Backup files
+*.backup
+*.bak</code></pre>
+
+                <h3>5. Gestion des Secrets</h3>
+
+                <div class="warning">
+                    <h4>⚠️ Ne jamais hardcoder les secrets</h4>
+                </div>
+
+                <pre><code class="language-hcl"># ❌ MAUVAIS
+resource "azurerm_postgresql_server" "bad" {
+  administrator_login_password = "P@ssw0rd123!"  # NE JAMAIS FAIRE ÇA
+}
+
+# ✅ BON - Utiliser des variables sensibles
+variable "db_password" {
+  type      = string
+  sensitive = true
+}
+
+resource "azurerm_postgresql_server" "good" {
+  administrator_login_password = var.db_password
+}
+
+# ✅ MEILLEUR - Utiliser Azure Key Vault
+data "azurerm_key_vault_secret" "db_password" {
+  name         = "db-password"
+  key_vault_id = data.azurerm_key_vault.main.id
+}
+
+resource "azurerm_postgresql_server" "better" {
+  administrator_login_password = data.azurerm_key_vault_secret.db_password.value
+}</code></pre>
+
+                <h3>6. Utiliser des Data Sources</h3>
+
+                <pre><code class="language-hcl"># Référencer des ressources existantes sans les gérer
+data "azurerm_resource_group" "existing" {
+  name = "rg-existing"
+}
+
+data "azurerm_virtual_network" "existing" {
+  name                = "vnet-existing"
+  resource_group_name = data.azurerm_resource_group.existing.name
+}
+
+# Utiliser les data sources
+resource "azurerm_subnet" "new" {
+  name                 = "subnet-new"
+  resource_group_name  = data.azurerm_resource_group.existing.name
+  virtual_network_name = data.azurerm_virtual_network.existing.name
+  address_prefixes     = ["10.0.5.0/24"]
+}</code></pre>
+
+                <h3>7. Validation et Tests</h3>
+
+                <pre><code class="language-bash"># Workflow de validation
+terraform fmt -recursive    # Formater le code
+terraform validate          # Valider la syntaxe
+terraform plan             # Vérifier les changements
+terraform apply            # Appliquer les changements
+
+# Utiliser tflint pour linting
+brew install tflint
+tflint --init
+tflint
+
+# Utiliser terraform-docs pour documentation
+brew install terraform-docs
+terraform-docs markdown . > README.md
+
+# Tests avec Terratest (Go)
+go test -v -timeout 30m</code></pre>
+
+                <h3>8. Count et For_Each</h3>
+
+                <pre><code class="language-hcl"># Créer plusieurs ressources similaires avec count
+resource "azurerm_linux_virtual_machine" "web" {
+  count = var.vm_count
+
+  name = "vm-web-${count.index + 1}"
+  # ...
+}
+
+# Créer des ressources avec for_each (plus flexible)
+variable "subnets" {
+  type = map(object({
+    address_prefix = string
+  }))
+  default = {
+    web  = { address_prefix = "10.0.1.0/24" }
+    app  = { address_prefix = "10.0.2.0/24" }
+    data = { address_prefix = "10.0.3.0/24" }
+  }
+}
+
+resource "azurerm_subnet" "main" {
+  for_each = var.subnets
+
+  name                 = "subnet-${each.key}"
+  address_prefixes     = [each.value.address_prefix]
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+}</code></pre>
+
+                <h3>9. Locals pour DRY (Don't Repeat Yourself)</h3>
+
+                <pre><code class="language-hcl">locals {
+  # Nom du projet
+  project_name = "${var.project}-${var.environment}"
+
+  # Nom de ressources
+  resource_group_name = "rg-${local.project_name}"
+  vnet_name          = "vnet-${local.project_name}"
+
+  # Tags communs
+  common_tags = {
+    project     = var.project
+    environment = var.environment
+    managed_by  = "terraform"
+    created_at  = timestamp()
+  }
+
+  # Calculs complexes
+  subnet_count = length(var.subnet_prefixes)
+}
+
+resource "azurerm_resource_group" "main" {
+  name     = local.resource_group_name
+  location = var.location
+  tags     = local.common_tags
+}</code></pre>
+
+                <h3>10. Lifecycle Management</h3>
+
+                <pre><code class="language-hcl"># Empêcher la destruction accidentelle
+resource "azurerm_resource_group" "main" {
+  name     = "rg-critical-prod"
+  location = "France Central"
+
+  lifecycle {
+    prevent_destroy = true  # Protection contre destroy
+  }
+}
+
+# Créer avant de détruire
+resource "azurerm_linux_virtual_machine" "web" {
+  # ...
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Ignorer des changements
+resource "azurerm_storage_account" "main" {
+  # ...
+
+  lifecycle {
+    ignore_changes = [
+      tags["created_at"],  # Ignorer les changements de ce tag
+    ]
+  }
+}</code></pre>
+            </section>
+
+            <section id="workflow-cicd">
+                <h2>🔄 Workflow CI/CD avec Terraform</h2>
+
+                <h3>Pipeline Azure DevOps</h3>
+
+                <div class="example-box">
+                    <h4>📄 azure-pipelines.yml</h4>
+                    <pre><code class="language-yaml">trigger:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: terraform-secrets  # Variable group avec ARM_ACCESS_KEY
+
+stages:
+  - stage: Validate
+    jobs:
+      - job: TerraformValidate
+        steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: '1.6.0'
+
+          - script: |
+              terraform fmt -check -recursive
+              terraform init -backend=false
+              terraform validate
+            displayName: 'Terraform Validate'
+
+  - stage: Plan
+    dependsOn: Validate
+    jobs:
+      - job: TerraformPlan
+        steps:
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: '1.6.0'
+
+          - script: |
+              terraform init
+              terraform plan -out=tfplan
+            env:
+              ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+              ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+              ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+              ARM_TENANT_ID: $(ARM_TENANT_ID)
+            displayName: 'Terraform Plan'
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: 'tfplan'
+              artifact: 'terraform-plan'
+
+  - stage: Apply
+    dependsOn: Plan
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: TerraformApply
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifact: 'terraform-plan'
+
+                - task: TerraformInstaller@0
+                  inputs:
+                    terraformVersion: '1.6.0'
+
+                - script: |
+                    terraform apply tfplan
+                  env:
+                    ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+                    ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+                    ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+                    ARM_TENANT_ID: $(ARM_TENANT_ID)
+                  displayName: 'Terraform Apply'</code></pre>
+                </div>
+
+                <h3>Pipeline GitHub Actions</h3>
+
+                <div class="example-box">
+                    <h4>📄 .github/workflows/terraform.yml</h4>
+                    <pre><code class="language-yaml">name: 'Terraform CI/CD'
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  TF_VERSION: '1.6.0'
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+jobs:
+  terraform-validate:
+    name: 'Terraform Validate'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        run: terraform validate
+
+  terraform-plan:
+    name: 'Terraform Plan'
+    needs: terraform-validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Upload Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: tfplan
+
+  terraform-apply:
+    name: 'Terraform Apply'
+    needs: terraform-plan
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Download Plan
+        uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan</code></pre>
+                </div>
+
+                <div class="success">
+                    <h4>✓ Best Practices CI/CD</h4>
+                    <ul>
+                        <li>Toujours valider et formater le code</li>
+                        <li>Plan sur toutes les branches</li>
+                        <li>Apply uniquement sur main avec approbation manuelle</li>
+                        <li>Utiliser des secrets pour les credentials</li>
+                        <li>Sauvegarder les plans pour audit</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="projet-complet">
+                <h2>🎯 Projet Complet : Application 3-Tier sur Azure</h2>
+
+                <p>Déployons une application complète avec Terraform :</p>
+                <ul>
+                    <li>Frontend : Azure Static Web App</li>
+                    <li>Backend : Azure Kubernetes Service (AKS)</li>
+                    <li>Base de données : Azure Database for PostgreSQL</li>
+                    <li>Stockage : Azure Storage Account</li>
+                    <li>Réseau : VNet avec subnets et NSGs</li>
+                </ul>
+
+                <div class="architecture-diagram">
+                    <h4>Architecture</h4>
+                    <pre>
+┌──────────────────────────────────────────────────────────────┐
+│                      AZURE CLOUD                              │
+│                                                               │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │           Resource Group: rg-app-prod                   │  │
+│  │                                                          │  │
+│  │  ┌──────────────────────────────────────────────────┐  │  │
+│  │  │   Virtual Network: 10.0.0.0/16                    │  │  │
+│  │  │                                                    │  │  │
+│  │  │  ┌──────────────┐  ┌──────────────┐             │  │  │
+│  │  │  │ Subnet Web   │  │ Subnet AKS   │             │  │  │
+│  │  │  │ 10.0.1.0/24  │  │ 10.0.2.0/24  │             │  │  │
+│  │  │  │   Frontend   │  │   Backend    │             │  │  │
+│  │  │  └──────────────┘  └──────────────┘             │  │  │
+│  │  │                                                    │  │  │
+│  │  │  ┌──────────────┐  ┌──────────────┐             │  │  │
+│  │  │  │ Subnet DB    │  │Subnet Storage│             │  │  │
+│  │  │  │ 10.0.3.0/24  │  │ 10.0.4.0/24  │             │  │  │
+│  │  │  │ PostgreSQL   │  │   Blobs      │             │  │  │
+│  │  │  └──────────────┘  └──────────────┘             │  │  │
+│  │  └────────────────────────────────────────────────────┘  │  │
+│  │                                                          │  │
+│  │  ┌──────────────────────────────────────────────────┐  │  │
+│  │  │  Security: NSGs, Key Vault, Private Endpoints    │  │  │
+│  │  └──────────────────────────────────────────────────┘  │  │
+│  └────────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <div class="example-box">
+                    <h4>📄 main.tf - Infrastructure Complète</h4>
+                    <pre><code class="language-hcl"># Variables
+variable "project_name" {
+  default = "myapp"
+}
+
+variable "environment" {
+  default = "prod"
+}
+
+variable "location" {
+  default = "France Central"
+}
+
+# Resource Group
+resource "azurerm_resource_group" "main" {
+  name     = "rg-${var.project_name}-${var.environment}"
+  location = var.location
+
+  tags = local.common_tags
+}
+
+# Virtual Network
+resource "azurerm_virtual_network" "main" {
+  name                = "vnet-${var.project_name}-${var.environment}"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  tags                = local.common_tags
+}
+
+# Subnets
+resource "azurerm_subnet" "web" {
+  name                 = "subnet-web"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_subnet" "aks" {
+  name                 = "subnet-aks"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+resource "azurerm_subnet" "db" {
+  name                 = "subnet-db"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.3.0/24"]
+
+  delegation {
+    name = "fs"
+    service_delegation {
+      name = "Microsoft.DBforPostgreSQL/flexibleServers"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+      ]
+    }
+  }
+}
+
+# AKS Cluster
+resource "azurerm_kubernetes_cluster" "main" {
+  name                = "aks-${var.project_name}-${var.environment}"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  dns_prefix          = "${var.project_name}${var.environment}"
+
+  default_node_pool {
+    name                = "default"
+    node_count          = 2
+    vm_size             = "Standard_D2s_v3"
+    vnet_subnet_id      = azurerm_subnet.aks.id
+    enable_auto_scaling = true
+    min_count           = 2
+    max_count           = 5
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin = "azure"
+    service_cidr   = "10.1.0.0/16"
+    dns_service_ip = "10.1.0.10"
+  }
+
+  tags = local.common_tags
+}
+
+# PostgreSQL
+resource "azurerm_postgresql_flexible_server" "main" {
+  name                   = "psql-${var.project_name}-${var.environment}"
+  resource_group_name    = azurerm_resource_group.main.name
+  location               = azurerm_resource_group.main.location
+  version                = "15"
+  delegated_subnet_id    = azurerm_subnet.db.id
+  administrator_login    = "psqladmin"
+  administrator_password = var.db_password
+  zone                   = "1"
+
+  storage_mb = 32768
+  sku_name   = "GP_Standard_D2s_v3"
+
+  tags = local.common_tags
+}
+
+resource "azurerm_postgresql_flexible_server_database" "main" {
+  name      = "${var.project_name}db"
+  server_id = azurerm_postgresql_flexible_server.main.id
+  collation = "en_US.utf8"
+  charset   = "utf8"
+}
+
+# Storage Account
+resource "azurerm_storage_account" "main" {
+  name                     = "st${var.project_name}${var.environment}${random_string.suffix.result}"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  min_tls_version          = "TLS1_2"
+
+  tags = local.common_tags
+}
+
+resource "random_string" "suffix" {
+  length  = 6
+  special = false
+  upper   = false
+}
+
+# Key Vault pour secrets
+resource "azurerm_key_vault" "main" {
+  name                = "kv-${var.project_name}-${var.environment}"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  sku_name            = "standard"
+
+  tags = local.common_tags
+}
+
+data "azurerm_client_config" "current" {}
+
+# Locals
+locals {
+  common_tags = {
+    project     = var.project_name
+    environment = var.environment
+    managed_by  = "terraform"
+  }
+}
+
+# Outputs
+output "aks_cluster_name" {
+  value = azurerm_kubernetes_cluster.main.name
+}
+
+output "aks_kube_config" {
+  value     = azurerm_kubernetes_cluster.main.kube_config_raw
+  sensitive = true
+}
+
+output "postgresql_fqdn" {
+  value = azurerm_postgresql_flexible_server.main.fqdn
+}
+
+output "storage_account_name" {
+  value = azurerm_storage_account.main.name
+}
+
+output "key_vault_uri" {
+  value = azurerm_key_vault.main.vault_uri
+}</code></pre>
+                </div>
+
+                <div class="command-box">
+                    <h4>Déployer le Projet</h4>
+                    <pre><code class="language-bash"># 1. Initialiser
+terraform init
+
+# 2. Valider
+terraform validate
+terraform fmt
+
+# 3. Planifier
+terraform plan -out=tfplan
+
+# 4. Appliquer
+terraform apply tfplan
+
+# 5. Récupérer les outputs
+terraform output
+
+# 6. Configurer kubectl avec AKS
+az aks get-credentials \
+  --resource-group $(terraform output -raw resource_group_name) \
+  --name $(terraform output -raw aks_cluster_name)
+
+# 7. Vérifier la connexion
+kubectl get nodes</code></pre>
+                </div>
+            </section>
+
+            <section id="troubleshooting">
+                <h2>🔧 Troubleshooting</h2>
+
+                <h3>Problèmes Courants</h3>
+
+                <div class="warning">
+                    <h4>Erreur : State Lock</h4>
+                    <pre><code>Error: Error acquiring the state lock</code></pre>
+                    <p><strong>Solution :</strong></p>
+                    <pre><code class="language-bash"># Forcer l'unlock (attention !)
+terraform force-unlock <LOCK_ID>
+
+# Vérifier qu'aucune autre opération n'est en cours</code></pre>
+                </div>
+
+                <div class="warning">
+                    <h4>Erreur : Provider Not Found</h4>
+                    <pre><code>Error: Could not load plugin</code></pre>
+                    <p><strong>Solution :</strong></p>
+                    <pre><code class="language-bash">rm -rf .terraform
+rm .terraform.lock.hcl
+terraform init</code></pre>
+                </div>
+
+                <div class="warning">
+                    <h4>Erreur : Resource Already Exists</h4>
+                    <pre><code>Error: A resource with the ID already exists</code></pre>
+                    <p><strong>Solution :</strong></p>
+                    <pre><code class="language-bash"># Importer la ressource existante
+terraform import azurerm_resource_group.main /subscriptions/xxx/resourceGroups/rg-name</code></pre>
+                </div>
+
+                <h3>Commandes de Debug</h3>
+
+                <pre><code class="language-bash"># Activer les logs détaillés
+export TF_LOG=DEBUG
+export TF_LOG_PATH=terraform.log
+terraform apply
+
+# Voir le state en détail
+terraform state list
+terraform state show <resource>
+
+# Tester la configuration Azure
+az account show
+az login
+
+# Vérifier les permissions
+az role assignment list --assignee <user-or-sp-id></code></pre>
+            </section>
+
+            <section id="resources">
+                <h2>📚 Ressources et Documentation</h2>
+
+                <h3>Documentation Officielle</h3>
+                <ul>
+                    <li><strong>Terraform :</strong> <a href="https://www.terraform.io/docs" target="_blank">terraform.io/docs</a></li>
+                    <li><strong>Azure Provider :</strong> <a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs" target="_blank">registry.terraform.io/providers/hashicorp/azurerm</a></li>
+                    <li><strong>Terraform Registry :</strong> <a href="https://registry.terraform.io" target="_blank">registry.terraform.io</a></li>
+                </ul>
+
+                <h3>Outils Recommandés</h3>
+                <ul>
+                    <li><strong>tflint :</strong> Linter pour Terraform</li>
+                    <li><strong>terraform-docs :</strong> Génération de documentation</li>
+                    <li><strong>tfswitch :</strong> Gestion de versions Terraform</li>
+                    <li><strong>Infracost :</strong> Estimation des coûts cloud</li>
+                    <li><strong>Checkov :</strong> Scan de sécurité</li>
+                </ul>
+
+                <h3>Learning Path</h3>
+                <ol>
+                    <li>Terraform Basics (cette formation)</li>
+                    <li>HashiCorp Certified: Terraform Associate</li>
+                    <li>Advanced Terraform (modules, workspaces)</li>
+                    <li>Terraform Cloud / Enterprise</li>
+                    <li>Multi-cloud Terraform (Azure + AWS + GCP)</li>
+                </ol>
+            </section>
+
+            <section id="conclusion">
+                <div class="success">
+                    <h2>🎉 Conclusion</h2>
+                    <p>Félicitations ! Vous avez maintenant une compréhension solide de Terraform et de son utilisation avec Azure.</p>
+
+                    <h3>Ce que vous avez appris :</h3>
+                    <ul>
+                        <li>Les concepts fondamentaux de l'Infrastructure as Code</li>
+                        <li>Installation et configuration de Terraform avec Azure</li>
+                        <li>Création de ressources Azure (VMs, réseaux, bases de données, AKS)</li>
+                        <li>Gestion des variables, outputs et modules</li>
+                        <li>State management et remote backends</li>
+                        <li>Best practices et workflow CI/CD</li>
+                    </ul>
+
+                    <h3>Prochaines Étapes :</h3>
+                    <ol>
+                        <li>Pratiquer avec le brief Terraform (exercices pratiques)</li>
+                        <li>Déployer votre propre infrastructure sur Azure</li>
+                        <li>Explorer les modules Terraform Registry</li>
+                        <li>Implémenter un pipeline CI/CD complet</li>
+                        <li>Passer la certification HashiCorp Terraform Associate</li>
+                    </ol>
+
+                    <p style="text-align: center; margin-top: 30px; font-size: 1.2em;">
+                        <strong>Bonne chance dans vos projets Terraform ! 🚀</strong>
+                    </p>
+                </div>
+            </section>
+
+            <div style="margin-top: 50px; text-align: center;">
+                <a href="partie7.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">← Précédent : Module 7</a>
+                <a href="../index.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">🏠 Accueil</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Data Engineering - Simplon</p>
+            <p>Terraform avec Azure - Module 8 : Best Practices et CI/CD</p>
+            <p>&copy; 2025 - Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-hcl.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

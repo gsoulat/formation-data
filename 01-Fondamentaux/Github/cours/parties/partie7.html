@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 7 : Fonctionnalités avancées - Formation GitHub</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Partie 7 : Fonctionnalités avancées</h1>
+            <p class="subtitle">Devenez un expert GitHub avec les outils avancés</p>
+            <span class="duration">⏱️ Durée : 30 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html" class="active">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Maîtriser GitHub CLI (gh)</li>
+                    <li>Partager du code avec Gists</li>
+                    <li>Utiliser GitHub Codespaces</li>
+                    <li>Héberger des packages sur GitHub</li>
+                    <li>Animer une communauté avec Discussions</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>GitHub CLI (gh)</h2>
+
+                <p>
+                    <strong>gh</strong> est l'outil en ligne de commande officiel de GitHub pour gérer repositories,
+                    PR, issues, etc. depuis le terminal.
+                </p>
+
+                <h3>Installation</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># macOS
+brew install gh
+
+# Linux
+sudo apt install gh
+
+# Windows
+winget install GitHub.cli</code></pre>
+                </div>
+
+                <h3>Authentification</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Se connecter à GitHub
+gh auth login
+
+# Choisissez GitHub.com
+# Choisissez HTTPS ou SSH
+# Authentifiez-vous via le navigateur</code></pre>
+                </div>
+
+                <h3>Commandes utiles</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un repository
+gh repo create my-new-repo --public --clone
+
+# Créer une Pull Request
+gh pr create --title "Add feature X" --body "Description"
+
+# Lister les PR
+gh pr list
+
+# Voir le détail d'une PR
+gh pr view 42
+
+# Checkout une PR localement
+gh pr checkout 42
+
+# Merger une PR
+gh pr merge 42 --squash
+
+# Créer une issue
+gh issue create --title "Bug found" --body "Description"
+
+# Lister les issues
+gh issue list
+
+# Voir les workflows
+gh workflow list
+
+# Voir les runs d'un workflow
+gh run list --workflow=tests.yml
+
+# Cloner un repo
+gh repo clone username/repo</code></pre>
+                </div>
+
+                <h2>GitHub Gists</h2>
+
+                <p>
+                    Les <strong>Gists</strong> permettent de partager rapidement des snippets de code.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un Gist
+gh gist create script.py --desc "Useful data cleaning script"
+
+# Lister vos Gists
+gh gist list
+
+# Voir un Gist
+gh gist view &lt;gist-id&gt;</code></pre>
+                </div>
+
+                <h2>GitHub Codespaces</h2>
+
+                <p>
+                    <strong>Codespaces</strong> est un environnement de développement cloud complet avec VS Code dans le
+                    navigateur.
+                </p>
+
+                <ul>
+                    <li>Environnement de dev prêt en quelques secondes</li>
+                    <li>Accessible de n'importe où</li>
+                    <li>Gratuit jusqu'à 60h/mois pour les comptes personnels</li>
+                </ul>
+
+                <p>Pour créer un Codespace :</p>
+                <ol>
+                    <li>Sur votre repository, cliquez sur <strong>Code</strong></li>
+                    <li>Onglet <strong>Codespaces</strong></li>
+                    <li>Cliquez sur <strong>Create codespace on main</strong></li>
+                </ol>
+
+                <h2>GitHub Packages</h2>
+
+                <p>
+                    Hébergez vos packages Python, Docker, npm, etc. directement sur GitHub.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Publier une image Docker
+docker tag myimage ghcr.io/username/myimage:latest
+docker push ghcr.io/username/myimage:latest
+
+# Installer un package Python depuis GitHub Packages
+pip install --index-url https://pypi.github.com/username mypackage</code></pre>
+                </div>
+
+                <h2>GitHub Discussions</h2>
+
+                <p>
+                    Forum de discussion intégré au repository pour :
+                </p>
+
+                <ul>
+                    <li>Questions et réponses</li>
+                    <li>Annonces</li>
+                    <li>Idées et propositions</li>
+                    <li>Discussions générales</li>
+                </ul>
+
+                <p>Activer Discussions :</p>
+                <ol>
+                    <li><strong>Settings</strong> → <strong>General</strong></li>
+                    <li>Cochez <strong>Discussions</strong></li>
+                </ol>
+
+                <div class="key-points">
+                    <h3>Récapitulatif des bonnes pratiques</h3>
+                    <ul>
+                        <li>Protégez la branche main avec branch protection rules</li>
+                        <li>Utilisez Pull Requests pour toutes les modifications</li>
+                        <li>Écrivez des descriptions de PR complètes et claires</li>
+                        <li>Faites des reviews de code constructives</li>
+                        <li>Configurez CI/CD avec GitHub Actions</li>
+                        <li>Activez Dependabot et Secret Scanning</li>
+                        <li>Utilisez Issues et Projects pour organiser le travail</li>
+                        <li>Documentez avec un README complet</li>
+                        <li>Ajoutez des badges pour montrer l'état du projet</li>
+                        <li>Ne committez JAMAIS de secrets ou credentials</li>
+                    </ul>
+                </div>
+
+                <h3>Aide-mémoire : Workflow quotidien sur GitHub</h3>
+
+                <div class="workflow-diagram">
+                    <pre>
+1. Synchroniser main
+   git checkout main && git pull origin main
+
+2. Créer une branche feature
+   git checkout -b feature/nouvelle-fonctionnalite
+
+3. Développer et committer
+   # ... coder ...
+   git add . && git commit -m "feat: add feature X"
+
+4. Pousser et créer une PR
+   git push -u origin feature/nouvelle-fonctionnalite
+   gh pr create --title "Add feature X" --body "Description"
+
+5. Review et intégration des feedbacks
+   # ... corrections ...
+   git add . && git commit -m "fix: address review comments"
+   git push
+
+6. Merge de la PR
+   gh pr merge --squash
+
+7. Nettoyage
+   git checkout main && git pull origin main
+   git branch -d feature/nouvelle-fonctionnalite
+</pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>📚 Ressources et liens utiles</h2>
+
+                <div class="resources">
+                    <a href="https://docs.github.com" target="_blank" class="resource-link">
+                        <strong>Documentation officielle GitHub</strong>
+                        <p>Guide complet de toutes les fonctionnalités GitHub</p>
+                    </a>
+
+                    <a href="https://skills.github.com" target="_blank" class="resource-link">
+                        <strong>GitHub Skills</strong>
+                        <p>Cours interactifs gratuits pour apprendre GitHub</p>
+                    </a>
+
+                    <a href="https://lab.github.com" target="_blank" class="resource-link">
+                        <strong>GitHub Learning Lab</strong>
+                        <p>Exercices pratiques dans de vrais repositories</p>
+                    </a>
+
+                    <a href="https://github.com/marketplace?type=actions" target="_blank" class="resource-link">
+                        <strong>GitHub Actions Marketplace</strong>
+                        <p>Des milliers d'actions prêtes à l'emploi</p>
+                    </a>
+
+                    <a href="https://cli.github.com" target="_blank" class="resource-link">
+                        <strong>GitHub CLI Documentation</strong>
+                        <p>Documentation de l'outil en ligne de commande gh</p>
+                    </a>
+
+                    <a href="https://github.com/awesome-lists" target="_blank" class="resource-link">
+                        <strong>Awesome Lists</strong>
+                        <p>Listes curées de ressources sur tous les sujets tech</p>
+                    </a>
+                </div>
+
+                <div class="alert alert-info" style="margin-top: 40px;">
+                    <h4>Prochaines étapes</h4>
+                    <p>Maintenant que vous maîtrisez GitHub, explorez :</p>
+                    <ul>
+                        <li><strong>GitHub Advanced Security</strong> : Features de sécurité avancées (GHAS)</li>
+                        <li><strong>GitHub Enterprise</strong> : Fonctionnalités pour les grandes entreprises</li>
+                        <li><strong>GitHub GraphQL API</strong> : API puissante pour automatiser GitHub</li>
+                        <li><strong>GitHub Apps</strong> : Créer des intégrations personnalisées</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>🎉 Félicitations !</h4>
+                <p>
+                    Vous avez terminé la formation GitHub ! Vous maîtrisez maintenant :
+                </p>
+                <ul>
+                    <li>✅ Les concepts fondamentaux de GitHub</li>
+                    <li>✅ Le workflow de collaboration avec Pull Requests</li>
+                    <li>✅ La gestion de projet avec Issues et Projects</li>
+                    <li>✅ L'automatisation avec GitHub Actions</li>
+                    <li>✅ La sécurisation de vos projets</li>
+                    <li>✅ Les outils avancés pour être plus productif</li>
+                </ul>
+                <p style="margin-top: 15px;">
+                    Continuez à pratiquer sur vos propres projets et n'hésitez pas à contribuer à l'open source !
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie6.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 6 : Sécurité
+                </a>
+                <a href="../index.html"
+                    style="display: inline-block; padding: 12px 24px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    🏠 Retour à l'accueil
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation GitHub pour Data Engineering - 2025</p>
+
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markdown.min.js"></script>
+</body>
+
+</html>

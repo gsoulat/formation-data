@@ -1,0 +1,21 @@
+user_id,first_name,last_name,email,company_name,job_title,signup_date,last_login,account_status,company_size,industry
+1,Alice,Johnson,alice.johnson@techstartup.com,TechStartup Inc,CEO,2023-01-15 09:30:00,2024-02-13 14:22:00,ACTIVE,25,Technology
+2,Bob,Chen,bob.chen@marketpro.com,MarketPro Solutions,Marketing Director,2023-02-01 10:15:00,2024-02-12 16:45:00,ACTIVE,150,Marketing
+3,Carol,Smith,carol.smith@financetech.com,FinanceTech Corp,CFO,2023-02-15 14:30:00,2024-02-11 11:30:00,ACTIVE,300,Finance
+4,David,Brown,david.brown@retailmax.com,RetailMax Ltd,Operations Manager,2023-03-01 11:45:00,2024-02-10 09:15:00,ACTIVE,75,Retail
+5,Emma,Davis,emma.davis@healthplus.com,HealthPlus Solutions,Product Manager,2023-03-15 16:20:00,2024-02-09 13:40:00,ACTIVE,200,Healthcare
+6,Frank,Wilson,frank.wilson@edutech.com,EduTech Systems,CTO,2023-04-01 08:30:00,2024-02-08 15:55:00,ACTIVE,50,Education
+7,Grace,Miller,grace.miller@consultpro.com,ConsultPro Inc,Senior Consultant,2023-04-15 12:15:00,2024-02-07 10:20:00,ACTIVE,120,Consulting
+8,Henry,Garcia,henry.garcia@logicorp.com,LogiCorp,Logistics Director,2023-05-01 13:45:00,2024-02-06 14:35:00,ACTIVE,400,Logistics
+9,Ivy,Martinez,ivy.martinez@designstudio.com,Design Studio,Creative Director,2023-05-15 15:30:00,2024-02-05 16:10:00,ACTIVE,30,Design
+10,Jack,Anderson,jack.anderson@manufact.com,ManufacTech,Plant Manager,2023-06-01 09:20:00,2024-02-04 12:25:00,ACTIVE,500,Manufacturing
+11,Kate,Taylor,kate.taylor@realestate.com,RealEstate Pro,Sales Director,2023-06-15 11:10:00,2024-02-03 08:45:00,ACTIVE,80,Real Estate
+12,Liam,Thomas,liam.thomas@mediamax.com,MediaMax Agency,Media Planner,2023-07-01 14:40:00,2024-02-02 17:30:00,ACTIVE,60,Media
+13,Mia,Jackson,mia.jackson@foodcorp.com,FoodCorp International,Supply Chain Manager,2023-07-15 10:25:00,2024-02-01 13:15:00,ACTIVE,1000,Food & Beverage
+14,Noah,White,noah.white@traveltech.com,TravelTech Solutions,Product Owner,2023-08-01 16:50:00,2024-01-31 11:50:00,ACTIVE,90,Travel
+15,Olivia,Harris,olivia.harris@autoparts.com,AutoParts Direct,Procurement Manager,2023-08-15 12:35:00,2024-01-30 15:20:00,ACTIVE,250,Automotive
+16,Paul,Clark,paul.clark@energysol.com,Energy Solutions,Project Manager,2023-09-01 08:15:00,2024-01-29 09:35:00,ACTIVE,180,Energy
+17,Quinn,Lewis,quinn.lewis@sportstech.com,SportsTech Inc,Data Analyst,2023-09-15 13:20:00,2024-01-28 14:10:00,ACTIVE,40,Sports
+18,Ruby,Robinson,ruby.robinson@fashionhub.com,Fashion Hub,Buyer,2023-10-01 15:45:00,2024-01-27 16:40:00,ACTIVE,70,Fashion
+19,Sam,Walker,sam.walker@agritech.com,AgriTech Solutions,Farm Manager,2023-10-15 11:30:00,2024-01-26 10:05:00,ACTIVE,35,Agriculture
+20,Tina,Young,tina.young@bankpro.com,BankPro Services,Risk Analyst,2023-11-01 09:55:00,2024-01-25 12:50:00,ACTIVE,600,Banking

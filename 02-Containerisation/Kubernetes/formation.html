@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Kubernetes - De Zéro à Hero</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --primary-dark: #0052a3;
+            --secondary-color: #00a3e0;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --info-color: #2196f3;
+            --text-dark: #1a1a1a;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --border-color: #e0e0e0;
+            --code-bg: #2d2d2d;
+            --k8s-blue: #326ce5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%);
+            color: white;
+            padding: 60px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/></svg>');
+            opacity: 0.3;
+        }
+
+        h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        h1::before {
+            content: '☸️';
+            font-size: 1.2em;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 300;
+            position: relative;
+        }
+
+        .duration {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            font-size: 0.95em;
+            backdrop-filter: blur(10px);
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        .objectives {
+            background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 102, 204, 0.3);
+        }
+
+        .objectives h2 {
+            color: white;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 0;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .objectives h2::before {
+            content: '🎯';
+        }
+
+        .objectives ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .objectives li {
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .objectives li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            scroll-margin-top: 20px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-color);
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--text-dark);
+            font-size: 1.5em;
+            margin: 30px 0 20px 0;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: var(--primary-dark);
+            font-size: 1.2em;
+            margin: 25px 0 15px 0;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: var(--text-dark);
+            font-size: 1.05em;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+
+        .code-container {
+            position: relative;
+            margin: 25px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .code-header {
+            background: #1e1e1e;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .code-dot.red { background: #ff5f56; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #27c93f; }
+
+        pre {
+            margin: 0 !important;
+            border-radius: 0 !important;
+            background: var(--code-bg) !important;
+        }
+
+        pre[class*="language-"] {
+            padding: 25px !important;
+            font-size: 0.95em;
+            line-height: 1.6;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        :not(pre) > code {
+            background: #f4f4f4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #e83e8c;
+            font-weight: 500;
+        }
+
+        .alert {
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border-left: 5px solid;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            border-color: var(--info-color);
+            color: #0d47a1;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border-color: var(--success-color);
+            color: #1b5e20;
+        }
+
+        .alert-warning {
+            background: #fff3e0;
+            border-color: var(--warning-color);
+            color: #e65100;
+        }
+
+        .alert-danger {
+            background: #ffebee;
+            border-color: var(--danger-color);
+            color: #b71c1c;
+        }
+
+        .alert h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+        }
+
+        .alert-info h4::before { content: 'ℹ️'; }
+        .alert-success h4::before { content: '✅'; }
+        .alert-warning h4::before { content: '⚠️'; }
+        .alert-danger h4::before { content: '🚨'; }
+
+        .card {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 120, 212, 0.3);
+        }
+
+        .key-points h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            padding-left: 35px;
+            position: relative;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .key-points li::before {
+            content: '⭐';
+            position: absolute;
+            left: 0;
+            font-size: 1.2em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%);
+            color: white;
+        }
+
+        th {
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        td {
+            padding: 15px 18px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-light);
+        }
+
+        .workflow-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 2px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: auto;
+        }
+
+        .workflow-diagram pre {
+            background: transparent !important;
+            color: var(--text-dark) !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            font-size: 1em;
+            line-height: 1.8;
+        }
+
+        .image-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .image-caption {
+            margin-top: 12px;
+            color: var(--text-light);
+            font-style: italic;
+            font-size: 0.95em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .grid-item {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item:hover {
+            transform: translateX(5px);
+        }
+
+        .grid-item h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 40px 50px;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        footer a:hover {
+            opacity: 0.8;
+        }
+
+        .resources {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .resource-link {
+            display: block;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-dark);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .resource-link:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.2);
+        }
+
+        .resource-link strong {
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            header {
+                padding: 40px 30px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .objectives ul {
+                grid-template-columns: 1fr;
+            }
+
+            pre[class*="language-"] {
+                font-size: 0.85em;
+                padding: 20px !important;
+            }
+        }
+
+        .command-table td:first-child {
+            font-family: 'JetBrains Mono', monospace;
+            background: #f8f9fa;
+            font-weight: 500;
+            color: #e83e8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Formation Kubernetes</h1>
+            <p class="subtitle">De Zéro à Hero - Orchestrez vos conteneurs avec Kubernetes (K8s)</p>
+            <span class="duration">⏱️ Durée : 1 heure</span>
+        </header>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de la formation</h2>
+                <ul>
+                    <li>Comprendre Kubernetes et son architecture</li>
+                    <li>Maîtriser les concepts de base (Pods, Services, Deployments)</li>
+                    <li>Déployer des applications dans Kubernetes</li>
+                    <li>Gérer la configuration et les secrets</li>
+                    <li>Configurer le networking et l'ingress</li>
+                    <li>Mettre en production sur Azure (AKS)</li>
+                </ul>
+            </div>
+
+            <!-- PARTIE 1: INTRODUCTION -->
+            <section class="section">
+                <h2>1. Introduction à Kubernetes</h2>
+
+                <h3>Qu'est-ce que Kubernetes ?</h3>
+
+                <p>
+                    <strong>Kubernetes</strong> (K8s) est une plateforme open-source d'orchestration de conteneurs
+                    développée par Google et maintenue par la CNCF (Cloud Native Computing Foundation). Il automatise
+                    le déploiement, la mise à l'échelle et la gestion des applications conteneurisées.
+                </p>
+
+                <div class="alert alert-info">
+                    <h4>Pourquoi K8s ?</h4>
+                    <p>
+                        Le nom "K8s" vient de "K" + 8 lettres (ubernete) + "s".
+                        C'est une abréviation courante dans la communauté.
+                    </p>
+                </div>
+
+                <h3>Pourquoi utiliser Kubernetes ?</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>🔄 Auto-scaling</h4>
+                        <p>Scale automatiquement vos applications en fonction de la charge (CPU, mémoire, métriques custom)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🏥 Self-healing</h4>
+                        <p>Redémarre automatiquement les conteneurs qui échouent, remplace et re-schedule</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🚀 Déploiements automatisés</h4>
+                        <p>Rolling updates, rollbacks automatiques, zero-downtime deployments</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>⚖️ Load Balancing</h4>
+                        <p>Distribution automatique du trafic entre les conteneurs</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🔐 Gestion des secrets</h4>
+                        <p>Stockage sécurisé des mots de passe, tokens, clés SSH</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>☁️ Multi-cloud</h4>
+                        <p>Fonctionne sur AWS, Azure, GCP, on-premise de manière uniforme</p>
+                    </div>
+                </div>
+
+                <h3>Docker vs Kubernetes</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Docker</th>
+                            <th>Kubernetes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Rôle</strong></td>
+                            <td>Conteneurisation</td>
+                            <td>Orchestration de conteneurs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scope</strong></td>
+                            <td>Machine unique</td>
+                            <td>Cluster de machines</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scaling</strong></td>
+                            <td>Manuel</td>
+                            <td>Automatique</td>
+                        </tr>
+                        <tr>
+                            <td><strong>High Availability</strong></td>
+                            <td>Non natif</td>
+                            <td>Oui, natif</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Networking</strong></td>
+                            <td>Simple</td>
+                            <td>Avancé (Services, Ingress)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-success">
+                    <h4>Complémentaires</h4>
+                    <p>
+                        Docker et Kubernetes ne sont pas en compétition ! Kubernetes utilise Docker
+                        (ou containerd, CRI-O) comme runtime pour exécuter les conteneurs.
+                    </p>
+                </div>
+
+                <h3>Concepts clés</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Concept</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Cluster</strong></td>
+                            <td>Ensemble de machines (nodes) qui exécutent des conteneurs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Node</strong></td>
+                            <td>Machine (VM ou physique) dans le cluster</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pod</strong></td>
+                            <td>Plus petite unité déployable, contient un ou plusieurs conteneurs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Deployment</strong></td>
+                            <td>Déclare l'état désiré des Pods (nombre de replicas, image, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Service</strong></td>
+                            <td>Point d'accès stable pour communiquer avec des Pods</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Namespace</strong></td>
+                            <td>Isolation virtuelle des ressources dans un cluster</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- PARTIE 2: ARCHITECTURE -->
+            <section class="section">
+                <h2>2. Architecture de Kubernetes</h2>
+
+                <h3>Architecture globale</h3>
+
+                <div class="workflow-diagram">
+                    <pre>
+┌────────────────────────────────────────────────────────────────┐
+│                       KUBERNETES CLUSTER                        │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │              CONTROL PLANE (Master Node)                 │  │
+│  │                                                           │  │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │  │
+│  │  │  API Server  │  │  Scheduler   │  │  Controller  │  │  │
+│  │  │              │  │              │  │   Manager    │  │  │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘  │  │
+│  │                                                           │  │
+│  │  ┌──────────────────────────────────────────────────┐   │  │
+│  │  │              etcd (State Store)                    │   │  │
+│  │  └──────────────────────────────────────────────────┘   │  │
+│  └─────────────────────────────────────────────────────────┘  │
+│                                                                 │
+│  ┌─────────────────────────────────────────────────────────┐  │
+│  │                    WORKER NODES                          │  │
+│  │                                                           │  │
+│  │  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐   │  │
+│  │  │   Node 1    │   │   Node 2    │   │   Node 3    │   │  │
+│  │  │             │   │             │   │             │   │  │
+│  │  │  ┌───────┐  │   │  ┌───────┐  │   │  ┌───────┐  │   │  │
+│  │  │  │ Pod 1 │  │   │  │ Pod 3 │  │   │  │ Pod 5 │  │   │  │
+│  │  │  └───────┘  │   │  └───────┘  │   │  └───────┘  │   │  │
+│  │  │  ┌───────┐  │   │  ┌───────┐  │   │  ┌───────┐  │   │  │
+│  │  │  │ Pod 2 │  │   │  │ Pod 4 │  │   │  │ Pod 6 │  │   │  │
+│  │  │  └───────┘  │   │  └───────┘  │   │  └───────┘  │   │  │
+│  │  │             │   │             │   │             │   │  │
+│  │  │  kubelet    │   │  kubelet    │   │  kubelet    │   │  │
+│  │  │  kube-proxy │   │  kube-proxy │   │  kube-proxy │   │  │
+│  │  └─────────────┘   └─────────────┘   └─────────────┘   │  │
+│  └─────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+
+                <h3>Control Plane (Master Node)</h3>
+
+                <p>Le <strong>Control Plane</strong> gère le cluster et prend toutes les décisions :</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Composant</th>
+                            <th>Rôle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>API Server</strong></td>
+                            <td>Point d'entrée pour toutes les commandes (kubectl, dashboards). Interface REST</td>
+                        </tr>
+                        <tr>
+                            <td><strong>etcd</strong></td>
+                            <td>Base de données clé-valeur qui stocke l'état du cluster</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Scheduler</strong></td>
+                            <td>Décide sur quel Node placer les nouveaux Pods</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Controller Manager</strong></td>
+                            <td>Exécute les controllers (Node, Replication, Endpoints, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cloud Controller Manager</strong></td>
+                            <td>Interactions avec les APIs cloud (AWS, Azure, GCP)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Worker Nodes</h3>
+
+                <p>Les <strong>Worker Nodes</strong> exécutent les applications :</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Composant</th>
+                            <th>Rôle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>kubelet</strong></td>
+                            <td>Agent qui s'assure que les conteneurs tournent dans les Pods</td>
+                        </tr>
+                        <tr>
+                            <td><strong>kube-proxy</strong></td>
+                            <td>Gère le networking et le load balancing des Services</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Container Runtime</strong></td>
+                            <td>Moteur de conteneurs (Docker, containerd, CRI-O)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-info">
+                    <h4>Managed Kubernetes</h4>
+                    <p>
+                        Avec les services managés (AKS, EKS, GKE), le Control Plane est géré par le provider.
+                        Vous ne gérez que les Worker Nodes (et parfois même pas avec les node pools auto-managés).
+                    </p>
+                </div>
+            </section>
+
+            <!-- PARTIE 3: INSTALLATION -->
+            <section class="section">
+                <h2>3. Installation et premiers pas</h2>
+
+                <h3>Options d'installation</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>💻 Minikube</h4>
+                        <p>Cluster local sur votre machine, parfait pour le développement</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🐳 Docker Desktop</h4>
+                        <p>Kubernetes intégré à Docker Desktop (Mac/Windows)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>🎯 Kind</h4>
+                        <p>Kubernetes in Docker, léger et rapide pour les tests</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>☁️ Cloud managé</h4>
+                        <p>AKS (Azure), EKS (AWS), GKE (Google)</p>
+                    </div>
+                </div>
+
+                <h3>Installation Minikube</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># macOS
+brew install minikube kubectl
+
+# Linux
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+# Windows (avec Chocolatey)
+choco install minikube kubernetes-cli
+
+# Démarrer Minikube
+minikube start
+
+# Vérifier l'installation
+kubectl version --client
+kubectl cluster-info
+kubectl get nodes</code></pre>
+                </div>
+
+                <h3>Installation kubectl</h3>
+
+                <p><strong>kubectl</strong> est l'outil en ligne de commande pour interagir avec Kubernetes :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># macOS
+brew install kubectl
+
+# Linux
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Windows (avec Chocolatey)
+choco install kubernetes-cli
+
+# Vérifier
+kubectl version --client
+
+# Configuration (pointe vers votre cluster)
+kubectl config view
+kubectl config get-contexts
+kubectl config use-context minikube</code></pre>
+                </div>
+
+                <h3>Commandes kubectl essentielles</h3>
+
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>kubectl get pods</code></td>
+                            <td>Lister tous les Pods</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl get services</code></td>
+                            <td>Lister tous les Services</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl get deployments</code></td>
+                            <td>Lister tous les Deployments</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl describe pod &lt;name&gt;</code></td>
+                            <td>Détails d'un Pod</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl logs &lt;pod&gt;</code></td>
+                            <td>Voir les logs d'un Pod</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl exec -it &lt;pod&gt; -- bash</code></td>
+                            <td>Se connecter à un Pod</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl apply -f &lt;file.yaml&gt;</code></td>
+                            <td>Appliquer une configuration</td>
+                        </tr>
+                        <tr>
+                            <td><code>kubectl delete -f &lt;file.yaml&gt;</code></td>
+                            <td>Supprimer des ressources</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Premier déploiement</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Déployer nginx
+kubectl create deployment nginx --image=nginx:latest
+
+# Vérifier le déploiement
+kubectl get deployments
+kubectl get pods
+
+# Exposer via un Service
+kubectl expose deployment nginx --port=80 --type=NodePort
+
+# Obtenir l'URL du service (avec Minikube)
+minikube service nginx --url
+
+# Tester
+curl $(minikube service nginx --url)
+
+# Nettoyer
+kubectl delete service nginx
+kubectl delete deployment nginx</code></pre>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Félicitations !</h4>
+                    <p>
+                        Vous venez de déployer votre première application sur Kubernetes !
+                        Kubernetes a automatiquement créé un Pod, l'a assigné à un Node, et l'a exposé via un Service.
+                    </p>
+                </div>
+            </section>
+
+            <!-- PARTIE 4: PODS ET DEPLOYMENTS -->
+            <section class="section">
+                <h2>4. Pods et Deployments</h2>
+
+                <h3>Qu'est-ce qu'un Pod ?</h3>
+
+                <p>
+                    Un <strong>Pod</strong> est la plus petite unité déployable dans Kubernetes.
+                    Il contient un ou plusieurs conteneurs qui partagent le même réseau et le même stockage.
+                </p>
+
+                <h4>Pod simple (YAML)</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.25
+    ports:
+    - containerPort: 80</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer le Pod
+kubectl apply -f nginx-pod.yaml
+
+# Vérifier
+kubectl get pods
+kubectl describe pod nginx-pod
+
+# Voir les logs
+kubectl logs nginx-pod
+
+# Se connecter au Pod
+kubectl exec -it nginx-pod -- bash
+
+# Supprimer
+kubectl delete pod nginx-pod</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Ne pas utiliser les Pods seuls</h4>
+                    <p>
+                        En production, on n'utilise presque jamais de Pods directement.
+                        On utilise des <strong>Deployments</strong> qui gèrent les Pods automatiquement.
+                    </p>
+                </div>
+
+                <h3>Deployments</h3>
+
+                <p>
+                    Un <strong>Deployment</strong> déclare l'état désiré de vos Pods et gère leur cycle de vie
+                    (création, mise à jour, scaling, self-healing).
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3  # Nombre de Pods
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer le Deployment
+kubectl apply -f nginx-deployment.yaml
+
+# Vérifier
+kubectl get deployments
+kubectl get pods  # 3 Pods créés
+
+# Voir le rollout status
+kubectl rollout status deployment/nginx-deployment
+
+# Scaler manuellement
+kubectl scale deployment nginx-deployment --replicas=5
+
+# Mettre à jour l'image
+kubectl set image deployment/nginx-deployment nginx=nginx:1.26
+
+# Voir l'historique des déploiements
+kubectl rollout history deployment/nginx-deployment
+
+# Rollback vers la version précédente
+kubectl rollout undo deployment/nginx-deployment
+
+# Supprimer
+kubectl delete deployment nginx-deployment</code></pre>
+                </div>
+
+                <h3>ReplicaSet</h3>
+
+                <p>
+                    Un <strong>ReplicaSet</strong> assure qu'un nombre spécifié de réplicas de Pods est toujours en cours d'exécution.
+                    Les Deployments créent et gèrent automatiquement des ReplicaSets.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Voir les ReplicaSets
+kubectl get replicasets
+
+# Un ReplicaSet a été créé automatiquement par le Deployment
+# nginx-deployment-xxxxxxxxxx   3         3         3       5m</code></pre>
+                </div>
+
+                <h3>Stratégies de déploiement</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate  # ou Recreate
+    rollingUpdate:
+      maxSurge: 1        # Nombre max de Pods en plus pendant le rollout
+      maxUnavailable: 1  # Nombre max de Pods indisponibles pendant le rollout
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        ports:
+        - containerPort: 80</code></pre>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stratégie</th>
+                            <th>Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>RollingUpdate</strong></td>
+                            <td>Remplace progressivement les anciens Pods par des nouveaux</td>
+                            <td>Par défaut, zero-downtime</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Recreate</strong></td>
+                            <td>Supprime tous les anciens Pods avant de créer les nouveaux</td>
+                            <td>Quand les versions ne peuvent pas coexister</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- PARTIE 5: SERVICES -->
+            <section class="section">
+                <h2>5. Services et networking</h2>
+
+                <h3>Qu'est-ce qu'un Service ?</h3>
+
+                <p>
+                    Un <strong>Service</strong> est une abstraction qui définit un moyen d'accéder à un ensemble de Pods.
+                    Les Pods sont éphémères (IPs changeantes), mais les Services fournissent une adresse stable.
+                </p>
+
+                <h3>Types de Services</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ClusterIP</strong></td>
+                            <td>IP interne au cluster (par défaut)</td>
+                            <td>Communication interne entre services</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NodePort</strong></td>
+                            <td>Expose le service sur un port de chaque Node</td>
+                            <td>Accès externe simple (dev/test)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>LoadBalancer</strong></td>
+                            <td>Crée un load balancer externe (cloud)</td>
+                            <td>Production avec cloud provider</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ExternalName</strong></td>
+                            <td>Alias DNS vers un service externe</td>
+                            <td>Pointer vers des services hors cluster</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Service ClusterIP</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: ClusterIP  # Par défaut
+  selector:
+    app: nginx  # Sélectionne les Pods avec ce label
+  ports:
+  - protocol: TCP
+    port: 80        # Port du Service
+    targetPort: 80  # Port du conteneur</code></pre>
+                </div>
+
+                <h4>Service NodePort</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-nodeport
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30080  # Port sur les Nodes (30000-32767)</code></pre>
+                </div>
+
+                <h4>Service LoadBalancer</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer les Services
+kubectl apply -f nginx-service.yaml
+
+# Lister les Services
+kubectl get services
+
+# Détails d'un Service
+kubectl describe service nginx-service
+
+# Tester depuis un Pod dans le cluster
+kubectl run -it --rm debug --image=busybox --restart=Never -- sh
+wget -O- nginx-service
+
+# Avec NodePort (Minikube)
+minikube service nginx-nodeport --url
+curl $(minikube service nginx-nodeport --url)</code></pre>
+                </div>
+
+                <h3>DNS dans Kubernetes</h3>
+
+                <p>
+                    Kubernetes fournit un serveur DNS interne. Chaque Service obtient automatiquement un nom DNS :
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Format DNS
+<service-name>.<namespace>.svc.cluster.local
+
+# Exemples
+nginx-service.default.svc.cluster.local
+database.production.svc.cluster.local
+
+# Dans le même namespace, on peut juste utiliser le nom
+curl http://nginx-service</code></pre>
+                </div>
+            </section>
+
+            <!-- PARTIE 6: CONFIGMAPS ET SECRETS -->
+            <section class="section">
+                <h2>6. ConfigMaps et Secrets</h2>
+
+                <h3>ConfigMaps</h3>
+
+                <p>
+                    Les <strong>ConfigMaps</strong> permettent de stocker des données de configuration non confidentielles
+                    (fichiers de config, variables d'environnement).
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  # Variables simples
+  DATABASE_HOST: "postgres.default.svc.cluster.local"
+  DATABASE_PORT: "5432"
+  APP_ENV: "production"
+
+  # Fichier de configuration
+  app.conf: |
+    server {
+      listen 80;
+      server_name example.com;
+    }</code></pre>
+                </div>
+
+                <h4>Utiliser un ConfigMap dans un Pod</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+spec:
+  containers:
+  - name: app
+    image: myapp:1.0
+    # Méthode 1: Variables d'environnement
+    env:
+    - name: DATABASE_HOST
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: DATABASE_HOST
+
+    # Méthode 2: Toutes les clés en variables d'env
+    envFrom:
+    - configMapRef:
+        name: app-config
+
+    # Méthode 3: Monter comme fichiers
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+
+  volumes:
+  - name: config-volume
+    configMap:
+      name: app-config</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un ConfigMap depuis kubectl
+kubectl create configmap app-config \
+  --from-literal=DATABASE_HOST=postgres \
+  --from-literal=DATABASE_PORT=5432
+
+# Depuis un fichier
+kubectl create configmap nginx-config --from-file=nginx.conf
+
+# Voir les ConfigMaps
+kubectl get configmaps
+kubectl describe configmap app-config
+
+# Supprimer
+kubectl delete configmap app-config</code></pre>
+                </div>
+
+                <h3>Secrets</h3>
+
+                <p>
+                    Les <strong>Secrets</strong> stockent des données sensibles (mots de passe, tokens, clés SSH).
+                    Les données sont encodées en base64 (pas chiffrées par défaut !).
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+type: Opaque
+data:
+  # Valeurs en base64
+  username: YWRtaW4=       # admin
+  password: cGFzc3dvcmQ=   # password</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un Secret depuis kubectl
+kubectl create secret generic db-credentials \
+  --from-literal=username=admin \
+  --from-literal=password=secret123
+
+# Encoder/décoder base64
+echo -n "admin" | base64      # YWRtaW4=
+echo "YWRtaW4=" | base64 -d   # admin
+
+# Voir les Secrets (valeurs cachées)
+kubectl get secrets
+kubectl describe secret db-credentials
+
+# Voir les valeurs (nécessite les permissions)
+kubectl get secret db-credentials -o yaml</code></pre>
+                </div>
+
+                <h4>Utiliser un Secret dans un Pod</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+spec:
+  containers:
+  - name: app
+    image: myapp:1.0
+    env:
+    - name: DB_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: db-credentials
+          key: username
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: db-credentials
+          key: password
+
+    # Ou monter comme fichiers
+    volumeMounts:
+    - name: secret-volume
+      mountPath: /etc/secrets
+      readOnly: true
+
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: db-credentials</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Sécurité des Secrets</h4>
+                    <p>
+                        Par défaut, les Secrets sont encodés en base64, pas chiffrés !
+                        En production, utilisez :
+                    </p>
+                    <ul>
+                        <li>Encryption at rest (chiffrement dans etcd)</li>
+                        <li>Azure Key Vault, AWS Secrets Manager, ou HashiCorp Vault</li>
+                        <li>Sealed Secrets pour versionner les secrets de manière sécurisée</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- PARTIE 7: VOLUMES ET PERSISTENCE -->
+            <section class="section">
+                <h2>7. Volumes et persistence des données</h2>
+
+                <h3>Types de Volumes</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>emptyDir</strong></td>
+                            <td>Volume temporaire, supprimé avec le Pod</td>
+                            <td>Cache, données temporaires</td>
+                        </tr>
+                        <tr>
+                            <td><strong>hostPath</strong></td>
+                            <td>Monte un répertoire du Node</td>
+                            <td>Dev, logs système</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PersistentVolume</strong></td>
+                            <td>Stockage persistant (NFS, cloud storage)</td>
+                            <td>Bases de données, fichiers persistants</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ConfigMap/Secret</strong></td>
+                            <td>Monte des configs ou secrets</td>
+                            <td>Configuration, credentials</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>emptyDir</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: shared-volume-pod
+spec:
+  containers:
+  - name: writer
+    image: busybox
+    command: ["sh", "-c", "while true; do date >> /data/log.txt; sleep 5; done"]
+    volumeMounts:
+    - name: shared-data
+      mountPath: /data
+
+  - name: reader
+    image: busybox
+    command: ["sh", "-c", "while true; do cat /data/log.txt; sleep 10; done"]
+    volumeMounts:
+    - name: shared-data
+      mountPath: /data
+
+  volumes:
+  - name: shared-data
+    emptyDir: {}</code></pre>
+                </div>
+
+                <h3>PersistentVolume (PV) et PersistentVolumeClaim (PVC)</h3>
+
+                <p>
+                    <strong>PersistentVolume (PV)</strong> : Stockage provisionné par l'admin<br>
+                    <strong>PersistentVolumeClaim (PVC)</strong> : Demande de stockage par un utilisateur
+                </p>
+
+                <h4>PersistentVolume</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-storage
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteOnce  # RWO = un seul Node, RWX = plusieurs Nodes
+  persistentVolumeReclaimPolicy: Retain  # ou Delete
+  storageClassName: manual
+  hostPath:
+    path: "/mnt/data"  # Pour dev (hostPath), en prod utiliser NFS ou cloud storage</code></pre>
+                </div>
+
+                <h4>PersistentVolumeClaim</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: manual</code></pre>
+                </div>
+
+                <h4>Utiliser un PVC dans un Pod</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-pod
+spec:
+  containers:
+  - name: postgres
+    image: postgres:15
+    env:
+    - name: POSTGRES_PASSWORD
+      value: mysecretpassword
+    volumeMounts:
+    - name: postgres-storage
+      mountPath: /var/lib/postgresql/data
+
+  volumes:
+  - name: postgres-storage
+    persistentVolumeClaim:
+      claimName: pvc-storage</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer les ressources
+kubectl apply -f pv.yaml
+kubectl apply -f pvc.yaml
+kubectl apply -f pod-with-pvc.yaml
+
+# Vérifier
+kubectl get pv
+kubectl get pvc
+kubectl describe pvc pvc-storage
+
+# Le PVC est automatiquement lié au PV disponible</code></pre>
+                </div>
+
+                <h3>StorageClass (provisionnement dynamique)</h3>
+
+                <p>
+                    Les <strong>StorageClass</strong> permettent le provisionnement dynamique de volumes sans créer de PV manuellement.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azure-disk
+provisioner: kubernetes.io/azure-disk
+parameters:
+  storageaccounttype: Standard_LRS
+  kind: Managed</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: azure-disk  # Utilise la StorageClass
+  resources:
+    requests:
+      storage: 10Gi</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Provisionnement automatique</h4>
+                    <p>
+                        Avec une StorageClass, Kubernetes crée automatiquement le PV et le disque dans le cloud
+                        quand vous créez un PVC. Très pratique en production !
+                    </p>
+                </div>
+            </section>
+
+            <!-- PARTIE 8: INGRESS -->
+            <section class="section">
+                <h2>8. Ingress et exposition externe</h2>
+
+                <h3>Qu'est-ce qu'un Ingress ?</h3>
+
+                <p>
+                    Un <strong>Ingress</strong> est un objet qui gère l'accès externe aux Services, typiquement HTTP/HTTPS.
+                    Il fournit du load balancing, SSL termination, et du routing basé sur le nom d'hôte ou le path.
+                </p>
+
+                <div class="workflow-diagram">
+                    <pre>
+Internet
+   │
+   ↓
+┌──────────────────┐
+│  Load Balancer   │  (Cloud provider ou Nginx)
+└──────────────────┘
+   │
+   ↓
+┌──────────────────┐
+│  Ingress         │  Routing rules
+└──────────────────┘
+   │
+   ├─────────────────┬─────────────────┐
+   ↓                 ↓                 ↓
+Service A        Service B        Service C
+(frontend)       (api)            (admin)
+</pre>
+                </div>
+
+                <h3>Installer un Ingress Controller</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Avec Minikube
+minikube addons enable ingress
+
+# Avec Helm (NGINX Ingress Controller)
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx
+
+# Vérifier
+kubectl get pods -n ingress-nginx</code></pre>
+                </div>
+
+                <h3>Exemple d'Ingress</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myapp-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 8080</code></pre>
+                </div>
+
+                <h4>Ingress avec SSL/TLS</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tls-ingress
+spec:
+  tls:
+  - hosts:
+    - myapp.example.com
+    secretName: tls-secret  # Secret contenant le certificat SSL
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: myapp-service
+            port:
+              number: 80</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un Secret TLS depuis des certificats
+kubectl create secret tls tls-secret \
+  --cert=path/to/tls.crt \
+  --key=path/to/tls.key
+
+# Appliquer l'Ingress
+kubectl apply -f ingress.yaml
+
+# Vérifier
+kubectl get ingress
+kubectl describe ingress myapp-ingress</code></pre>
+                </div>
+
+                <div class="key-points">
+                    <h3>Best Practices Ingress</h3>
+                    <ul>
+                        <li>Utilisez toujours HTTPS en production avec Let's Encrypt (cert-manager)</li>
+                        <li>Configurez des rate limits pour protéger vos APIs</li>
+                        <li>Utilisez des annotations pour personnaliser le comportement</li>
+                        <li>Mettez en place du monitoring sur votre Ingress Controller</li>
+                        <li>Utilisez plusieurs Ingress pour séparer les domaines</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- PARTIE 9: PRODUCTION ET AKS -->
+            <section class="section">
+                <h2>9. Déploiement sur Azure (AKS)</h2>
+
+                <h3>Azure Kubernetes Service (AKS)</h3>
+
+                <p>
+                    <strong>AKS</strong> est le service Kubernetes managé d'Azure. Le Control Plane est entièrement géré par Microsoft,
+                    vous ne payez que pour les Worker Nodes.
+                </p>
+
+                <h3>Créer un cluster AKS</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installer Azure CLI
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# Se connecter
+az login
+
+# Créer un resource group
+az group create --name myResourceGroup --location francecentral
+
+# Créer un cluster AKS
+az aks create \
+  --resource-group myResourceGroup \
+  --name myAKSCluster \
+  --node-count 3 \
+  --node-vm-size Standard_D2s_v3 \
+  --enable-managed-identity \
+  --generate-ssh-keys
+
+# Récupérer les credentials
+az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+
+# Vérifier la connexion
+kubectl get nodes
+kubectl cluster-info</code></pre>
+                </div>
+
+                <h3>Déployer une application sur AKS</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml"># deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: myapp
+        image: myregistry.azurecr.io/myapp:v1
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: myapp
+  ports:
+  - port: 80
+    targetPort: 80</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Déployer
+kubectl apply -f deployment.yaml
+
+# Attendre le Load Balancer
+kubectl get service myapp-service --watch
+
+# Une fois l'EXTERNAL-IP disponible
+curl http://<EXTERNAL-IP></code></pre>
+                </div>
+
+                <h3>Azure Container Registry (ACR)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un Azure Container Registry
+az acr create \
+  --resource-group myResourceGroup \
+  --name myRegistry \
+  --sku Basic
+
+# Lier AKS à ACR
+az aks update \
+  --resource-group myResourceGroup \
+  --name myAKSCluster \
+  --attach-acr myRegistry
+
+# Build et push une image
+az acr build \
+  --registry myRegistry \
+  --image myapp:v1 \
+  .
+
+# Vérifier
+az acr repository list --name myRegistry --output table</code></pre>
+                </div>
+
+                <div class="key-points">
+                    <h3>Best Practices AKS</h3>
+                    <ul>
+                        <li>Utilisez des Managed Identities plutôt que des Service Principals</li>
+                        <li>Activez Azure Monitor pour les logs et métriques</li>
+                        <li>Configurez autoscaling des Pods (HPA) et des Nodes (Cluster Autoscaler)</li>
+                        <li>Utilisez Azure Key Vault pour les secrets sensibles</li>
+                        <li>Mettez en place des Network Policies pour la sécurité</li>
+                        <li>Configurez des resource quotas par namespace</li>
+                        <li>Utilisez GitOps (Flux, ArgoCD) pour les déploiements</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- RESSOURCES -->
+            <section class="section">
+                <h2>📚 Ressources et liens utiles</h2>
+
+                <div class="resources">
+                    <a href="https://kubernetes.io/docs/" target="_blank" class="resource-link">
+                        <strong>Documentation officielle Kubernetes</strong>
+                        <p>Documentation complète, concepts et références</p>
+                    </a>
+
+                    <a href="https://kubernetes.io/docs/tutorials/" target="_blank" class="resource-link">
+                        <strong>Kubernetes Tutorials</strong>
+                        <p>Tutorials interactifs pour apprendre K8s</p>
+                    </a>
+
+                    <a href="https://learn.microsoft.com/azure/aks/" target="_blank" class="resource-link">
+                        <strong>Azure AKS Documentation</strong>
+                        <p>Guide complet pour AKS</p>
+                    </a>
+
+                    <a href="https://helm.sh/" target="_blank" class="resource-link">
+                        <strong>Helm</strong>
+                        <p>Package manager pour Kubernetes</p>
+                    </a>
+
+                    <a href="https://github.com/kelseyhightower/kubernetes-the-hard-way" target="_blank" class="resource-link">
+                        <strong>Kubernetes The Hard Way</strong>
+                        <p>Comprendre K8s en profondeur</p>
+                    </a>
+
+                    <a href="https://www.cncf.io/" target="_blank" class="resource-link">
+                        <strong>CNCF</strong>
+                        <p>Cloud Native Computing Foundation</p>
+                    </a>
+                </div>
+
+                <div class="alert alert-info" style="margin-top: 40px;">
+                    <h4>Prochaines étapes</h4>
+                    <p>Maintenant que vous maîtrisez Kubernetes, explorez :</p>
+                    <ul>
+                        <li><strong>Helm</strong> : Package manager pour simplifier les déploiements</li>
+                        <li><strong>Kustomize</strong> : Gestion des configurations Kubernetes</li>
+                        <li><strong>ArgoCD/Flux</strong> : GitOps pour déploiements automatiques</li>
+                        <li><strong>Prometheus + Grafana</strong> : Monitoring et alerting</li>
+                        <li><strong>Istio/Linkerd</strong> : Service Mesh pour microservices</li>
+                        <li><strong>Cert-Manager</strong> : Gestion automatique des certificats SSL</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Formation Kubernetes pour Data Engineering - 2024</p>
+            <p>Pour toute question ou suggestion : <a href="mailto:formation@example.com">formation@example.com</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

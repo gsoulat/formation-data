@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 1 - Introduction au Shell</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 1</h1>
+            <p class="subtitle">Introduction au Shell (Bash/Zsh)</p>
+            <span class="duration">⏱️ Durée : 25 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie2.html">Partie 2 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>1. Introduction au Shell (Bash/Zsh)</h2>
+
+                <h3>Qu'est-ce que le Shell ?</h3>
+                <p>
+                    Le <strong>shell</strong> est un interpréteur de commandes qui permet d'interagir avec le système
+                    d'exploitation via des commandes textuelles. C'est l'interface entre l'utilisateur et le noyau
+                    (kernel) du système.
+                </p>
+
+                <div class="alert alert-info">
+                    <h4>Shell vs Terminal</h4>
+                    <p>
+                        <strong>Terminal</strong> : L'application graphique qui affiche le shell (iTerm, GNOME
+                        Terminal, Windows Terminal...)<br>
+                        <strong>Shell</strong> : Le programme qui interprète vos commandes (Bash, Zsh, Fish...)
+                    </p>
+                </div>
+
+                <h3>Les principaux shells</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Shell</th>
+                            <th>Avantages</th>
+                            <th>Utilisation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Bash</strong> (Bourne Again Shell)</td>
+                            <td>Universel, compatible partout, documentation abondante</td>
+                            <td>Shell par défaut sur Linux et macOS (avant Catalina)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Zsh</strong> (Z Shell)</td>
+                            <td>Autocomplétion puissante, plugins, thèmes, historique partagé</td>
+                            <td>Shell par défaut sur macOS depuis Catalina</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fish</strong></td>
+                            <td>Syntaxe moderne, autocomplétion intelligente</td>
+                            <td>Alternative moderne mais syntaxe différente</td>
+                        </tr>
+                        <tr>
+                            <td><strong>sh</strong> (Bourne Shell)</td>
+                            <td>Minimaliste, scripts portables</td>
+                            <td>Scripts système, compatibilité maximale</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Bash vs Zsh : Les différences</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>🐚 Bash</h4>
+                        <p><strong>Points forts :</strong></p>
+                        <ul>
+                            <li>✅ Présent partout par défaut</li>
+                            <li>✅ Très stable et bien documenté</li>
+                            <li>✅ Scripts portables</li>
+                            <li>✅ Compatible POSIX</li>
+                        </ul>
+                        <p><strong>Limitations :</strong></p>
+                        <ul>
+                            <li>❌ Autocomplétion basique</li>
+                            <li>❌ Moins de fonctionnalités modernes</li>
+                            <li>❌ Configuration plus complexe</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>⚡ Zsh</h4>
+                        <p><strong>Points forts :</strong></p>
+                        <ul>
+                            <li>✅ Autocomplétion intelligente</li>
+                            <li>✅ Correction automatique des typos</li>
+                            <li>✅ Oh My Zsh (framework de plugins)</li>
+                            <li>✅ Historique de commandes partagé</li>
+                            <li>✅ Globbing avancé</li>
+                        </ul>
+                        <p><strong>Limitations :</strong></p>
+                        <ul>
+                            <li>❌ Pas toujours installé par défaut</li>
+                            <li>❌ Légèrement plus lent au démarrage</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Pourquoi le Shell en Data Engineering ?</h3>
+
+                <div class="key-points">
+                    <h3>💡 Cas d'usage essentiels</h3>
+                    <ul>
+                        <li><strong>Traitement de fichiers volumineux</strong> : Filtrer des fichiers de logs de
+                            plusieurs Go avec grep/awk</li>
+                        <li><strong>Automatisation de pipelines</strong> : Créer des scripts ETL légers et rapides
+                        </li>
+                        <li><strong>Manipulation de données</strong> : Nettoyer des CSV, extraire des colonnes,
+                            calculer des agrégations</li>
+                        <li><strong>Surveillance système</strong> : Monitorer l'utilisation CPU/mémoire des processus
+                            de données</li>
+                        <li><strong>Déploiement</strong> : Automatiser le déploiement de pipelines avec des scripts
+                            shell</li>
+                        <li><strong>Debugging</strong> : Analyser rapidement des logs, comparer des fichiers</li>
+                        <li><strong>Orchestration</strong> : Lancer des jobs, gérer des dépendances entre tâches</li>
+                    </ul>
+                </div>
+
+                <h3>Exemple concret en Data Engineering</h3>
+
+                <p>Imaginez que vous devez analyser des logs de serveur pour identifier les erreurs. Voici comment
+                    faire en une seule ligne de shell :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Extraire toutes les erreurs, compter par type, et trier
+grep "ERROR" server.log | \
+  awk '{print $5}' | \
+  sort | \
+  uniq -c | \
+  sort -rn | \
+  head -10
+
+# Résultat :
+# 245 ConnectionTimeout
+# 189 DatabaseError
+# 156 FileNotFound
+#  89 PermissionDenied
+#  67 InvalidFormat</code></pre>
+                </div>
+
+                <p>En Python, cela nécessiterait une dizaine de lignes de code. En shell, c'est une seule commande !</p>
+
+                <h3>Vérifier votre shell actuel</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Afficher le shell actuel
+echo $SHELL
+# Output: /bin/zsh  (ou /bin/bash)
+
+# Afficher la version de Bash
+bash --version
+
+# Afficher la version de Zsh
+zsh --version
+
+# Lister tous les shells disponibles
+cat /etc/shells</code></pre>
+                </div>
+
+                <h3>Changer de shell</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Passer à Zsh temporairement
+zsh
+
+# Passer à Bash temporairement
+bash
+
+# Définir Zsh comme shell par défaut
+chsh -s /bin/zsh
+
+# Définir Bash comme shell par défaut
+chsh -s /bin/bash
+
+# (Nécessite de se déconnecter/reconnecter)</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>⚠️ Note importante</h4>
+                    <p>
+                        Dans cette formation, nous utiliserons principalement <strong>Bash</strong> car il est
+                        universel.
+                        Toutes les commandes fonctionneront également en <strong>Zsh</strong>.
+                        Les différences de syntaxe seront signalées lorsque nécessaire.
+                    </p>
+                </div>
+
+                <h3>Le prompt du shell</h3>
+
+                <p>Le <strong>prompt</strong> est le texte affiché avant votre curseur dans le terminal. Il contient
+                    généralement :</p>
+
+                <div class="workflow-diagram">
+                    <pre>
+username@hostname:~/directory$
+    │        │         │      └─ Indicateur ($=user, #=root)
+    │        │         └─ Répertoire courant
+    │        └─ Nom de la machine
+    └─ Nom de l'utilisateur</pre>
+                </div>
+
+                <p><strong>Exemples de prompts :</strong></p>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Bash par défaut
+guillaume@macbook:~/projects$
+
+# Zsh avec Oh My Zsh (thème agnoster)
+➜  projects git:(main) ✗
+
+# Root user
+root@server:/var/log#
+
+# Dans un container Docker
+root@container-id:/#</code></pre>
+                </div>
+
+                <h3>Premières commandes essentielles</h3>
+
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>pwd</code></td>
+                            <td>Afficher le répertoire courant</td>
+                            <td><code>pwd</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>whoami</code></td>
+                            <td>Afficher le nom d'utilisateur</td>
+                            <td><code>whoami</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>date</code></td>
+                            <td>Afficher la date et l'heure</td>
+                            <td><code>date</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>hostname</code></td>
+                            <td>Afficher le nom de la machine</td>
+                            <td><code>hostname</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>echo</code></td>
+                            <td>Afficher du texte</td>
+                            <td><code>echo "Hello World"</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>clear</code></td>
+                            <td>Effacer l'écran</td>
+                            <td><code>clear</code> ou <code>Ctrl+L</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>history</code></td>
+                            <td>Afficher l'historique des commandes</td>
+                            <td><code>history</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>exit</code></td>
+                            <td>Quitter le shell</td>
+                            <td><code>exit</code> ou <code>Ctrl+D</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Exercice pratique</h3>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 1 : Découverte du shell</h4>
+                    <p>Ouvrez un terminal et exécutez les commandes suivantes :</p>
+                    <ol>
+                        <li>Affichez votre shell actuel avec <code>echo $SHELL</code></li>
+                        <li>Affichez votre nom d'utilisateur avec <code>whoami</code></li>
+                        <li>Affichez le répertoire courant avec <code>pwd</code></li>
+                        <li>Affichez la date et l'heure actuelles</li>
+                        <li>Affichez les 10 dernières commandes de votre historique</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash"># 1. Shell actuel
+echo $SHELL
+
+# 2. Nom d'utilisateur
+whoami
+
+# 3. Répertoire courant
+pwd
+
+# 4. Date et heure
+date
+
+# 5. Historique
+history | tail -10</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <h3>Raccourcis clavier essentiels</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Raccourci</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Ctrl + C</code></td>
+                            <td>Interrompre la commande en cours</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + D</code></td>
+                            <td>Quitter le shell (EOF)</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + L</code></td>
+                            <td>Effacer l'écran (équivalent à <code>clear</code>)</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + A</code></td>
+                            <td>Aller au début de la ligne</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + E</code></td>
+                            <td>Aller à la fin de la ligne</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + U</code></td>
+                            <td>Effacer du curseur au début de la ligne</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + K</code></td>
+                            <td>Effacer du curseur à la fin de la ligne</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + W</code></td>
+                            <td>Effacer le mot précédent</td>
+                        </tr>
+                        <tr>
+                            <td><code>Ctrl + R</code></td>
+                            <td>Rechercher dans l'historique</td>
+                        </tr>
+                        <tr>
+                            <td><code>↑ / ↓</code></td>
+                            <td>Naviguer dans l'historique</td>
+                        </tr>
+                        <tr>
+                            <td><code>Tab</code></td>
+                            <td>Autocomplétion</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-success">
+                    <h4>💡 Conseil pro</h4>
+                    <p>
+                        Mémorisez <code>Ctrl + R</code> pour la recherche dans l'historique. C'est l'un des
+                        raccourcis
+                        les plus utiles au quotidien. Tapez <code>Ctrl + R</code> puis commencez à taper une partie
+                        de
+                        la commande que vous cherchez !
+                    </p>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 1 terminée !</h4>
+                <p>
+                    Vous avez appris les bases du shell et compris pourquoi c'est essentiel en Data Engineering.
+                    Passez maintenant à la Partie 2 pour apprendre à naviguer dans le système de fichiers.
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="partie2.html"
+                        style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 2 : Navigation et Gestion de Fichiers →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Bash/Zsh pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

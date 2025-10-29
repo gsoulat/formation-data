@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 5 : Volumes, Réseaux et Variables - Formation Docker</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>💾 Partie 5 : Volumes, Réseaux et Variables</h1>
+            <p class="subtitle">Persistance des données et communication inter-conteneurs</p>
+            <span class="duration">⏱️ Durée : 5 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html" class="active">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Comprendre la persistance des données avec les volumes</li>
+                    <li>Utiliser les différents types de volumes Docker</li>
+                    <li>Créer et gérer des réseaux Docker</li>
+                    <li>Configurer des variables d'environnement</li>
+                    <li>Assurer la sécurité des données sensibles</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>5.1 Volumes Docker - Persistance des Données</h2>
+
+                <div class="concept">
+                    <p>Par défaut, les données dans un conteneur sont <strong>éphémères</strong>. Les
+                        <strong>volumes</strong> permettent de persister les données.
+                    </p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Named Volume</strong></td>
+                            <td>Géré par Docker</td>
+                            <td>Bases de données, fichiers applicatifs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bind Mount</strong></td>
+                            <td>Dossier de l'hôte monté</td>
+                            <td>Développement, configuration, logs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>tmpfs Mount</strong></td>
+                            <td>En mémoire (temporaire)</td>
+                            <td>Données sensibles, cache</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un volume nommé
+docker volume create postgres_data
+
+# Lister les volumes
+docker volume ls
+
+# Utiliser un volume nommé
+docker run -d -v postgres_data:/var/lib/postgresql/data postgres:15
+
+# Bind mount (développement)
+docker run -d -v $(pwd)/data:/app/data mon-app
+
+# Bind mount en lecture seule
+docker run -d -v $(pwd)/config:/app/config:ro mon-app
+
+# Supprimer un volume
+docker volume rm postgres_data
+
+# Supprimer tous les volumes non utilisés
+docker volume prune</code></pre>
+                </div>
+
+                <div class="example">
+                    <h4>💼 Cas d'usage : Persister les données d'une base PostgreSQL</h4>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-bash"># Créer un volume pour PostgreSQL
+docker volume create pgdata
+
+# Lancer PostgreSQL avec le volume
+docker run -d \
+  --name postgres \
+  -e POSTGRES_PASSWORD=secret \
+  -v pgdata:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  postgres:15
+
+# Les données survivent à la suppression du conteneur !
+docker rm -f postgres
+docker run -d --name postgres -v pgdata:/var/lib/postgresql/data postgres:15</code></pre>
+                    </div>
+                </div>
+
+                <h2>5.2 Réseaux Docker</h2>
+
+                <div class="concept">
+                    <p>Les <strong>réseaux Docker</strong> permettent aux conteneurs de communiquer entre eux de
+                        manière isolée.</p>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer un réseau personnalisé
+docker network create data-network
+
+# Lister les réseaux
+docker network ls
+
+# Connecter un conteneur à un réseau
+docker run -d --name postgres --network data-network postgres:15
+docker run -d --name app --network data-network mon-app
+
+# Les conteneurs peuvent communiquer par leur nom !
+# L'app peut accéder à PostgreSQL via "postgres:5432"
+
+# Inspecter un réseau
+docker network inspect data-network
+
+# Supprimer un réseau
+docker network rm data-network</code></pre>
+                </div>
+
+                <div class="example">
+                    <h4>💼 Exemple : Stack avec PostgreSQL et application</h4>
+                    <div class="code-container">
+                        <div class="code-header">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <pre><code class="language-bash"># Créer le réseau
+docker network create data-net
+
+# Lancer PostgreSQL
+docker run -d \
+  --name db \
+  --network data-net \
+  -e POSTGRES_PASSWORD=secret \
+  postgres:15
+
+# Lancer l'application (elle peut accéder à "db:5432")
+docker run -d \
+  --name app \
+  --network data-net \
+  -e DATABASE_URL=postgresql://postgres:secret@db:5432/mydb \
+  mon-app:latest</code></pre>
+                    </div>
+                </div>
+
+                <h2>5.3 Variables d'Environnement</h2>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Définir une variable avec -e
+docker run -e DB_HOST=localhost -e DB_PORT=5432 mon-app
+
+# Charger depuis un fichier .env
+docker run --env-file .env mon-app
+
+# Exemple de fichier .env :
+# DB_HOST=localhost
+# DB_PORT=5432
+# DB_NAME=warehouse
+# DB_USER=dataeng</code></pre>
+                </div>
+
+                <div class="warning">
+                    <strong>⚠️ Sécurité :</strong> N'utilisez jamais <code>-e</code> pour des secrets en production !
+                    Préférez Docker Secrets ou des solutions comme HashiCorp Vault.
+                </div>
+
+                <div class="tip">
+                    <strong>💡 Astuce :</strong> Utilisez <code>--env-file</code> pour séparer la configuration de
+                    votre code. Ajoutez le fichier .env à .gitignore pour ne pas commiter les secrets.
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Les volumes permettent de persister les données au-delà du cycle de vie d'un conteneur</li>
+                    <li>Utilisez des named volumes pour les données de production</li>
+                    <li>Les bind mounts sont parfaits pour le développement</li>
+                    <li>Les réseaux Docker isolent et connectent les conteneurs</li>
+                    <li>Les conteneurs sur le même réseau se découvrent par leur nom</li>
+                    <li>Ne stockez jamais de secrets dans les variables d'environnement en production</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Vous maîtrisez maintenant volumes et réseaux ! Passons à la <strong>Partie 6</strong> pour
+                    orchestrer des applications multi-conteneurs avec Docker Compose.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="partie4.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Partie 4 : Dockerfile
+                </a>
+                <a href="partie6.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 6 : Docker Compose →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Docker pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

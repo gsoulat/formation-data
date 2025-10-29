@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: Index et Performance - Formation MongoDB</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Module 5: Index et Performance</h1>
+            <p class="subtitle">Optimisation des requetes MongoDB</p>
+            <span class="duration">Duree: 8 minutes</span>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="01-introduction.html">M1: Introduction</a></li>
+                <li><a href="02-installation.html">M2: Installation</a></li>
+                <li><a href="03-crud.html">M3: CRUD</a></li>
+                <li><a href="04-aggregation.html">M4: Agregation</a></li>
+                <li><a href="05-index-performance.html" class="active">M5: Index</a></li>
+                <li><a href="06-modelisation.html">M6: Modelisation</a></li>
+                <li><a href="07-data-engineering.html">M7: Data Engineering</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs du module</h2>
+                <ul>
+                    <li>Comprendre l'importance des index</li>
+                    <li>Creer differents types d'index</li>
+                    <li>Analyser les performances avec explain()</li>
+                    <li>Appliquer les bonnes pratiques d'indexation</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Pourquoi les index ?</h2>
+
+                <p>
+                    Les <strong>index</strong> ameliorent drastiquement les performances des requetes en permettant a MongoDB
+                    de localiser rapidement les documents sans scanner toute la collection. Sans index, MongoDB doit effectuer
+                    un <em>collection scan</em> (lire tous les documents).
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Sans index</h4>
+                        <p>Collection scan : O(n)</p>
+                        <p>Temps : lent sur grandes collections</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Avec index</h4>
+                        <p>Index scan : O(log n)</p>
+                        <p>Temps : tres rapide</p>
+                    </div>
+                </div>
+
+                <h3>Types d'index</h3>
+
+                <h4>1. Single Field Index (Index simple)</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Creer un index sur le champ email
+db.users.createIndex({ email: 1 })  // 1 = croissant, -1 = decroissant
+
+// Index unique (empeche les doublons)
+db.users.createIndex({ email: 1 }, { unique: true })
+
+// Voir les index
+db.users.getIndexes()
+
+// Supprimer un index
+db.users.dropIndex("email_1")</code></pre>
+                </div>
+
+                <h4>2. Compound Index (Index compose)</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Index sur plusieurs champs
+db.users.createIndex({ department: 1, age: -1 })
+
+// Utile pour les requetes :
+db.users.find({ department: "Data", age: { $gt: 25 } })
+db.users.find({ department: "Data" }).sort({ age: -1 })</code></pre>
+                </div>
+
+                <h4>3. Text Index (Index de texte)</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Creer un index de texte
+db.articles.createIndex({ title: "text", content: "text" })
+
+// Recherche plein texte
+db.articles.find({ $text: { $search: "mongodb data engineering" } })
+
+// Recherche avec score de pertinence
+db.articles.find(
+  { $text: { $search: "mongodb" } },
+  { score: { $meta: "textScore" } }
+).sort({ score: { $meta: "textScore" } })</code></pre>
+                </div>
+
+                <h4>4. Geospatial Index (Index geospatial)</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Index 2dsphere pour coordonnees GPS
+db.places.createIndex({ location: "2dsphere" })
+
+// Document avec localisation
+{
+  name: "Paris Office",
+  location: {
+    type: "Point",
+    coordinates: [2.3522, 48.8566]  // [longitude, latitude]
+  }
+}
+
+// Recherche a proximite
+db.places.find({
+  location: {
+    $near: {
+      $geometry: {
+        type: "Point",
+        coordinates: [2.35, 48.85]
+      },
+      $maxDistance: 5000  // 5 km
+    }
+  }
+})</code></pre>
+                </div>
+
+                <h3>Analyser les performances : explain()</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Analyser une requete
+db.users.find({ email: "alice@example.com" }).explain("executionStats")
+
+// Resultat (sans index)
+{
+  "executionStats": {
+    "executionTimeMillis": 45,
+    "totalDocsExamined": 10000,    // Tous les documents scannés
+    "nReturned": 1
+  }
+}
+
+// Creer un index
+db.users.createIndex({ email: 1 })
+
+// Analyser a nouveau
+{
+  "executionStats": {
+    "executionTimeMillis": 2,       // Beaucoup plus rapide
+    "totalDocsExamined": 1,         // Un seul document scanne
+    "nReturned": 1
+  }
+}</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Modes d'explain()</h4>
+                    <ul>
+                        <li><code>"queryPlanner"</code> : Plan d'execution (par defaut)</li>
+                        <li><code>"executionStats"</code> : Statistiques d'execution detaillees</li>
+                        <li><code>"allPlansExecution"</code> : Tous les plans possibles</li>
+                    </ul>
+                </div>
+
+                <h3>Bonnes pratiques d'indexation</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>A faire</h4>
+                        <ul>
+                            <li>Indexer les champs frequemment requetes</li>
+                            <li>Utiliser explain() pour valider</li>
+                            <li>Index composes pour queries multiples</li>
+                            <li>Index unique sur emails, usernames</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>A eviter</h4>
+                        <ul>
+                            <li>Trop d'index (ralentit les ecritures)</li>
+                            <li>Indexer des champs peu utilises</li>
+                            <li>Oublier de monitorer les performances</li>
+                            <li>Index sur champs avec peu de variete</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Avec Python (PyMongo)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">from pymongo import MongoClient, ASCENDING, DESCENDING
+
+client = MongoClient('mongodb://localhost:27017/')
+db = client['mydb']
+collection = db['users']
+
+# Creer un index simple
+collection.create_index([("email", ASCENDING)], unique=True)
+
+# Index compose
+collection.create_index([
+    ("department", ASCENDING),
+    ("age", DESCENDING)
+])
+
+# Lister les index
+indexes = collection.list_indexes()
+for index in indexes:
+    print(index)
+
+# Analyser une requete
+explain_result = collection.find({"email": "alice@example.com"}).explain()
+print(f"Temps d'execution: {explain_result['executionStats']['executionTimeMillis']}ms")
+print(f"Documents examines: {explain_result['executionStats']['totalDocsExamined']}")</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Index par defaut</h4>
+                    <p>
+                        MongoDB cree automatiquement un index unique sur le champ <code>_id</code> de chaque collection.
+                        Vous n'avez pas besoin de creer cet index manuellement.
+                    </p>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points cles a retenir</h3>
+                <ul>
+                    <li>Les index accelerent drastiquement les requetes (O(n) → O(log n))</li>
+                    <li>Types : simples, composes, texte, geospatiaux</li>
+                    <li>explain() permet d'analyser les performances des requetes</li>
+                    <li>Index unique pour garantir l'unicite (emails, usernames)</li>
+                    <li>Trop d'index ralentit les ecritures : trouver le bon equilibre</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="04-aggregation.html" class="nav-button prev">Module 4: Agregation</a>
+                <a href="06-modelisation.html" class="nav-button next">Module 6: Modelisation</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Module 5/7 - Formation MongoDB pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+</body>
+</html>

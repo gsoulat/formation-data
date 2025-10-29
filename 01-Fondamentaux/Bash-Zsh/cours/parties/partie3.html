@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 3 - Manipulation de Texte et Données</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Partie 3</h1>
+            <p class="subtitle">Manipulation de Texte et Données</p>
+            <span class="duration">⏱️ Durée : 50 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie2.html">← Partie 2</a></li>
+                <li><a href="partie4.html">Partie 4 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>3. Manipulation de Texte et Données</h2>
+
+                <p>Cette partie couvre les outils essentiels pour traiter des données textuelles. Ces commandes sont au cœur du Data Engineering en shell.</p>
+
+                <h3>Afficher le contenu de fichiers</h3>
+
+                <table class="command-table">
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>cat</code></td>
+                            <td>Afficher tout le contenu</td>
+                            <td>Fichiers courts</td>
+                        </tr>
+                        <tr>
+                            <td><code>less</code></td>
+                            <td>Naviguer dans le fichier</td>
+                            <td>Fichiers longs</td>
+                        </tr>
+                        <tr>
+                            <td><code>head</code></td>
+                            <td>Afficher le début (10 lignes par défaut)</td>
+                            <td>Aperçu rapide</td>
+                        </tr>
+                        <tr>
+                            <td><code>tail</code></td>
+                            <td>Afficher la fin (10 lignes par défaut)</td>
+                            <td>Logs récents</td>
+                        </tr>
+                        <tr>
+                            <td><code>wc</code></td>
+                            <td>Compter lignes, mots, caractères</td>
+                            <td>Statistiques</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># cat : afficher tout le fichier
+cat data.csv
+
+# Numéroter les lignes
+cat -n data.csv
+
+# Concaténer plusieurs fichiers
+cat file1.txt file2.txt > combined.txt
+
+# head : afficher les premières lignes
+head data.csv                    # 10 premières lignes
+head -n 20 data.csv              # 20 premières lignes
+head -5 data.csv                 # 5 premières lignes (raccourci)
+
+# tail : afficher les dernières lignes
+tail data.csv                    # 10 dernières lignes
+tail -n 50 data.csv              # 50 dernières lignes
+tail -f server.log               # Suivre en temps réel (logs)
+
+# wc : compter
+wc data.csv                      # lignes mots caractères
+wc -l data.csv                   # nombre de lignes seulement
+wc -w data.csv                   # nombre de mots
+wc -c data.csv                   # nombre d'octets
+
+# less : naviguer (plus puissant que more)
+less data.csv
+# Raccourcis dans less :
+# - espace : page suivante
+# - b : page précédente
+# - / : rechercher
+# - q : quitter
+# - G : aller à la fin
+# - g : aller au début</code></pre>
+                </div>
+
+                <h3>Redirections et Pipelines</h3>
+
+                <div class="key-points">
+                    <h3>💡 Opérateurs de redirection</h3>
+                    <ul>
+                        <li><code>&gt;</code> : Redirige la sortie vers un fichier (écrase)</li>
+                        <li><code>&gt;&gt;</code> : Ajoute à la fin d'un fichier</li>
+                        <li><code>&lt;</code> : Lit depuis un fichier</li>
+                        <li><code>|</code> : Pipe - envoie la sortie d'une commande vers une autre</li>
+                        <li><code>2&gt;</code> : Redirige les erreurs</li>
+                        <li><code>&amp;&gt;</code> : Redirige sortie et erreurs</li>
+                    </ul>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># > : redirection (écrase le fichier)
+echo "Nouvelle ligne" > output.txt
+ls -l > file_list.txt
+
+# >> : ajout à la fin
+echo "Ligne supplémentaire" >> output.txt
+date >> log.txt
+
+# < : lire depuis un fichier
+wc -l < data.csv
+
+# | : pipeline (chaîner des commandes)
+cat data.csv | wc -l
+ls -l | grep ".csv"
+ps aux | grep python
+
+# Combiner plusieurs pipes
+cat data.csv | grep "ERROR" | wc -l
+
+# 2> : rediriger les erreurs
+ls fichier_inexistant 2> errors.log
+
+# &> : rediriger sortie ET erreurs
+command &> all_output.log
+
+# Séparer sortie et erreurs
+command > output.log 2> error.log
+
+# Ignorer les erreurs
+command 2> /dev/null
+
+# Exemple pratique : analyser des logs
+cat server.log | grep "ERROR" | tail -100 > recent_errors.txt</code></pre>
+                </div>
+
+                <h3>grep - Rechercher dans des fichiers</h3>
+
+                <p><code>grep</code> est l'outil le plus utilisé pour rechercher des patterns dans des fichiers. Essentiel en Data Engineering.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>grep pattern file</code></td>
+                            <td>Recherche basique</td>
+                            <td><code>grep "ERROR" log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-i</code></td>
+                            <td>Ignorer la casse</td>
+                            <td><code>grep -i "error" log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-v</code></td>
+                            <td>Inverser (lignes ne contenant PAS)</td>
+                            <td><code>grep -v "DEBUG" log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-c</code></td>
+                            <td>Compter les correspondances</td>
+                            <td><code>grep -c "ERROR" log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-n</code></td>
+                            <td>Afficher les numéros de ligne</td>
+                            <td><code>grep -n "ERROR" log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-r</code></td>
+                            <td>Récursif dans les dossiers</td>
+                            <td><code>grep -r "TODO" .</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-l</code></td>
+                            <td>Afficher uniquement les noms de fichiers</td>
+                            <td><code>grep -l "ERROR" *.log</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-A n</code></td>
+                            <td>Afficher n lignes après</td>
+                            <td><code>grep -A 3 "ERROR" log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-B n</code></td>
+                            <td>Afficher n lignes avant</td>
+                            <td><code>grep -B 2 "ERROR" log.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>-C n</code></td>
+                            <td>Afficher n lignes avant et après</td>
+                            <td><code>grep -C 5 "ERROR" log.txt</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Recherche simple
+grep "ERROR" server.log
+
+# Ignorer la casse
+grep -i "error" server.log
+
+# Compter les occurrences
+grep -c "ERROR" server.log
+
+# Avec numéros de ligne
+grep -n "ERROR" server.log
+
+# Inverser (tout sauf ERROR)
+grep -v "ERROR" server.log
+
+# Recherche récursive dans tous les fichiers
+grep -r "database_connection" .
+
+# Afficher uniquement les noms de fichiers
+grep -l "ERROR" *.log
+
+# Contexte : 3 lignes avant et après
+grep -C 3 "CRITICAL" server.log
+
+# Expressions régulières
+grep "ERROR.*database" server.log          # ERROR suivi de database
+grep "^ERROR" server.log                   # Lignes commençant par ERROR
+grep "ERROR$" server.log                   # Lignes finissant par ERROR
+grep "[0-9]{3}" server.log                 # 3 chiffres consécutifs
+grep -E "ERROR|CRITICAL|FATAL" server.log  # Plusieurs patterns
+
+# Exemples pratiques en Data Engineering
+
+# Trouver les erreurs SQL dans les logs
+grep -i "sql.*error" application.log
+
+# Compter les requêtes par code HTTP
+grep -o "HTTP/[0-9]\.[0-9]\" [0-9]*" access.log | cut -d' ' -f2 | sort | uniq -c
+
+# Extraire les emails d'un fichier
+grep -Eo "\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b" data.txt
+
+# Trouver les lignes avec des montants en dollars
+grep -E '\$[0-9,]+\.[0-9]{2}' transactions.txt
+
+# Filtrer les logs d'une date spécifique
+grep "2024-01-15" server.log
+
+# Exclure les lignes de debug et info
+grep -v -E "DEBUG|INFO" server.log
+
+# Rechercher dans des CSV
+grep "John Doe" customers.csv</code></pre>
+                </div>
+
+                <h3>sed - Transformation de texte</h3>
+
+                <p><code>sed</code> (Stream EDitor) permet de transformer du texte à la volée. Très puissant pour le nettoyage de données.</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Substitution basique : s/ancien/nouveau/
+echo "Hello World" | sed 's/World/Universe/'
+# Output: Hello Universe
+
+# Remplacer dans un fichier (sans modifier l'original)
+sed 's/old/new/' data.txt
+
+# Modifier le fichier directement (-i)
+sed -i 's/old/new/' data.txt           # Linux
+sed -i '' 's/old/new/' data.txt        # macOS
+
+# Remplacer toutes les occurrences sur chaque ligne (g = global)
+sed 's/ERROR/WARNING/g' log.txt
+
+# Remplacer uniquement la 2ème occurrence
+sed 's/ERROR/WARNING/2' log.txt
+
+# Supprimer des lignes
+sed '/pattern/d' file.txt              # Supprimer les lignes contenant pattern
+sed '1d' file.txt                      # Supprimer la première ligne
+sed '1,3d' file.txt                    # Supprimer les lignes 1 à 3
+sed '$d' file.txt                      # Supprimer la dernière ligne
+
+# Afficher certaines lignes
+sed -n '1,10p' file.txt                # Afficher lignes 1 à 10
+sed -n '/pattern/p' file.txt           # Afficher lignes contenant pattern
+
+# Exemples pratiques en Data Engineering
+
+# Remplacer les séparateurs CSV
+sed 's/;/,/g' data_semicolon.csv > data_comma.csv
+
+# Nettoyer les espaces en double
+sed 's/  */ /g' data.txt
+
+# Supprimer les lignes vides
+sed '/^$/d' data.txt
+
+# Supprimer les espaces en début et fin de ligne
+sed 's/^[[:space:]]*//; s/[[:space:]]*$//' data.txt
+
+# Ajouter un préfixe à chaque ligne
+sed 's/^/PREFIX_/' data.txt
+
+# Remplacer NULL par une valeur par défaut
+sed 's/NULL/0/g' data.csv
+
+# Extraire une colonne d'un CSV (colonne 2)
+sed 's/^[^,]*,\([^,]*\).*/\1/' data.csv
+
+# Remplacer plusieurs patterns en une commande
+sed -e 's/ERROR/ERR/g' -e 's/WARNING/WARN/g' log.txt
+
+# Supprimer les commentaires (lignes commençant par #)
+sed '/^#/d' config.txt
+
+# Conversion : minuscules en majuscules (GNU sed)
+sed 's/.*/\U&/' data.txt
+
+# Nettoyer un CSV : supprimer header et footer
+sed '1d; $d' data.csv</code></pre>
+                </div>
+
+                <h3>awk - Traitement de données structurées</h3>
+
+                <p><code>awk</code> est un langage de programmation complet spécialisé dans le traitement de données textuelles structurées. Extrêmement puissant pour les CSV/TSV.</p>
+
+                <div class="alert alert-info">
+                    <h4>Structure d'une commande awk</h4>
+                    <pre>awk 'pattern { action }' file
+
+pattern : condition optionnelle
+action  : traitement à effectuer
+NR      : numéro de ligne
+NF      : nombre de colonnes
+$1, $2  : colonnes 1, 2, etc.
+$0      : ligne complète</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Afficher une colonne spécifique
+awk '{print $1}' data.txt              # Première colonne
+awk '{print $2}' data.txt              # Deuxième colonne
+awk '{print $1, $3}' data.txt          # Colonnes 1 et 3
+
+# Définir le séparateur de champs (-F)
+awk -F',' '{print $1}' data.csv        # CSV
+awk -F'\t' '{print $1}' data.tsv       # TSV
+
+# Afficher avec formatage
+awk '{print $1 " - " $2}' data.txt
+
+# Numéros de ligne (NR)
+awk '{print NR, $0}' data.txt          # Numéroter les lignes
+awk 'NR==5' data.txt                   # Afficher ligne 5
+awk 'NR>=10 && NR<=20' data.txt        # Lignes 10 à 20
+
+# Nombre de colonnes (NF)
+awk '{print NF}' data.csv              # Nombre de colonnes par ligne
+awk '{print $NF}' data.csv             # Dernière colonne
+
+# Conditions
+awk '$3 > 100' data.txt                # Lignes où colonne 3 > 100
+awk '$1 == "ERROR"' log.txt            # Lignes où colonne 1 = ERROR
+awk '$2 != "NULL"' data.csv            # Colonne 2 différente de NULL
+
+# Expressions régulières
+awk '/ERROR/' log.txt                  # Lignes contenant ERROR
+awk '$2 ~ /^[0-9]+$/' data.txt         # Colonne 2 = nombre
+
+# Opérations mathématiques
+awk '{sum += $3} END {print sum}' data.csv           # Somme de la colonne 3
+awk '{sum += $3} END {print sum/NR}' data.csv        # Moyenne
+awk '{if($3>max) max=$3} END {print max}' data.csv   # Maximum
+
+# BEGIN et END
+awk 'BEGIN {print "Start"} {print $0} END {print "End"}' data.txt
+
+# Exemples pratiques en Data Engineering
+
+# Fichier CSV : id,name,age,salary
+# 1,Alice,30,50000
+# 2,Bob,25,45000
+# 3,Charlie,35,60000
+
+# Extraire les noms (colonne 2)
+awk -F',' '{print $2}' employees.csv
+
+# Filtrer les salaires > 50000
+awk -F',' '$4 > 50000' employees.csv
+
+# Calculer le salaire total
+awk -F',' '{sum += $4} END {print "Total:", sum}' employees.csv
+
+# Calculer le salaire moyen
+awk -F',' 'NR>1 {sum += $4; count++} END {print "Average:", sum/count}' employees.csv
+
+# Ajouter une colonne calculée
+awk -F',' '{print $0 "," $4*0.2}' employees.csv    # Ajouter bonus 20%
+
+# Compter les occurrences par catégorie
+awk -F',' '{count[$2]++} END {for(c in count) print c, count[c]}' data.csv
+
+# Filtrer et transformer
+awk -F',' '$3 >= 30 {print $2, $4}' employees.csv
+
+# Supprimer le header
+awk -F',' 'NR>1 {print $0}' data.csv
+
+# Reformater un CSV en JSON (simple)
+awk -F',' '{print "{\"id\":" $1 ",\"name\":\"" $2 "\"}"}' data.csv
+
+# Analyser des logs Apache/Nginx
+awk '{print $1}' access.log | sort | uniq -c | sort -rn    # IPs les plus fréquentes
+
+# Calculer des statistiques
+awk '{sum+=$1; sumsq+=$1*$1} END {print "Mean:", sum/NR, "StdDev:", sqrt(sumsq/NR - (sum/NR)^2)}' numbers.txt
+
+# Pivoter des données
+awk -F',' '{a[$1]+=$2} END {for(i in a) print i, a[i]}' data.csv</code></pre>
+                </div>
+
+                <h3>Combinaisons puissantes : grep + sed + awk</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Pipeline complet : extraire, filtrer, transformer, agréger
+
+# Exemple 1 : Analyser des logs d'erreurs
+cat server.log | \
+    grep "ERROR" | \                          # Filtrer les erreurs
+    awk '{print $5}' | \                      # Extraire le type d'erreur
+    sort | \                                  # Trier
+    uniq -c | \                               # Compter les doublons
+    sort -rn | \                              # Trier par fréquence
+    head -10                                  # Top 10
+
+# Exemple 2 : Nettoyer un CSV et calculer des stats
+cat sales.csv | \
+    sed '1d' | \                              # Supprimer le header
+    sed 's/NULL/0/g' | \                      # Remplacer NULL par 0
+    awk -F',' '{sum += $3} END {print sum}'   # Somme de la colonne 3
+
+# Exemple 3 : Extraire des emails et compter par domaine
+grep -Eo "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" contacts.txt | \
+    awk -F'@' '{print $2}' | \
+    sort | \
+    uniq -c | \
+    sort -rn
+
+# Exemple 4 : Analyser un fichier de transactions
+cat transactions.csv | \
+    awk -F',' 'NR>1 {print $2, $4}' | \       # Date et montant
+    grep "2024-01" | \                        # Janvier 2024
+    awk '{sum += $2} END {print "Total:", sum}'
+
+# Exemple 5 : Nettoyer et formatter des données
+cat raw_data.txt | \
+    sed 's/^[[:space:]]*//; s/[[:space:]]*$//' | \  # Trim
+    sed '/^$/d' | \                                  # Supprimer lignes vides
+    awk '{print toupper($0)}' | \                    # Majuscules
+    sort -u                                          # Trier et dédupliquer
+
+# Exemple 6 : Analyser des accès API
+cat api_access.log | \
+    grep "POST" | \
+    awk '{print $7}' | \                      # Endpoint
+    sed 's/?.*$//' | \                        # Retirer les query params
+    sort | \
+    uniq -c | \
+    sort -rn | \
+    head -20
+
+# Exemple 7 : Extraire et reformater des données
+cat data.json | \
+    grep "user_id" | \
+    sed 's/.*"user_id": "\([^"]*\)".*/\1/' | \
+    sort | \
+    uniq > user_ids.txt
+
+# Exemple 8 : Comparer deux fichiers CSV
+diff <(sort file1.csv) <(sort file2.csv)
+
+# Exemple 9 : Générer un rapport de logs
+cat application.log | \
+    awk '{print $1, $4}' | \                  # Date et niveau
+    sed 's/\[//; s/\]//' | \                  # Nettoyer les brackets
+    awk '{count[$2]++} END {for (level in count) print level, count[level]}'</code></pre>
+                </div>
+
+                <h3>Utilitaires complémentaires</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Description</th>
+                            <th>Exemple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>sort</code></td>
+                            <td>Trier des lignes</td>
+                            <td><code>sort data.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>uniq</code></td>
+                            <td>Supprimer les doublons consécutifs</td>
+                            <td><code>sort data.txt | uniq</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>cut</code></td>
+                            <td>Extraire des colonnes</td>
+                            <td><code>cut -d',' -f1,3 data.csv</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>paste</code></td>
+                            <td>Fusionner des fichiers colonne par colonne</td>
+                            <td><code>paste file1.txt file2.txt</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>tr</code></td>
+                            <td>Traduire/supprimer des caractères</td>
+                            <td><code>tr '[:lower:]' '[:upper:]'</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>column</code></td>
+                            <td>Formatter en colonnes</td>
+                            <td><code>column -t -s',' data.csv</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># sort : trier
+sort data.txt                     # Tri alphabétique
+sort -n data.txt                  # Tri numérique
+sort -r data.txt                  # Tri inverse
+sort -k2 data.txt                 # Trier par colonne 2
+sort -t',' -k3n data.csv          # CSV : trier par colonne 3 numériquement
+
+# uniq : dédupliquer (nécessite un tri préalable)
+sort data.txt | uniq              # Supprimer les doublons
+sort data.txt | uniq -c           # Compter les occurrences
+sort data.txt | uniq -d           # Afficher uniquement les doublons
+sort data.txt | uniq -u           # Afficher uniquement les uniques
+
+# cut : extraire des colonnes
+cut -d',' -f1 data.csv            # Colonne 1 d'un CSV
+cut -d',' -f1,3,5 data.csv        # Colonnes 1, 3 et 5
+cut -d',' -f2- data.csv           # À partir de la colonne 2
+cut -c1-10 data.txt               # Caractères 1 à 10
+
+# paste : fusionner horizontalement
+paste file1.txt file2.txt         # Fusionner deux fichiers
+paste -d',' file1.txt file2.txt   # Avec virgule comme séparateur
+
+# tr : transformer des caractères
+echo "hello" | tr '[:lower:]' '[:upper:]'     # HELLO
+echo "hello world" | tr ' ' '_'               # hello_world
+echo "hello123" | tr -d '[:digit:]'           # hello
+echo "hello\n\nworld" | tr -s '\n'            # Supprimer lignes vides
+
+# column : formatter joliment
+cat data.csv | column -t -s','    # Aligner un CSV en colonnes
+
+# Exemples pratiques
+
+# Compter les valeurs uniques d'une colonne
+cut -d',' -f2 data.csv | sort | uniq | wc -l
+
+# Top 10 des valeurs les plus fréquentes
+cut -d',' -f3 data.csv | sort | uniq -c | sort -rn | head -10
+
+# Fusionner deux CSV par ligne
+paste -d',' file1.csv file2.csv > merged.csv
+
+# Convertir CSV en TSV
+cat data.csv | tr ',' '\t' > data.tsv
+
+# Nettoyer les espaces
+cat data.txt | tr -s ' ' > cleaned.txt</code></pre>
+                </div>
+
+                <h3>Cas pratique complet : Analyse de logs</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Fichier de log : server.log
+# Format : [2024-01-15 10:30:25] ERROR database Connection timeout user_id=123
+# Format : [2024-01-15 10:31:12] INFO  api     Request received user_id=456
+
+# 1. Compter les erreurs par type
+cat server.log | \
+    grep "ERROR" | \
+    awk '{print $4}' | \
+    sort | \
+    uniq -c | \
+    sort -rn
+# Output:
+# 145 database
+#  89 network
+#  34 authentication
+
+# 2. Extraire les user_ids des erreurs
+cat server.log | \
+    grep "ERROR" | \
+    grep -o "user_id=[0-9]*" | \
+    cut -d'=' -f2 | \
+    sort | \
+    uniq > error_users.txt
+
+# 3. Créer un rapport par heure
+cat server.log | \
+    awk '{print $2}' | \
+    cut -d':' -f1 | \
+    sort | \
+    uniq -c
+# Output:
+# 234 10
+# 456 11
+# 389 12
+
+# 4. Filtrer les erreurs d'une date spécifique et les exporter
+cat server.log | \
+    grep "2024-01-15" | \
+    grep "ERROR" | \
+    awk '{print $2, $3, $4, $5}' > errors_2024-01-15.txt
+
+# 5. Analyser les erreurs par service et sévérité
+cat server.log | \
+    awk '{print $3, $4}' | \
+    sort | \
+    uniq -c | \
+    sort -rn | \
+    column -t</code></pre>
+                </div>
+
+                <h3>Exercices pratiques</h3>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 1 : Manipulation de fichiers CSV</h4>
+                    <p>Créez un fichier <code>employees.csv</code> avec ce contenu :</p>
+                    <pre>id,name,department,salary
+1,Alice,Engineering,75000
+2,Bob,Marketing,65000
+3,Charlie,Engineering,80000
+4,Diana,Sales,70000
+5,Eve,Engineering,72000</pre>
+                    <ol>
+                        <li>Affichez uniquement les noms (colonne 2)</li>
+                        <li>Filtrez les employés de Engineering</li>
+                        <li>Calculez le salaire total</li>
+                        <li>Calculez le salaire moyen du département Engineering</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash"># 1. Noms uniquement
+awk -F',' 'NR>1 {print $2}' employees.csv
+
+# 2. Engineering seulement
+grep "Engineering" employees.csv
+
+# 3. Salaire total
+awk -F',' 'NR>1 {sum += $4} END {print sum}' employees.csv
+
+# 4. Salaire moyen Engineering
+awk -F',' 'NR>1 && $3=="Engineering" {sum+=$4; count++} END {print sum/count}' employees.csv</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 2 : Analyse de logs</h4>
+                    <p>Créez un fichier <code>app.log</code> :</p>
+                    <pre>2024-01-15 10:00:00 INFO User login user_id=100
+2024-01-15 10:05:00 ERROR Database timeout user_id=101
+2024-01-15 10:10:00 INFO User logout user_id=100
+2024-01-15 10:15:00 ERROR Network failure user_id=102
+2024-01-15 10:20:00 ERROR Database timeout user_id=103</pre>
+                    <ol>
+                        <li>Comptez le nombre total d'erreurs</li>
+                        <li>Listez les types d'erreurs uniques</li>
+                        <li>Extrayez tous les user_ids ayant eu une erreur</li>
+                        <li>Comptez les erreurs par type</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash"># 1. Compter les erreurs
+grep -c "ERROR" app.log
+
+# 2. Types d'erreurs uniques
+grep "ERROR" app.log | awk '{print $4, $5}' | sort -u
+
+# 3. User IDs avec erreurs
+grep "ERROR" app.log | grep -o "user_id=[0-9]*" | cut -d'=' -f2 | sort -u
+
+# 4. Erreurs par type
+grep "ERROR" app.log | awk '{print $4}' | sort | uniq -c</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="exercise">
+                    <h4>🎯 Exercice 3 : Pipeline complet</h4>
+                    <p>Créez un fichier <code>sales.csv</code> :</p>
+                    <pre>date,product,quantity,price
+2024-01-01,Laptop,2,1000
+2024-01-01,Mouse,5,25
+2024-01-02,Laptop,1,1000
+2024-01-02,Keyboard,3,75
+2024-01-03,Mouse,10,25</pre>
+                    <p>Créez un pipeline qui :</p>
+                    <ol>
+                        <li>Supprime le header</li>
+                        <li>Calcule le montant total (quantity * price) pour chaque ligne</li>
+                        <li>Fait la somme totale de toutes les ventes</li>
+                    </ol>
+
+                    <details class="exercise-solution">
+                        <summary>💡 Voir la solution</summary>
+                        <div class="code-container">
+                            <pre><code class="language-bash"># Solution complète
+cat sales.csv | \
+    sed '1d' | \
+    awk -F',' '{total = $3 * $4; sum += total} END {print "Total:", sum}'
+
+# OU avec affichage détaillé
+cat sales.csv | \
+    sed '1d' | \
+    awk -F',' '{total = $3 * $4; print $1, $2, total; sum += total} END {print "Grand Total:", sum}'</code></pre>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>💡 Points clés à retenir</h4>
+                    <ul>
+                        <li><code>cat</code>, <code>head</code>, <code>tail</code>, <code>less</code> : visualiser les fichiers</li>
+                        <li><code>grep</code> : rechercher des patterns (-i, -v, -c, -r, -A, -B, -C)</li>
+                        <li><code>sed</code> : transformer du texte (s/old/new/g, /pattern/d)</li>
+                        <li><code>awk</code> : traiter des données structurées (colonnes, agrégations)</li>
+                        <li>Pipelines <code>|</code> : chaîner les commandes</li>
+                        <li>Redirections <code>&gt;</code>, <code>&gt;&gt;</code> : sauvegarder les résultats</li>
+                        <li><code>sort | uniq -c | sort -rn</code> : pattern classique d'agrégation</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 3 terminée !</h4>
+                <p>
+                    Vous maîtrisez maintenant les outils essentiels de manipulation de texte et de données. Ces commandes
+                    sont le cœur du Data Engineering en shell. Passez à la Partie 4 pour apprendre à créer des scripts automatisés.
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="partie4.html"
+                        style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 4 : Scripts Shell et Automatisation →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Bash/Zsh pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+
+</html>

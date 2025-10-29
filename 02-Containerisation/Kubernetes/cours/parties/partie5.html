@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 5 - Services et networking</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📖 Partie 5</h1>
+            <p class="subtitle">Services et networking</p>
+            <span class="duration">⏱️ Durée : 15 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+                <li><a href="partie8.html">Partie 8</a></li>
+                <li><a href="partie9.html">Partie 9</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>5. Services et networking</h2>
+
+                <h3>Qu'est-ce qu'un Service ?</h3>
+
+                <p>
+                    Un <strong>Service</strong> est une abstraction qui définit un moyen d'accéder à un ensemble de Pods.
+                    Les Pods sont éphémères (IPs changeantes), mais les Services fournissent une adresse stable.
+                </p>
+
+                <h3>Types de Services</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>ClusterIP</strong></td>
+                            <td>IP interne au cluster (par défaut)</td>
+                            <td>Communication interne entre services</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NodePort</strong></td>
+                            <td>Expose le service sur un port de chaque Node</td>
+                            <td>Accès externe simple (dev/test)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>LoadBalancer</strong></td>
+                            <td>Crée un load balancer externe (cloud)</td>
+                            <td>Production avec cloud provider</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ExternalName</strong></td>
+                            <td>Alias DNS vers un service externe</td>
+                            <td>Pointer vers des services hors cluster</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Service ClusterIP</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: ClusterIP  # Par défaut
+  selector:
+    app: nginx  # Sélectionne les Pods avec ce label
+  ports:
+  - protocol: TCP
+    port: 80        # Port du Service
+    targetPort: 80  # Port du conteneur</code></pre>
+                </div>
+
+                <h4>Service NodePort</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-nodeport
+spec:
+  type: NodePort
+  selector:
+    app: nginx
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30080  # Port sur les Nodes (30000-32767)</code></pre>
+                </div>
+
+                <h4>Service LoadBalancer</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer les Services
+kubectl apply -f nginx-service.yaml
+
+# Lister les Services
+kubectl get services
+
+# Détails d'un Service
+kubectl describe service nginx-service
+
+# Tester depuis un Pod dans le cluster
+kubectl run -it --rm debug --image=busybox --restart=Never -- sh
+wget -O- nginx-service
+
+# Avec NodePort (Minikube)
+minikube service nginx-nodeport --url
+curl $(minikube service nginx-nodeport --url)</code></pre>
+                </div>
+
+                <h3>DNS dans Kubernetes</h3>
+
+                <p>
+                    Kubernetes fournit un serveur DNS interne. Chaque Service obtient automatiquement un nom DNS :
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Format DNS
+&lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local
+
+# Exemples
+nginx-service.default.svc.cluster.local
+database.production.svc.cluster.local
+
+# Dans le même namespace, on peut juste utiliser le nom
+curl http://nginx-service</code></pre>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points clés à retenir</h3>
+                <ul>
+                    <li>Les Services fournissent une adresse stable pour accéder aux Pods</li>
+                    <li>ClusterIP pour la communication interne (par défaut)</li>
+                    <li>NodePort pour l'accès externe simple (dev/test)</li>
+                    <li>LoadBalancer pour l'accès externe en production (cloud)</li>
+                    <li>Kubernetes fournit un DNS interne automatique pour tous les Services</li>
+                </ul>
+            </div>
+
+            <nav class="section-nav" style="display: flex; justify-content: space-between; margin-top: 40px;">
+                <a href="partie4.html" style="display: inline-block; padding: 12px 25px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    ← Partie 4
+                </a>
+                <a href="partie6.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    Partie 6 →
+                </a>
+            </nav>
+        </div>
+
+        <footer>
+            <p>Formation Kubernetes pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

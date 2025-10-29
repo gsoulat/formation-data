@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 1 : Les Fondamentaux de Docker - Formation Docker</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Partie 1 : Les Fondamentaux de Docker</h1>
+            <p class="subtitle">Découvrez Docker et la conteneurisation</p>
+            <span class="duration">⏱️ Durée : 15 minutes</span>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html" class="active">Partie 1</a></li>
+                <li><a href="partie2.html">Partie 2</a></li>
+                <li><a href="partie3.html">Partie 3</a></li>
+                <li><a href="partie4.html">Partie 4</a></li>
+                <li><a href="partie5.html">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs de cette partie</h2>
+                <ul>
+                    <li>Comprendre ce qu'est Docker et la conteneurisation</li>
+                    <li>Identifier les problèmes que Docker résout</li>
+                    <li>Comparer Docker avec les Machines Virtuelles</li>
+                    <li>Maîtriser les concepts clés : images et conteneurs</li>
+                    <li>Découvrir l'utilité de Docker en Data Engineering</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>1.1 Qu'est-ce que Docker ?</h2>
+
+                <div class="concept">
+                    <h4>💡 Définition</h4>
+                    <p><strong>Docker</strong> est une plateforme open-source de conteneurisation qui permet
+                        d'empaqueter une application et toutes ses dépendances dans un conteneur standardisé, portable
+                        et léger.</p>
+                    <p style="margin-top: 15px;"><strong>Analogie :</strong> Pensez à Docker comme à un conteneur de
+                        transport maritime. Tout comme ces conteneurs standardisent le transport de marchandises, Docker
+                        standardise le déploiement d'applications.</p>
+                </div>
+
+                <h2>1.2 Le Problème que Docker Résout</h2>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4>❌ Avant Docker : "Ça marche sur ma machine !"</h4>
+                        <ul>
+                            <li>Différences entre environnements dev/test/production</li>
+                            <li>Conflits de dépendances entre applications</li>
+                            <li>Temps de configuration long et erreurs humaines</li>
+                            <li>Difficultés de scalabilité et déploiement</li>
+                        </ul>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>✅ Avec Docker : Reproductibilité Garantie</h4>
+                        <ul>
+                            <li>Environnements identiques partout</li>
+                            <li>Isolation complète des applications</li>
+                            <li>Déploiement en quelques secondes</li>
+                            <li>Portabilité totale (cloud, on-premise, local)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h2>1.3 Docker vs Machines Virtuelles</h2>
+
+                <div class="diagram">
+                    <img src="https://www.docker.com/wp-content/uploads/2021/11/docker-containerized-appliction-blue-border_2.png"
+                        alt="Architecture Docker vs VM" style="max-width: 800px;">
+                    <div class="diagram-caption">Architecture comparative : Machines Virtuelles vs Conteneurs Docker
+                    </div>
+                </div>
+
+                <div class="comparison">
+                    <div class="comparison-item vm">
+                        <h4>🖥️ Machines Virtuelles (VM)</h4>
+                        <ul>
+                            <li>Contient un OS complet</li>
+                            <li>Lourdes (plusieurs GB)</li>
+                            <li>Démarrage lent (minutes)</li>
+                            <li>Grande consommation de ressources</li>
+                            <li>Isolation forte mais coûteuse</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-item docker">
+                        <h4>🐳 Conteneurs Docker</h4>
+                        <ul>
+                            <li>Partage le noyau de l'OS hôte</li>
+                            <li>Légers (quelques MB)</li>
+                            <li>Démarrage instantané (secondes)</li>
+                            <li>Faible overhead de ressources</li>
+                            <li>Isolation au niveau processus</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h2>1.4 Architecture Docker : Les Concepts Clés</h2>
+
+                <div class="concept">
+                    <h4>🎨 Image Docker</h4>
+                    <p>Une <strong>image</strong> est un template en lecture seule qui contient :</p>
+                    <ul>
+                        <li>Le système de fichiers de l'application</li>
+                        <li>Les dépendances et bibliothèques</li>
+                        <li>Les configurations et variables d'environnement</li>
+                        <li>La commande à exécuter au démarrage</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Analogie :</strong> Une image est comme une recette de cuisine
+                        - elle décrit exactement ce qu'il faut faire.</p>
+                </div>
+
+                <div class="concept">
+                    <h4>📦 Conteneur Docker</h4>
+                    <p>Un <strong>conteneur</strong> est une instance d'une image en cours d'exécution :</p>
+                    <ul>
+                        <li>C'est un processus isolé sur la machine hôte</li>
+                        <li>Possède son propre système de fichiers</li>
+                        <li>A son propre réseau et espace de processus</li>
+                        <li>Peut être démarré, arrêté, supprimé</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>Analogie :</strong> Si l'image est la recette, le conteneur
+                        est le plat préparé.</p>
+                </div>
+
+                <div class="diagram">
+                    <img src="https://docs.docker.com/get-started/images/docker-architecture.webp"
+                        alt="Architecture Docker" style="max-width: 700px;">
+                    <div class="diagram-caption">Architecture Docker : Client, Daemon, Registry</div>
+                </div>
+
+                <h2>1.5 Pourquoi Docker est Essentiel en Data Engineering ?</h2>
+
+                <div class="example">
+                    <h4>💼 Cas d'usage concrets :</h4>
+                    <ul>
+                        <li><strong>Pipelines ETL Reproductibles</strong> : Un pipeline Python avec Pandas/Spark
+                            fonctionne partout</li>
+                        <li><strong>Bases de Données Isolées</strong> : PostgreSQL, MongoDB, Redis dans des conteneurs
+                            séparés</li>
+                        <li><strong>Orchestration</strong> : Apache Airflow, Prefect, Dagster conteneurisés</li>
+                        <li><strong>Streaming</strong> : Kafka, Flink pour le traitement temps réel</li>
+                        <li><strong>Notebooks</strong> : Jupyter avec environnement prêt à l'emploi</li>
+                        <li><strong>MLOps</strong> : Modèles ML packagés avec leurs dépendances</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>💡 Points clés à retenir</h3>
+                <ul>
+                    <li>Docker standardise le déploiement d'applications dans des conteneurs légers</li>
+                    <li>Les conteneurs résolvent le problème "ça marche sur ma machine"</li>
+                    <li>Docker est plus léger et rapide que les machines virtuelles</li>
+                    <li>Une image est un template, un conteneur est une instance en cours d'exécution</li>
+                    <li>Docker est essentiel pour les pipelines de données modernes</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-info">
+                <h4>Prochaine étape</h4>
+                <p>
+                    Maintenant que vous comprenez les concepts fondamentaux, passons à la <strong>Partie 2</strong>
+                    pour installer Docker et lancer vos premiers conteneurs.
+                </p>
+            </div>
+
+            <!-- Navigation bas de page -->
+            <div style="display: flex; justify-content: space-between; margin-top: 50px;">
+                <a href="../index.html"
+                    style="display: inline-block; padding: 12px 24px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    ← Retour à l'accueil
+                </a>
+                <a href="partie2.html"
+                    style="display: inline-block; padding: 12px 24px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+                    Partie 2 : Premiers pas →
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Docker pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-docker.min.js"></script>
+</body>
+
+</html>

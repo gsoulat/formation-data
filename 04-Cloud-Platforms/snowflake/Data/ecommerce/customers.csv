@@ -1,0 +1,21 @@
+customer_id,first_name,last_name,email,phone,date_of_birth,gender,country,state,city,postal_code,registration_date,customer_segment,lifetime_value
+1,John,Smith,john.smith@email.com,+1-555-0101,1985-03-15,Male,USA,California,Los Angeles,90210,2023-01-15 10:30:00,PREMIUM,15000.50
+2,Sarah,Johnson,sarah.johnson@email.com,+1-555-0102,1990-07-22,Female,USA,New York,New York,10001,2023-01-20 14:15:00,STANDARD,3500.75
+3,Michael,Brown,michael.brown@email.com,+1-555-0103,1988-11-08,Male,USA,Texas,Houston,77001,2023-02-01 09:45:00,STANDARD,2800.25
+4,Emily,Davis,emily.davis@email.com,+1-555-0104,1992-04-17,Female,Canada,Ontario,Toronto,M5V 3A1,2023-02-10 16:20:00,BASIC,750.00
+5,David,Wilson,david.wilson@email.com,+1-555-0105,1983-09-03,Male,USA,Florida,Miami,33101,2023-02-15 11:30:00,PREMIUM,12500.80
+6,Lisa,Miller,lisa.miller@email.com,+1-555-0106,1987-12-25,Female,USA,Illinois,Chicago,60601,2023-03-01 13:45:00,STANDARD,4200.60
+7,Robert,Garcia,robert.garcia@email.com,+1-555-0107,1991-06-11,Male,USA,California,San Francisco,94102,2023-03-05 15:10:00,BASIC,950.30
+8,Jennifer,Martinez,jennifer.martinez@email.com,+1-555-0108,1989-01-28,Female,USA,Washington,Seattle,98101,2023-03-10 08:25:00,STANDARD,3100.45
+9,Christopher,Anderson,chris.anderson@email.com,+1-555-0109,1986-08-14,Male,USA,Colorado,Denver,80201,2023-03-15 12:00:00,PREMIUM,8900.70
+10,Amanda,Taylor,amanda.taylor@email.com,+1-555-0110,1993-05-06,Female,USA,Oregon,Portland,97201,2023-03-20 17:30:00,BASIC,650.20
+11,Matthew,Thomas,matthew.thomas@email.com,+1-555-0111,1984-10-19,Male,Canada,British Columbia,Vancouver,V6B 1A1,2023-04-01 10:15:00,STANDARD,2950.85
+12,Jessica,Jackson,jessica.jackson@email.com,+1-555-0112,1995-02-14,Female,USA,Nevada,Las Vegas,89101,2023-04-05 14:40:00,BASIC,480.15
+13,Daniel,White,daniel.white@email.com,+1-555-0113,1982-07-29,Male,USA,Arizona,Phoenix,85001,2023-04-10 09:20:00,PREMIUM,11200.95
+14,Ashley,Harris,ashley.harris@email.com,+1-555-0114,1990-12-03,Female,USA,Georgia,Atlanta,30301,2023-04-15 16:55:00,STANDARD,3800.40
+15,Joshua,Clark,joshua.clark@email.com,+1-555-0115,1988-03-21,Male,USA,North Carolina,Charlotte,28201,2023-04-20 11:10:00,BASIC,720.60
+16,Michelle,Lewis,michelle.lewis@email.com,+1-555-0116,1991-09-07,Female,USA,Virginia,Richmond,23219,2023-05-01 13:25:00,STANDARD,2600.30
+17,Andrew,Robinson,andrew.robinson@email.com,+1-555-0117,1985-11-16,Male,USA,Pennsylvania,Philadelphia,19101,2023-05-05 15:45:00,PREMIUM,9800.55
+18,Stephanie,Walker,stephanie.walker@email.com,+1-555-0118,1992-08-12,Female,USA,Ohio,Columbus,43215,2023-05-10 08:30:00,BASIC,890.75
+19,Ryan,Young,ryan.young@email.com,+1-555-0119,1987-01-24,Male,USA,Michigan,Detroit,48201,2023-05-15 12:50:00,STANDARD,3300.90
+20,Nicole,Allen,nicole.allen@email.com,+1-555-0120,1994-04-09,Female,USA,Tennessee,Nashville,37201,2023-05-20 17:15:00,BASIC,560.25

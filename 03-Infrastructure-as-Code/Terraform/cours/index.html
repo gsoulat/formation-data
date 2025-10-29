@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation Terraform avec Azure - Modulaire</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Formation Terraform avec Azure</h1>
+            <p class="subtitle">Infrastructure as Code - De Zéro à Expert</p>
+            <div class="nav-buttons">
+                <a href="../formation.html" class="btn">Version Complète</a>
+            </div>
+        </header>
+
+        <div class="content">
+            <section>
+                <h2>📚 Modules de Formation</h2>
+                <p>Cette formation est divisée en 8 modules progressifs pour maîtriser Terraform avec Azure. Chaque module contient des explications détaillées, des exemples de code et des exercices pratiques.</p>
+
+                <div class="modules-grid">
+                    <!-- Module 1 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">📚</div>
+                            <h3 class="module-title">Module 1</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Introduction à Terraform</h4>
+                            <p class="module-description">Découvrez les concepts fondamentaux de l'Infrastructure as Code et de Terraform.</p>
+                            <ul class="module-topics">
+                                <li>Qu'est-ce que Terraform ?</li>
+                                <li>Infrastructure as Code (IaC)</li>
+                                <li>Terraform vs autres outils</li>
+                                <li>Architecture Terraform</li>
+                                <li>Concepts clés (Provider, Resource, State)</li>
+                            </ul>
+                            <a href="parties/partie1.html" class="module-link">Commencer →</a>
+                        </div>
+                    </div>
+
+                    <!-- Module 2 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">🔧</div>
+                            <h3 class="module-title">Module 2</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Installation et Configuration</h4>
+                            <p class="module-description">Installez Terraform et configurez votre environnement Azure.</p>
+                            <ul class="module-topics">
+                                <li>Installation sur macOS/Windows/Linux</li>
+                                <li>Installation d'Azure CLI</li>
+                                <li>Authentification avec Azure</li>
+                                <li>Configuration de l'éditeur VS Code</li>
+                            </ul>
+                            <a href="parties/partie2.html" class="module-link">Continuer →</a>
+                        </div>
+                    </div>
+
+                    <!-- Module 3 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">🚀</div>
+                            <h3 class="module-title">Module 3</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Premier Projet Terraform</h4>
+                            <p class="module-description">Créez votre première infrastructure avec Terraform.</p>
+                            <ul class="module-topics">
+                                <li>Structure d'un projet</li>
+                                <li>Créer un Resource Group Azure</li>
+                                <li>Commandes essentielles (init, plan, apply)</li>
+                                <li>Workflow Terraform</li>
+                            </ul>
+                            <a href="parties/partie3.html" class="module-link">Continuer →</a>
+                        </div>
+                    </div>
+
+                    <!-- Module 4 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">📊</div>
+                            <h3 class="module-title">Module 4</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Variables et Outputs</h4>
+                            <p class="module-description">Rendez votre code réutilisable avec les variables et outputs.</p>
+                            <ul class="module-topics">
+                                <li>Déclarer des variables</li>
+                                <li>Types de variables (string, number, list, map)</li>
+                                <li>Fournir des valeurs (tfvars, env, CLI)</li>
+                                <li>Outputs pour extraire des informations</li>
+                            </ul>
+                            <a href="parties/partie4.html" class="module-link">Continuer →</a>
+                        </div>
+                    </div>
+
+                    <!-- Module 5 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">🏗️</div>
+                            <h3 class="module-title">Module 5</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Créer des Ressources Azure</h4>
+                            <p class="module-description">Déployez des ressources Azure complètes avec Terraform.</p>
+                            <ul class="module-topics">
+                                <li>Virtual Network et Subnets</li>
+                                <li>Machines Virtuelles Linux</li>
+                                <li>Storage Account</li>
+                                <li>Azure Database for PostgreSQL</li>
+                                <li>Azure Kubernetes Service (AKS)</li>
+                            </ul>
+                            <a href="parties/partie5.html" class="module-link">Continuer →</a>
+                        </div>
+                    </div>
+
+                    <!-- Module 6 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">💾</div>
+                            <h3 class="module-title">Module 6</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Gestion du State</h4>
+                            <p class="module-description">Maîtrisez la gestion du state Terraform pour la production.</p>
+                            <ul class="module-topics">
+                                <li>Comprendre le state file</li>
+                                <li>State local vs remote</li>
+                                <li>Configurer Azure Storage backend</li>
+                                <li>Commandes state utiles</li>
+                                <li>Best practices de sécurité</li>
+                            </ul>
+                            <a href="parties/partie6.html" class="module-link">Continuer →</a>
+                        </div>
+                    </div>
+
+                    <!-- Module 7 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">📦</div>
+                            <h3 class="module-title">Module 7</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Modules Terraform</h4>
+                            <p class="module-description">Créez des modules réutilisables pour votre infrastructure.</p>
+                            <ul class="module-topics">
+                                <li>Qu'est-ce qu'un module ?</li>
+                                <li>Créer un module custom</li>
+                                <li>Utiliser des modules</li>
+                                <li>Modules publics (Terraform Registry)</li>
+                            </ul>
+                            <a href="parties/partie7.html" class="module-link">Continuer →</a>
+                        </div>
+                    </div>
+
+                    <!-- Module 8 -->
+                    <div class="module-card">
+                        <div class="module-header">
+                            <div class="module-icon">✅</div>
+                            <h3 class="module-title">Module 8</h3>
+                        </div>
+                        <div class="module-body">
+                            <h4>Best Practices & CI/CD</h4>
+                            <p class="module-description">Appliquez les meilleures pratiques et automatisez vos déploiements.</p>
+                            <ul class="module-topics">
+                                <li>Structure de projet</li>
+                                <li>Nommage et tags</li>
+                                <li>Gestion des secrets</li>
+                                <li>Pipeline Azure DevOps</li>
+                                <li>Pipeline GitHub Actions</li>
+                                <li>Projet complet 3-Tier</li>
+                            </ul>
+                            <a href="parties/partie8.html" class="module-link">Continuer →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>💡 Comment utiliser cette formation ?</h4>
+                    <p>Pour une expérience optimale, suivez les modules dans l'ordre. Chaque module contient :</p>
+                    <ul>
+                        <li>Des explications détaillées des concepts</li>
+                        <li>Des exemples de code commentés</li>
+                        <li>Des exercices pratiques</li>
+                        <li>Des liens vers la documentation officielle</li>
+                    </ul>
+                    <p><strong>Durée estimée :</strong> 6-8 heures pour l'ensemble de la formation</p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Formation Data Engineering - Simplon</p>
+            <p>Terraform avec Azure - Infrastructure as Code</p>
+        </footer>
+    </div>
+</body>
+</html>

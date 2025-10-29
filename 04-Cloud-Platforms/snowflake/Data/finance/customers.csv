@@ -1,0 +1,21 @@
+customer_id,first_name,last_name,email,phone,date_of_birth,address,city,state,country,postal_code,ssn_hash,credit_score,customer_since,customer_status,income_range,risk_category
+F001,John,Anderson,john.anderson@email.com,+1-555-1001,1985-04-12,123 Main St,New York,NY,USA,10001,d4f7e2c9a1b8,750,2020-01-15,ACTIVE,75000-100000,LOW
+F002,Sarah,Thompson,sarah.thompson@email.com,+1-555-1002,1990-08-25,456 Oak Ave,Los Angeles,CA,USA,90210,b3e9f1a5c2d7,680,2020-03-22,ACTIVE,50000-75000,MEDIUM
+F003,Michael,Johnson,michael.johnson@email.com,+1-555-1003,1978-12-03,789 Pine St,Chicago,IL,USA,60601,a1c5e8b4d9f2,820,2019-11-08,ACTIVE,100000-150000,LOW
+F004,Emily,Brown,emily.brown@email.com,+1-555-1004,1995-06-18,321 Elm Dr,Houston,TX,USA,77001,e2f8a3c7b1d5,620,2021-07-14,ACTIVE,40000-50000,HIGH
+F005,David,Wilson,david.wilson@email.com,+1-555-1005,1983-09-30,654 Maple Ln,Phoenix,AZ,USA,85001,c7b2e5a9f8d1,710,2020-09-03,ACTIVE,60000-75000,MEDIUM
+F006,Jessica,Davis,jessica.davis@email.com,+1-555-1006,1987-02-14,987 Birch Rd,Philadelphia,PA,USA,19101,f5d1c8e3a7b2,775,2020-05-17,ACTIVE,80000-100000,LOW
+F007,Christopher,Miller,chris.miller@email.com,+1-555-1007,1992-11-27,159 Cedar St,San Antonio,TX,USA,78201,a9e4f7c1b5d8,645,2021-12-09,ACTIVE,45000-60000,MEDIUM
+F008,Amanda,Garcia,amanda.garcia@email.com,+1-555-1008,1986-07-08,753 Spruce Ave,San Diego,CA,USA,92101,b8d3a6e2c9f4,790,2019-08-25,ACTIVE,85000-100000,LOW
+F009,Matthew,Rodriguez,matt.rodriguez@email.com,+1-555-1009,1994-01-21,852 Willow Dr,Dallas,TX,USA,75201,e6a1f4c8b7d2,605,2022-02-11,ACTIVE,35000-50000,HIGH
+F010,Jennifer,Martinez,jennifer.martinez@email.com,+1-555-1010,1981-05-16,741 Ash Blvd,San Jose,CA,USA,95101,d2c9e5a8f1b6,725,2020-10-30,ACTIVE,70000-85000,LOW
+F011,Daniel,Hernandez,daniel.hernandez@email.com,+1-555-1011,1989-10-02,963 Palm St,Austin,TX,USA,73301,f8b4e7a2c5d1,665,2021-04-18,ACTIVE,55000-70000,MEDIUM
+F012,Lisa,Lopez,lisa.lopez@email.com,+1-555-1012,1993-03-29,357 Fir Ave,Jacksonville,FL,USA,32099,a3d7f9c2e5b8,580,2022-06-07,SUSPENDED,30000-40000,HIGH
+F013,Robert,Gonzalez,robert.gonzalez@email.com,+1-555-1013,1975-12-11,951 Poplar Rd,Fort Worth,TX,USA,76101,c5e2a8f7b3d9,845,2019-03-14,ACTIVE,120000-150000,LOW
+F014,Michelle,Wilson,michelle.wilson@email.com,+1-555-1014,1988-08-04,486 Hickory Ln,Columbus,OH,USA,43085,b7f3d1a9e4c8,695,2021-01-26,ACTIVE,65000-80000,MEDIUM
+F015,Kevin,Anderson,kevin.anderson@email.com,+1-555-1015,1991-04-17,724 Walnut St,Charlotte,NC,USA,28201,e1a5c9f6b2d7,735,2020-12-08,ACTIVE,75000-90000,LOW
+F016,Rachel,Thomas,rachel.thomas@email.com,+1-555-1016,1984-09-23,813 Chestnut Ave,San Francisco,CA,USA,94102,d9b6e3a1f8c4,760,2020-07-21,ACTIVE,90000-110000,LOW
+F017,James,Jackson,james.jackson@email.com,+1-555-1017,1996-01-08,675 Sycamore Dr,Indianapolis,IN,USA,46201,f4c8a5e9b7d1,615,2022-09-15,ACTIVE,42000-55000,HIGH
+F018,Nicole,White,nicole.white@email.com,+1-555-1018,1982-06-25,392 Magnolia Blvd,Seattle,WA,USA,98101,a8e2f5c3b9d6,780,2019-12-03,ACTIVE,95000-110000,LOW
+F019,Brandon,Harris,brandon.harris@email.com,+1-555-1019,1987-11-14,547 Dogwood St,Denver,CO,USA,80201,c2d6a9f4e7b1,700,2021-08-29,ACTIVE,68000-80000,MEDIUM
+F020,Stephanie,Clark,stephanie.clark@email.com,+1-555-1020,1990-02-28,918 Redwood Ave,Washington,DC,USA,20001,b1f7e4a8c6d3,655,2021-11-12,ACTIVE,52000-65000,MEDIUM

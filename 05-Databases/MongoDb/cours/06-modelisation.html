@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6: Modelisation des Donnees - Formation MongoDB</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Module 6: Modelisation des Donnees</h1>
+            <p class="subtitle">Embedded vs Referenced, patterns courants</p>
+            <span class="duration">Duree: 8 minutes</span>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="01-introduction.html">M1: Introduction</a></li>
+                <li><a href="02-installation.html">M2: Installation</a></li>
+                <li><a href="03-crud.html">M3: CRUD</a></li>
+                <li><a href="04-aggregation.html">M4: Agregation</a></li>
+                <li><a href="05-index-performance.html">M5: Index</a></li>
+                <li><a href="06-modelisation.html" class="active">M6: Modelisation</a></li>
+                <li><a href="07-data-engineering.html">M7: Data Engineering</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs du module</h2>
+                <ul>
+                    <li>Comprendre Embedded vs Referenced</li>
+                    <li>Connaitre les patterns de modelisation</li>
+                    <li>Appliquer les regles d'or de la modelisation</li>
+                    <li>Choisir la bonne strategie selon le cas d'usage</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Embedded vs Referenced : Deux approches</h2>
+
+                <p>
+                    MongoDB offre deux principales strategies pour modeliser les relations entre documents :
+                </p>
+
+                <h3>1. Embedded Documents (Documents imbriques)</h3>
+
+                <p>Les donnees liees sont stockees dans le meme document :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">{
+  "_id": ObjectId("..."),
+  "name": "Alice Dupont",
+  "email": "alice@example.com",
+  "address": {
+    "street": "123 Rue de la Paix",
+    "city": "Paris",
+    "zipcode": "75001",
+    "country": "France"
+  },
+  "orders": [
+    {
+      "order_id": "ORD001",
+      "date": ISODate("2024-01-15"),
+      "total": 150.50,
+      "items": [
+        { "product": "Laptop", "price": 150.50, "quantity": 1 }
+      ]
+    },
+    {
+      "order_id": "ORD002",
+      "date": ISODate("2024-01-20"),
+      "total": 45.00,
+      "items": [
+        { "product": "Mouse", "price": 25.00, "quantity": 1 },
+        { "product": "Keyboard", "price": 20.00, "quantity": 1 }
+      ]
+    }
+  ]
+}</code></pre>
+                </div>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Avantages</h4>
+                        <ul>
+                            <li>Une seule requete pour tout</li>
+                            <li>Meilleures performances en lecture</li>
+                            <li>Transactions atomiques automatiques</li>
+                            <li>Pas de joins necessaires</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Inconvenients</h4>
+                        <ul>
+                            <li>Limite de 16 MB par document</li>
+                            <li>Duplication de donnees possible</li>
+                            <li>Difficile de requeter uniquement les sous-documents</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>2. Referenced Documents (Documents references)</h3>
+
+                <p>Les donnees sont stockees dans des collections separees avec des references :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Collection users
+{
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "name": "Alice Dupont",
+  "email": "alice@example.com"
+}
+
+// Collection orders
+{
+  "_id": ObjectId("507f191e810c19729de860ea"),
+  "user_id": ObjectId("507f1f77bcf86cd799439011"),  // Reference
+  "order_number": "ORD001",
+  "date": ISODate("2024-01-15"),
+  "total": 150.50
+}
+
+// Collection order_items
+{
+  "_id": ObjectId("..."),
+  "order_id": ObjectId("507f191e810c19729de860ea"),  // Reference
+  "product": "Laptop",
+  "price": 150.50,
+  "quantity": 1
+}</code></pre>
+                </div>
+
+                <p><strong>Recuperer avec $lookup :</strong></p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">db.users.aggregate([
+  {
+    $lookup: {
+      from: "orders",
+      localField: "_id",
+      foreignField: "user_id",
+      as: "orders"
+    }
+  }
+])</code></pre>
+                </div>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Avantages</h4>
+                        <ul>
+                            <li>Pas de limite de taille</li>
+                            <li>Reutilisation des donnees (pas de duplication)</li>
+                            <li>Flexibilite pour requeter chaque collection</li>
+                            <li>Mise a jour plus facile (un seul endroit)</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Inconvenients</h4>
+                        <ul>
+                            <li>Plusieurs requetes ou utilisation de $lookup</li>
+                            <li>Performances legerement inferieures</li>
+                            <li>Joins necessaires</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Quand utiliser chaque approche ?</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Critere</th>
+                            <th>Embedded</th>
+                            <th>Referenced</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Relation</strong></td>
+                            <td>One-to-few (1 a quelques)</td>
+                            <td>One-to-many (1 a beaucoup), Many-to-many</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Frequence d'acces</strong></td>
+                            <td>Toujours ensemble</td>
+                            <td>Acces separe possible</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Taille des donnees</strong></td>
+                            <td>Petite a moyenne</td>
+                            <td>Grande (> 16 MB)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Frequence de mise a jour</strong></td>
+                            <td>Rarement mis a jour</td>
+                            <td>Souvent mis a jour</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duplication acceptable ?</strong></td>
+                            <td>Oui</td>
+                            <td>Non</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>Patterns de modelisation courants</h2>
+
+                <h3>Pattern 1 : One-to-Few (Embedded)</h3>
+
+                <p>Exemple : Un utilisateur avec quelques adresses</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">{
+  "name": "Alice",
+  "addresses": [
+    { "type": "home", "city": "Paris" },
+    { "type": "work", "city": "Lyon" }
+  ]
+}</code></pre>
+                </div>
+
+                <h3>Pattern 2 : One-to-Many (Referenced)</h3>
+
+                <p>Exemple : Un auteur avec beaucoup de livres</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Collection authors
+{ "_id": ObjectId("..."), "name": "Victor Hugo" }
+
+// Collection books
+{ "title": "Les Miserables", "author_id": ObjectId("...") }
+{ "title": "Notre-Dame de Paris", "author_id": ObjectId("...") }</code></pre>
+                </div>
+
+                <h3>Pattern 3 : Many-to-Many (Array of References)</h3>
+
+                <p>Exemple : Etudiants et cours</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">// Collection students
+{
+  "name": "Alice",
+  "course_ids": [ObjectId("course1"), ObjectId("course2")]
+}
+
+// Collection courses
+{
+  "name": "Data Engineering",
+  "student_ids": [ObjectId("student1"), ObjectId("student2")]
+}</code></pre>
+                </div>
+
+                <h3>Pattern 4 : Bucket Pattern (pour time-series)</h3>
+
+                <p>Regrouper les donnees temporelles par buckets :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-javascript">{
+  "sensor_id": "temp_sensor_01",
+  "date": ISODate("2024-01-15"),
+  "hour": 10,
+  "measurements": [
+    { "minute": 0, "temperature": 22.5 },
+    { "minute": 1, "temperature": 22.6 },
+    { "minute": 2, "temperature": 22.4 },
+    // ... 60 mesures dans un document
+  ],
+  "count": 60,
+  "avg_temperature": 22.5
+}</code></pre>
+                </div>
+
+                <p><strong>Avantages :</strong> Reduit le nombre de documents, ameliore les performances</p>
+            </section>
+
+            <div class="key-points">
+                <h3>Regles d'or pour la modelisation MongoDB</h3>
+                <ul>
+                    <li>Modelisez vos donnees en fonction de vos patterns d'acces</li>
+                    <li>Embed quand vous lisez ensemble, reference quand independant</li>
+                    <li>Privilegiez la denormalisation si cela ameliore les performances</li>
+                    <li>Utilisez embedded pour one-to-few, referenced pour one-to-many</li>
+                    <li>Attention a la limite de 16 MB par document</li>
+                    <li>Testez et mesurez avec vos vraies donnees</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="05-index-performance.html" class="nav-button prev">Module 5: Index</a>
+                <a href="07-data-engineering.html" class="nav-button next">Module 7: Data Engineering</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Module 6/7 - Formation MongoDB pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+</body>
+</html>

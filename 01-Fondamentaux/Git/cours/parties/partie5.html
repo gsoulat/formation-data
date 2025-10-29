@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 5 - Collaboration avec des dépôts distants</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤝 Partie 5</h1>
+            <p class="subtitle">Collaboration avec des dépôts distants (Remote)</p>
+            <span class="duration">⏱️ Durée : 35 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie4.html">← Partie 4</a></li>
+                <li><a href="partie6.html">Partie 6 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>5. Collaboration avec des dépôts distants (Remote)</h2>
+
+                <h3>Qu'est-ce qu'un remote ?</h3>
+
+                <p>
+                    Un <strong>remote</strong> est une version de votre projet hébergée sur un serveur (GitHub, GitLab, Bitbucket).
+                    Il permet la collaboration et la sauvegarde du code.
+                </p>
+
+                <div class="image-container">
+                    <img src="https://git-scm.com/book/en/v2/images/remote-branches-1.png" alt="Remote Branches" style="max-width: 600px;">
+                    <p class="image-caption">Schéma de synchronisation entre dépôt local et remote</p>
+                </div>
+
+                <h3>Gérer les remotes</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lister les remotes configurés
+git remote -v
+
+# Résultat typique :
+# origin  https://github.com/user/repo.git (fetch)
+# origin  https://github.com/user/repo.git (push)
+
+# Ajouter un remote
+git remote add origin https://github.com/username/projet.git
+
+# Renommer un remote
+git remote rename origin upstream
+
+# Supprimer un remote
+git remote remove upstream
+
+# Voir les détails d'un remote
+git remote show origin
+
+# Changer l'URL d'un remote
+git remote set-url origin https://github.com/newuser/newrepo.git</code></pre>
+                </div>
+
+                <h3>Fetch, Pull et Push</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>📥 git fetch</h4>
+                        <p>Télécharge les commits du remote sans les fusionner</p>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-dot red"></span>
+                                <span class="code-dot yellow"></span>
+                                <span class="code-dot green"></span>
+                            </div>
+                            <pre><code class="language-bash">git fetch origin
+git fetch --all</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>⬇️ git pull</h4>
+                        <p>Télécharge ET fusionne les commits (fetch + merge)</p>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-dot red"></span>
+                                <span class="code-dot yellow"></span>
+                                <span class="code-dot green"></span>
+                            </div>
+                            <pre><code class="language-bash">git pull origin main
+git pull --rebase</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>⬆️ git push</h4>
+                        <p>Envoie vos commits locaux vers le remote</p>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-dot red"></span>
+                                <span class="code-dot yellow"></span>
+                                <span class="code-dot green"></span>
+                            </div>
+                            <pre><code class="language-bash">git push origin main
+git push -u origin feature</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Workflow de collaboration complet</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># 1. Cloner le projet
+git clone https://github.com/team/data-platform.git
+cd data-platform
+
+# 2. Créer une branche pour votre feature
+git checkout -b feature/mongodb-etl
+
+# 3. Développer votre feature
+echo "def extract_mongodb():" > mongodb_extractor.py
+git add mongodb_extractor.py
+git commit -m "feat: Add MongoDB data extractor"
+
+# 4. Récupérer les dernières modifications de main
+git fetch origin
+git checkout main
+git pull origin main
+
+# 5. Rebaser votre branche sur main (optionnel mais recommandé)
+git checkout feature/mongodb-etl
+git rebase main
+
+# 6. Pousser votre branche vers le remote
+git push -u origin feature/mongodb-etl
+# Le -u (--set-upstream) crée le lien entre la branche locale et distante
+
+# 7. Créer une Pull Request sur GitHub/GitLab
+
+# 8. Après validation et merge de la PR, mettre à jour main
+git checkout main
+git pull origin main
+
+# 9. Supprimer la branche locale
+git branch -d feature/mongodb-etl
+
+# 10. Supprimer la branche distante
+git push origin --delete feature/mongodb-etl</code></pre>
+                </div>
+
+                <h3>Commandes push avancées</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Pousser une nouvelle branche et créer le lien
+git push -u origin feature/new-dashboard
+
+# Pousser tous les tags
+git push --tags
+
+# Pousser toutes les branches
+git push --all
+
+# Forcer le push (DANGER : réécrit l'historique distant)
+git push --force origin feature/experimental
+
+# Force push plus sûr (échoue si quelqu'un a pushé entre-temps)
+git push --force-with-lease origin feature/api-rest
+
+# Supprimer une branche distante
+git push origin --delete feature/old-feature</code></pre>
+                </div>
+
+                <div class="alert alert-danger">
+                    <h4>Attention au force push !</h4>
+                    <p>
+                        <code>git push --force</code> peut détruire le travail de vos collaborateurs.
+                        Utilisez toujours <code>--force-with-lease</code> à la place, qui échoue si quelqu'un
+                        a pushé des commits dont vous n'avez pas connaissance.
+                    </p>
+                </div>
+
+                <h3>Suivre des branches distantes</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Voir toutes les branches (locales et distantes)
+git branch -a
+
+# Créer une branche locale depuis une branche distante
+git checkout -b feature/api origin/feature/api
+# ou plus simplement :
+git checkout --track origin/feature/api
+
+# Voir les branches de suivi
+git branch -vv
+
+# Mettre à jour les références des branches distantes
+git fetch --prune
+# Supprime les références locales de branches qui n'existent plus sur le remote</code></pre>
+                </div>
+
+                <h3>Pull Request / Merge Request</h3>
+
+                <p>
+                    Les <strong>Pull Requests</strong> (GitHub) ou <strong>Merge Requests</strong> (GitLab)
+                    sont le mécanisme standard pour intégrer du code dans un projet collaboratif.
+                </p>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Créer une PR</h4>
+                        <ol>
+                            <li>Pusher votre branche feature</li>
+                            <li>Aller sur GitHub/GitLab</li>
+                            <li>Cliquer sur "New Pull Request"</li>
+                            <li>Sélectionner base (main) et compare (votre feature)</li>
+                            <li>Ajouter description et captures d'écran</li>
+                            <li>Assigner des reviewers</li>
+                        </ol>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>Processus de review</h4>
+                        <ol>
+                            <li>Les reviewers commentent le code</li>
+                            <li>Vous effectuez les modifications</li>
+                            <li>Push les corrections sur la même branche</li>
+                            <li>La PR se met à jour automatiquement</li>
+                            <li>Approbation et merge par le lead</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <h4>Bonnes pratiques pour les PR</h4>
+                    <ul>
+                        <li>Gardez les PR petites (&lt; 400 lignes si possible)</li>
+                        <li>Écrivez une description claire avec le contexte</li>
+                        <li>Ajoutez des captures d'écran pour les changements UI</li>
+                        <li>Liez les issues/tickets associés</li>
+                        <li>Répondez rapidement aux commentaires de review</li>
+                        <li>Assurez-vous que les tests passent avant de demander une review</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 5 terminée !</h4>
+                <p>
+                    Vous savez maintenant collaborer avec des dépôts distants et créer des Pull Requests.
+                    Passons aux commandes avancées !
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="../exercices.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                        🎯 Faire les exercices
+                    </a>
+                    <a href="partie6.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 6 →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

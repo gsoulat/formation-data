@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page 2 - OLTP vs OLAP | Formation Data Warehouse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e74c3c;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #e74c3c;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: #e74c3c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .comparison-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .system-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .system-card:hover {
+            border-color: #e74c3c;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .system-card.active {
+            border-color: #27ae60;
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .system-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #e74c3c;
+        }
+
+        .system-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+
+        .characteristics {
+            list-style: none;
+        }
+
+        .characteristics li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            animation: fadeInLeft 0.5s ease-out forwards;
+        }
+
+        .characteristics li:nth-child(1) { animation-delay: 0.1s; }
+        .characteristics li:nth-child(2) { animation-delay: 0.2s; }
+        .characteristics li:nth-child(3) { animation-delay: 0.3s; }
+        .characteristics li:nth-child(4) { animation-delay: 0.4s; }
+        .characteristics li:nth-child(5) { animation-delay: 0.5s; }
+
+        .characteristics li:before {
+            content: "▶";
+            color: #e74c3c;
+            margin-right: 10px;
+        }
+
+        .interactive-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #e74c3c;
+            text-align: center;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: #34495e;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #e74c3c;
+            transform: scale(1.05);
+        }
+
+        .tab:hover {
+            background: #e74c3c;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .example-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #e74c3c;
+            transition: all 0.3s ease;
+        }
+
+        .example-card:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .quiz-section {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .quiz-question {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quiz-option {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .quiz-option.correct {
+            background: #27ae60;
+        }
+
+        .quiz-option.incorrect {
+            background: #c0392b;
+        }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .quiz-feedback.show {
+            display: block;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .quiz-feedback.correct {
+            background: rgba(39, 174, 96, 0.3);
+        }
+
+        .quiz-feedback.incorrect {
+            background: rgba(192, 57, 43, 0.3);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .comparison-container {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="main-menu"></div>
+
+        <div class="header">
+            <h1>OLTP vs OLAP</h1>
+            <p>Comprendre les différences fondamentales entre systèmes transactionnels et analytiques</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="page1_intro_datawarehouse.html" class="nav-btn">← Retour Introduction</a>
+            <a href="page3_architecture_dw.html" class="nav-btn">Architecture DW →</a>
+        </div>
+
+        <div class="comparison-container">
+            <div class="system-card" onclick="toggleCard(this)">
+                <h2 class="system-title">OLTP</h2>
+                <p class="system-subtitle">Online Transaction Processing</p>
+                <ul class="characteristics">
+                    <li><strong>Objectif :</strong> Gestion des opérations quotidiennes</li>
+                    <li><strong>Données :</strong> Actuelles, détaillées, normalisées</li>
+                    <li><strong>Utilisateurs :</strong> Opérationnels (milliers)</li>
+                    <li><strong>Requêtes :</strong> Simples, rapides, CRUD</li>
+                    <li><strong>Volume :</strong> Lectures/écritures équilibrées</li>
+                </ul>
+            </div>
+
+            <div class="system-card" onclick="toggleCard(this)">
+                <h2 class="system-title">OLAP</h2>
+                <p class="system-subtitle">Online Analytical Processing</p>
+                <ul class="characteristics">
+                    <li><strong>Objectif :</strong> Analyse et aide à la décision</li>
+                    <li><strong>Données :</strong> Historiques, agrégées, dénormalisées</li>
+                    <li><strong>Utilisateurs :</strong> Analystes, décideurs (centaines)</li>
+                    <li><strong>Requêtes :</strong> Complexes, analytiques, lecture</li>
+                    <li><strong>Volume :</strong> Principalement des lectures</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="interactive-section">
+            <h2 class="section-title">Exemples Pratiques par Secteur</h2>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab(event, 'banking')">Banque</button>
+                <button class="tab" onclick="showTab(event, 'retail')">Commerce</button>
+                <button class="tab" onclick="showTab(event, 'healthcare')">Santé</button>
+            </div>
+
+            <div id="banking" class="tab-content active">
+                <div class="example-grid">
+                    <div class="example-card">
+                        <h3>🏧 OLTP - Système Bancaire</h3>
+                        <p><strong>Opération :</strong> Retrait au distributeur</p>
+                        <p><strong>Données :</strong> Solde compte, historique transactions</p>
+                        <p><strong>Réponse :</strong> < 2 secondes</p>
+                        <p><strong>Utilisateurs :</strong> Clients (millions)</p>
+                    </div>
+                    <div class="example-card">
+                        <h3>📊 OLAP - Analyse Bancaire</h3>
+                        <p><strong>Analyse :</strong> Tendances de crédit par région</p>
+                        <p><strong>Données :</strong> 5 ans d'historique agrégé</p>
+                        <p><strong>Réponse :</strong> Quelques minutes</p>
+                        <p><strong>Utilisateurs :</strong> Analystes risque (dizaines)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="retail" class="tab-content">
+                <div class="example-grid">
+                    <div class="example-card">
+                        <h3>🛒 OLTP - E-commerce</h3>
+                        <p><strong>Opération :</strong> Commande en ligne</p>
+                        <p><strong>Données :</strong> Stock, prix, panier client</p>
+                        <p><strong>Réponse :</strong> Temps réel</p>
+                        <p><strong>Utilisateurs :</strong> Clients web (millions)</p>
+                    </div>
+                    <div class="example-card">
+                        <h3>📈 OLAP - Business Intelligence</h3>
+                        <p><strong>Analyse :</strong> Performance des ventes par produit</p>
+                        <p><strong>Données :</strong> Historique multi-années</p>
+                        <p><strong>Réponse :</strong> Rapports batch</p>
+                        <p><strong>Utilisateurs :</strong> Direction commerciale</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="healthcare" class="tab-content">
+                <div class="example-grid">
+                    <div class="example-card">
+                        <h3>🏥 OLTP - Dossier Patient</h3>
+                        <p><strong>Opération :</strong> Consultation médicale</p>
+                        <p><strong>Données :</strong> Antécédents, prescriptions</p>
+                        <p><strong>Réponse :</strong> Immédiate</p>
+                        <p><strong>Utilisateurs :</strong> Personnel médical</p>
+                    </div>
+                    <div class="example-card">
+                        <h3>🔬 OLAP - Épidémiologie</h3>
+                        <p><strong>Analyse :</strong> Tendances de maladies</p>
+                        <p><strong>Données :</strong> Agrégations populationnelles</p>
+                        <p><strong>Réponse :</strong> Études longitudinales</p>
+                        <p><strong>Utilisateurs :</strong> Chercheurs, autorités</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-section">
+            <h2 class="section-title">Quiz de Compréhension</h2>
+            <div class="quiz-question">
+                Quel système utiliseriez-vous pour analyser les tendances de vente des 3 dernières années ?
+            </div>
+            <div class="quiz-options">
+                <button class="quiz-option" onclick="checkAnswer(this, false)">OLTP - Base opérationnelle</button>
+                <button class="quiz-option" onclick="checkAnswer(this, true)">OLAP - Data Warehouse</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Les deux systèmes</button>
+                <button class="quiz-option" onclick="checkAnswer(this, false)">Aucun des deux</button>
+            </div>
+            <div id="quiz-feedback" class="quiz-feedback">
+                <p id="feedback-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCard(card) {
+            // Remove active class from all cards
+            document.querySelectorAll('.system-card').forEach(c => c.classList.remove('active'));
+
+            // Add active class to clicked card
+            card.classList.add('active');
+
+            // Add a pulse effect
+            card.style.animation = 'none';
+            setTimeout(() => {
+                card.style.animation = 'slideInUp 0.5s ease-out';
+            }, 10);
+        }
+
+        function showTab(event, tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function checkAnswer(option, isCorrect) {
+            const allOptions = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quiz-feedback');
+            const feedbackText = document.getElementById('feedback-text');
+
+            // Disable all options
+            allOptions.forEach(opt => {
+                opt.disabled = true;
+                if (opt !== option) {
+                    opt.style.opacity = '0.5';
+                }
+            });
+
+            // Show result
+            if (isCorrect) {
+                option.classList.add('correct');
+                feedback.classList.add('show', 'correct');
+                feedbackText.innerHTML = '✅ <strong>Correct !</strong><br>OLAP est conçu pour l\'analyse de données historiques et les tendances. Un Data Warehouse stocke et optimise les données pour ce type de requêtes analytiques complexes.';
+            } else {
+                option.classList.add('incorrect');
+                feedback.classList.add('show', 'incorrect');
+                feedbackText.innerHTML = '❌ <strong>Incorrect.</strong><br>Pour analyser des tendances historiques sur plusieurs années, il faut utiliser un système OLAP (Data Warehouse) qui est optimisé pour les requêtes analytiques complexes sur de gros volumes de données.';
+
+                // Highlight correct answer
+                allOptions.forEach(opt => {
+                    if (opt.onclick.toString().includes('true')) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+        }
+
+        // Chargement du menu
+        function loadMenu() {
+            fetch('menu.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('main-menu').innerHTML = data;
+                })
+                .catch(error => console.log('Menu non chargé:', error));
+        }
+
+        // Add smooth scrolling animation on page load
+        window.addEventListener('load', () => {
+            loadMenu();
+            document.querySelector('.container').style.opacity = '0';
+            setTimeout(() => {
+                document.querySelector('.container').style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

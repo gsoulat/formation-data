@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 5 : Delta Lake et gestion des données</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌊 Partie 5 : Delta Lake et gestion des données</h1>
+            <p class="subtitle">Des pipelines de données fiables avec Delta Lake</p>
+            <span class="duration">⏱️ Durée : 45 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie4.html">← Partie 4</a></li>
+                <li><a href="partie5.html" class="active">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="objectives">
+                <h2>🎯 Objectifs d'apprentissage</h2>
+                <ul>
+                    <li>Comprendre Delta Lake et ses avantages</li>
+                    <li>Créer et manipuler des tables Delta</li>
+                    <li>Utiliser les transactions ACID sur les données</li>
+                    <li>Exploiter le Time Travel pour l'audit et le rollback</li>
+                    <li>Optimiser et maintenir les tables Delta</li>
+                    <li>Implémenter le streaming avec Delta Lake</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>1. Introduction à Delta Lake</h2>
+
+                <p>Delta Lake est une <strong>couche de stockage open source</strong> qui apporte la fiabilité des bases de données aux data lakes. C'est le fondement de l'architecture Lakehouse de Databricks.</p>
+
+                <h3>Problèmes des Data Lakes traditionnels</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Problème</th>
+                            <th>Impact</th>
+                            <th>Solution Delta Lake</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pas de transactions ACID</td>
+                            <td>Données corrompues lors d'écritures concurrentes</td>
+                            <td>✅ ACID complet</td>
+                        </tr>
+                        <tr>
+                            <td>Lectures incohérentes</td>
+                            <td>Résultats différents selon le timing</td>
+                            <td>✅ Isolation des transactions</td>
+                        </tr>
+                        <tr>
+                            <td>Pas d'historique</td>
+                            <td>Impossible de revenir en arrière</td>
+                            <td>✅ Time Travel</td>
+                        </tr>
+                        <tr>
+                            <td>Difficile à maintenir</td>
+                            <td>Petits fichiers, performances dégradées</td>
+                            <td>✅ OPTIMIZE et Z-ORDER</td>
+                        </tr>
+                        <tr>
+                            <td>Pas de schéma enforcement</td>
+                            <td>Données invalides insérées</td>
+                            <td>✅ Schema enforcement & evolution</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Architecture Delta Lake</h3>
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                    DELTA LAKE ARCHITECTURE                   │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │            Transaction Log (_delta_log/)             │    │
+│  │  • JSON files with change history                    │    │
+│  │  • Versioning and ACID guarantees                    │    │
+│  │  • Checkpoint files for performance                  │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                            │                                  │
+│                            ▼                                  │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              Data Files (Parquet)                    │    │
+│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐    │    │
+│  │  │ part-1 │  │ part-2 │  │ part-3 │  │ part-4 │    │    │
+│  │  │.parquet│  │.parquet│  │.parquet│  │.parquet│    │    │
+│  │  └────────┘  └────────┘  └────────┘  └────────┘    │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                               │
+└─────────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>2. Créer et manipuler des tables Delta</h2>
+
+                <h3>Création d'une table Delta</h3>
+                <pre><code class="language-python"># Méthode 1 : Depuis un DataFrame
+from pyspark.sql.functions import *
+
+data = [
+    ("2024-01-01", "ProductA", 100, 1500.0),
+    ("2024-01-01", "ProductB", 50, 750.0),
+    ("2024-01-02", "ProductA", 120, 1800.0)
+]
+
+df = spark.createDataFrame(data, ["date", "product", "quantity", "revenue"])
+
+# Écrire en format Delta
+df.write.format("delta").mode("overwrite").save("/mnt/delta/sales")
+
+# Méthode 2 : Créer une table managée
+df.write.format("delta").mode("overwrite").saveAsTable("sales")
+
+# Méthode 3 : Avec SQL
+spark.sql("""
+    CREATE TABLE IF NOT EXISTS sales_delta (
+        date DATE,
+        product STRING,
+        quantity INT,
+        revenue DOUBLE
+    )
+    USING DELTA
+    LOCATION '/mnt/delta/sales'
+""")
+</code></pre>
+
+                <h3>Opérations CRUD</h3>
+
+                <pre><code class="language-python">from delta.tables import DeltaTable
+
+# Référence à une table Delta
+delta_table = DeltaTable.forPath(spark, "/mnt/delta/sales")
+
+# INSERT : Ajouter des données
+new_data = spark.createDataFrame([
+    ("2024-01-03", "ProductA", 150, 2250.0),
+    ("2024-01-03", "ProductC", 80, 1200.0)
+], ["date", "product", "quantity", "revenue"])
+
+new_data.write.format("delta").mode("append").save("/mnt/delta/sales")
+
+# UPDATE : Mettre à jour des lignes
+delta_table.update(
+    condition="product = 'ProductA'",
+    set={"revenue": "revenue * 1.1"}  # Augmentation de 10%
+)
+
+# DELETE : Supprimer des lignes
+delta_table.delete("quantity < 60")
+
+# MERGE (UPSERT) : Insertion ou mise à jour
+updates = spark.createDataFrame([
+    ("2024-01-03", "ProductA", 200, 3000.0),  # Update si existe
+    ("2024-01-04", "ProductD", 90, 1350.0)    # Insert si nouveau
+], ["date", "product", "quantity", "revenue"])
+
+delta_table.alias("target").merge(
+    updates.alias("source"),
+    "target.date = source.date AND target.product = source.product"
+).whenMatchedUpdate(
+    set={
+        "quantity": "source.quantity",
+        "revenue": "source.revenue"
+    }
+).whenNotMatchedInsert(
+    values={
+        "date": "source.date",
+        "product": "source.product",
+        "quantity": "source.quantity",
+        "revenue": "source.revenue"
+    }
+).execute()
+</code></pre>
+
+                <h3>Opérations avec SQL</h3>
+                <pre><code class="language-sql">-- UPDATE
+UPDATE sales
+SET revenue = revenue * 1.1
+WHERE product = 'ProductA';
+
+-- DELETE
+DELETE FROM sales
+WHERE quantity < 60;
+
+-- MERGE (UPSERT)
+MERGE INTO sales AS target
+USING updates AS source
+ON target.date = source.date AND target.product = source.product
+WHEN MATCHED THEN
+  UPDATE SET
+    target.quantity = source.quantity,
+    target.revenue = source.revenue
+WHEN NOT MATCHED THEN
+  INSERT (date, product, quantity, revenue)
+  VALUES (source.date, source.product, source.quantity, source.revenue);
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>3. Time Travel</h2>
+
+                <p>Delta Lake conserve l'historique complet des modifications, permettant de voyager dans le temps pour auditer ou restaurer des données.</p>
+
+                <pre><code class="language-python"># Lire une version spécifique
+df_v0 = spark.read.format("delta").option("versionAsOf", 0).load("/mnt/delta/sales")
+df_v5 = spark.read.format("delta").option("versionAsOf", 5).load("/mnt/delta/sales")
+
+# Lire à une date spécifique
+df_yesterday = spark.read.format("delta") \
+    .option("timestampAsOf", "2024-01-15") \
+    .load("/mnt/delta/sales")
+
+# Voir l'historique des versions
+delta_table = DeltaTable.forPath(spark, "/mnt/delta/sales")
+display(delta_table.history())
+
+# Informations affichées :
+# - version
+# - timestamp
+# - operation (WRITE, UPDATE, DELETE, MERGE)
+# - operationParameters
+# - readVersion, isolationLevel
+</code></pre>
+
+                <pre><code class="language-sql">-- SQL Time Travel
+SELECT * FROM sales VERSION AS OF 5;
+
+SELECT * FROM sales TIMESTAMP AS OF '2024-01-15';
+
+-- Voir l'historique
+DESCRIBE HISTORY sales;
+
+-- Restaurer une version précédente
+RESTORE TABLE sales TO VERSION AS OF 3;
+
+-- Ou à une date
+RESTORE TABLE sales TO TIMESTAMP AS OF '2024-01-15';
+</code></pre>
+
+                <div class="exercise">
+                    <h4>Cas d'usage Time Travel</h4>
+                    <ul>
+                        <li><strong>Audit :</strong> Voir qui a modifié quoi et quand</li>
+                        <li><strong>Rollback :</strong> Revenir à une version stable après une erreur</li>
+                        <li><strong>Comparaison :</strong> Analyser l'évolution des données dans le temps</li>
+                        <li><strong>Reproducibilité :</strong> Re-exécuter des analyses sur des données historiques</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>4. Optimisation et maintenance</h2>
+
+                <h3>OPTIMIZE : Compacter les fichiers</h3>
+                <p>Au fil du temps, les écritures créent de nombreux petits fichiers, dégradant les performances de lecture.</p>
+
+                <pre><code class="language-python"># Compacter les fichiers d'une table
+delta_table.optimize().executeCompaction()
+
+# Ou avec SQL
+spark.sql("OPTIMIZE sales")
+
+# Optimiser seulement certaines partitions
+spark.sql("OPTIMIZE sales WHERE date >= '2024-01-01'")
+</code></pre>
+
+                <h3>Z-ORDER : Clustering multi-dimensionnel</h3>
+                <p>Z-ORDER co-localise les données souvent filtrées ensemble, améliorant drastiquement les performances.</p>
+
+                <pre><code class="language-python"># Z-ORDER sur colonnes fréquemment filtrées
+delta_table.optimize().executeZOrderBy("product", "date")
+
+# SQL
+spark.sql("OPTIMIZE sales ZORDER BY (product, date)")
+</code></pre>
+
+                <div class="alert alert-info">
+                    <h4>Quand utiliser Z-ORDER ?</h4>
+                    <p>Utilisez Z-ORDER sur les colonnes fréquemment utilisées dans les clauses WHERE. Typiquement 2-4 colonnes max.</p>
+                </div>
+
+                <h3>VACUUM : Nettoyer les anciens fichiers</h3>
+                <p>VACUUM supprime les fichiers de données obsolètes (marqués comme supprimés mais physiquement présents).</p>
+
+                <pre><code class="language-python"># Par défaut, conserve 7 jours d'historique
+delta_table.vacuum()
+
+# Conserver 30 jours
+delta_table.vacuum(retentionHours=30*24)
+
+# SQL
+spark.sql("VACUUM sales")
+spark.sql("VACUUM sales RETAIN 720 HOURS")  # 30 jours
+
+# Mode DRY RUN pour voir ce qui serait supprimé
+spark.sql("VACUUM sales DRY RUN")
+</code></pre>
+
+                <div class="alert alert-warning">
+                    <h4>Attention avec VACUUM</h4>
+                    <p>Une fois VACUUM exécuté, le Time Travel avant la période de rétention ne fonctionnera plus. Assurez-vous de ne pas avoir besoin de ces versions !</p>
+                </div>
+
+                <h3>Auto Optimize (Databricks)</h3>
+                <pre><code class="language-sql">-- Activer l'optimisation automatique
+ALTER TABLE sales SET TBLPROPERTIES (
+  'delta.autoOptimize.optimizeWrite' = 'true',
+  'delta.autoOptimize.autoCompact' = 'true'
+);
+
+-- optimizeWrite : Combine petits fichiers lors de l'écriture
+-- autoCompact : Compacte automatiquement après écritures
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>5. Schema Management</h2>
+
+                <h3>Schema Enforcement</h3>
+                <pre><code class="language-python"># Delta Lake valide automatiquement le schéma
+bad_data = spark.createDataFrame([
+    ("2024-01-05", "ProductE", "invalid", 1500.0)  # quantity doit être INT
+], ["date", "product", "quantity", "revenue"])
+
+# Ceci échouera avec AnalysisException
+try:
+    bad_data.write.format("delta").mode("append").save("/mnt/delta/sales")
+except Exception as e:
+    print(f"Erreur : {e}")
+</code></pre>
+
+                <h3>Schema Evolution</h3>
+                <pre><code class="language-python"># Ajouter de nouvelles colonnes automatiquement
+new_schema_data = spark.createDataFrame([
+    ("2024-01-05", "ProductE", 100, 1500.0, "France")
+], ["date", "product", "quantity", "revenue", "country"])
+
+# Activer l'évolution du schéma
+new_schema_data.write \
+    .format("delta") \
+    .mode("append") \
+    .option("mergeSchema", "true") \
+    .save("/mnt/delta/sales")
+
+# Ou définir comme propriété de table
+spark.sql("""
+    ALTER TABLE sales SET TBLPROPERTIES (
+        'delta.autoMerge.mergeSchema' = 'true'
+    )
+""")
+</code></pre>
+
+                <h3>Modifier le schéma</h3>
+                <pre><code class="language-sql">-- Ajouter une colonne
+ALTER TABLE sales ADD COLUMN region STRING;
+
+-- Renommer une colonne
+ALTER TABLE sales RENAME COLUMN product TO product_name;
+
+-- Modifier le type (si compatible)
+ALTER TABLE sales ALTER COLUMN quantity TYPE BIGINT;
+
+-- Modifier un commentaire
+ALTER TABLE sales ALTER COLUMN revenue COMMENT 'Revenue in EUR';
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>6. Streaming avec Delta Lake</h2>
+
+                <p>Delta Lake est parfait pour le streaming grâce à son support des lectures et écritures continues.</p>
+
+                <h3>Écriture en streaming</h3>
+                <pre><code class="language-python"># Source de streaming (exemple : Kafka, Event Hubs)
+stream_df = spark.readStream \
+    .format("kafka") \
+    .option("kafka.bootstrap.servers", "localhost:9092") \
+    .option("subscribe", "sales-topic") \
+    .load()
+
+# Parser les données JSON
+from pyspark.sql.types import *
+
+schema = StructType([
+    StructField("date", StringType()),
+    StructField("product", StringType()),
+    StructField("quantity", IntegerType()),
+    StructField("revenue", DoubleType())
+])
+
+parsed_stream = stream_df.select(
+    from_json(col("value").cast("string"), schema).alias("data")
+).select("data.*")
+
+# Écrire en Delta en mode streaming
+query = parsed_stream.writeStream \
+    .format("delta") \
+    .outputMode("append") \
+    .option("checkpointLocation", "/mnt/checkpoints/sales") \
+    .start("/mnt/delta/sales_stream")
+
+query.awaitTermination()
+</code></pre>
+
+                <h3>Lecture en streaming</h3>
+                <pre><code class="language-python"># Lire une table Delta en mode streaming
+stream_read = spark.readStream \
+    .format("delta") \
+    .load("/mnt/delta/sales_stream")
+
+# Agrégations en temps réel
+real_time_stats = stream_read \
+    .groupBy(
+        window(col("timestamp"), "10 minutes"),
+        col("product")
+    ).agg(
+        sum("revenue").alias("total_revenue"),
+        count("*").alias("transaction_count")
+    )
+
+# Afficher les résultats
+query = real_time_stats.writeStream \
+    .format("console") \
+    .outputMode("update") \
+    .start()
+</code></pre>
+
+                <h3>Change Data Feed (CDC)</h3>
+                <pre><code class="language-sql">-- Activer Change Data Feed
+ALTER TABLE sales SET TBLPROPERTIES (
+  'delta.enableChangeDataFeed' = 'true'
+);
+</code></pre>
+
+                <pre><code class="language-python"># Lire les changements depuis une version
+changes_df = spark.read \
+    .format("delta") \
+    .option("readChangeData", "true") \
+    .option("startingVersion", 5) \
+    .load("/mnt/delta/sales")
+
+# Colonnes ajoutées : _change_type, _commit_version, _commit_timestamp
+# _change_type : insert, update_preimage, update_postimage, delete
+display(changes_df)
+
+# Utiliser en streaming pour capturer les changements en temps réel
+change_stream = spark.readStream \
+    .format("delta") \
+    .option("readChangeData", "true") \
+    .option("startingVersion", 10) \
+    .load("/mnt/delta/sales")
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>7. Bonnes pratiques Delta Lake</h2>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Partitionnement</h4>
+                        <ul>
+                            <li>Partitionner par date/région pour filtres fréquents</li>
+                            <li>Éviter trop de partitions (&lt;1000)</li>
+                            <li>Chaque partition : minimum 1 GB de données</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Optimisation</h4>
+                        <ul>
+                            <li>OPTIMIZE régulièrement (daily/weekly)</li>
+                            <li>Z-ORDER sur colonnes de filtre</li>
+                            <li>Auto Optimize activé en production</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Maintenance</h4>
+                        <ul>
+                            <li>VACUUM après rétention appropriée</li>
+                            <li>Monitor la taille du transaction log</li>
+                            <li>Checkpoints automatiques (tous les 10 commits)</li>
+                        </ul>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Sécurité</h4>
+                        <ul>
+                            <li>Activer audit logs</li>
+                            <li>Utiliser table ACLs</li>
+                            <li>Change Data Feed pour compliance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <h3>📌 Points clés à retenir</h3>
+                    <ul>
+                        <li>Delta Lake apporte ACID, Time Travel et performance aux data lakes</li>
+                        <li>Transactions ACID garantissent la cohérence des données</li>
+                        <li>Time Travel permet audit, rollback et reproducibilité</li>
+                        <li>OPTIMIZE et Z-ORDER améliorent drastiquement les performances</li>
+                        <li>VACUUM nettoie les fichiers mais supprime l'historique ancien</li>
+                        <li>Schema enforcement + evolution = données fiables et flexibles</li>
+                        <li>Parfaitement adapté au streaming avec checkpointing et exactly-once</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-warning">
+                <h4>Prochaine étape</h4>
+                <p>Vous maîtrisez Delta Lake ! Dans la <strong>Partie 6</strong>, apprenez à orchestrer vos pipelines avec Databricks Workflows.</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie4.html">← Partie 4</a></li>
+                <li><a href="partie5.html" class="active">Partie 5</a></li>
+                <li><a href="partie6.html">Partie 6 : Workflows →</a></li>
+            </ul>
+        </nav>
+
+        <footer>
+            <p>&copy; 2024 Formation Simplon - Azure Databricks</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Installation et Configuration - Formation MongoDB</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Module 2: Installation et Configuration</h1>
+            <p class="subtitle">Docker, mongosh et PyMongo</p>
+            <span class="duration">Duree: 8 minutes</span>
+        </header>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="01-introduction.html">M1: Introduction</a></li>
+                <li><a href="02-installation.html" class="active">M2: Installation</a></li>
+                <li><a href="03-crud.html">M3: CRUD</a></li>
+                <li><a href="04-aggregation.html">M4: Agregation</a></li>
+                <li><a href="05-index-performance.html">M5: Index</a></li>
+                <li><a href="06-modelisation.html">M6: Modelisation</a></li>
+                <li><a href="07-data-engineering.html">M7: Data Engineering</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>Objectifs du module</h2>
+                <ul>
+                    <li>Installer MongoDB avec Docker</li>
+                    <li>Configurer docker-compose pour MongoDB</li>
+                    <li>Se connecter avec mongosh</li>
+                    <li>Utiliser PyMongo avec Python</li>
+                </ul>
+            </div>
+
+            <section class="section">
+                <h2>Installation de MongoDB</h2>
+
+                <h3>Option 1 : Installation locale</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># macOS avec Homebrew
+brew tap mongodb/brew
+brew install mongodb-community
+brew services start mongodb-community
+
+# Ubuntu/Debian
+wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -sc)/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+sudo apt update
+sudo apt install -y mongodb-org
+sudo systemctl start mongod
+
+# Verifier l'installation
+mongosh --version</code></pre>
+                </div>
+
+                <h3>Option 2 : Docker (recommande pour le developpement)</h3>
+
+                <p>Docker permet une installation rapide et isolee de MongoDB, ideale pour le developpement.</p>
+
+                <h4>Lancer MongoDB avec Docker</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lancer MongoDB avec Docker
+docker run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=password \
+  -v mongodb_data:/data/db \
+  mongo:7.0
+
+# Se connecter au shell MongoDB
+docker exec -it mongodb mongosh -u admin -p password</code></pre>
+                </div>
+
+                <h4>Configuration avec docker-compose</h4>
+
+                <p>Pour un environnement plus complet avec Mongo Express (interface web), creez un fichier <code>docker-compose.yml</code> :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-yaml">version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb_dev
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: mydb
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo_express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password@mongodb:27017/
+      ME_CONFIG_BASICAUTH: false
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:</code></pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Demarrer avec docker-compose
+docker-compose up -d
+
+# Acceder a Mongo Express (UI web)
+# http://localhost:8081
+
+# Arreter les services
+docker-compose down</code></pre>
+                </div>
+
+                <h3>Option 3 : MongoDB Atlas (Cloud gratuit)</h3>
+
+                <p>MongoDB Atlas offre un cluster gratuit (M0) dans le cloud :</p>
+
+                <ol>
+                    <li>Allez sur <a href="https://www.mongodb.com/cloud/atlas" target="_blank">MongoDB Atlas</a></li>
+                    <li>Creez un compte gratuit</li>
+                    <li>Creez un cluster (M0 - Free Tier)</li>
+                    <li>Configurez l'acces reseau (Allow Access from Anywhere pour le dev)</li>
+                    <li>Creez un utilisateur de base de donnees</li>
+                    <li>Recuperez la connection string</li>
+                </ol>
+
+                <div class="alert alert-info">
+                    <h4>Connection String MongoDB</h4>
+                    <p>Format local : <code>mongodb://[username:password@]host[:port]/[database]</code></p>
+                    <p>Format Atlas : <code>mongodb+srv://username:password@cluster.mongodb.net/database</code></p>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Se connecter a MongoDB</h2>
+
+                <h3>Avec mongosh (MongoDB Shell)</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Connexion locale
+mongosh
+
+# Avec authentification
+mongosh mongodb://localhost:27017 -u admin -p password
+
+# MongoDB Atlas
+mongosh "mongodb+srv://cluster0.xxxxx.mongodb.net/mydb" --username admin
+
+# Voir les bases de donnees
+show dbs
+
+# Utiliser une base de donnees
+use mydb
+
+# Voir les collections
+show collections
+
+# Afficher la base courante
+db
+
+# Quitter
+exit</code></pre>
+                </div>
+
+                <h3>Avec Python (PyMongo)</h3>
+
+                <h4>Installation de PyMongo</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Installation avec pip
+pip install pymongo
+
+# Avec support DNS pour Atlas
+pip install "pymongo[srv]"</code></pre>
+                </div>
+
+                <h4>Connexion avec PyMongo</h4>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-python">from pymongo import MongoClient
+from datetime import datetime
+
+# Connexion locale
+client = MongoClient('mongodb://localhost:27017/')
+
+# Avec authentification
+client = MongoClient(
+    'mongodb://localhost:27017/',
+    username='admin',
+    password='password'
+)
+
+# MongoDB Atlas
+client = MongoClient(
+    'mongodb+srv://admin:password@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority'
+)
+
+# Selectionner une base de donnees
+db = client['mydb']
+
+# Selectionner une collection
+collection = db['users']
+
+# Tester la connexion
+try:
+    client.admin.command('ping')
+    print("Connexion reussie a MongoDB!")
+except Exception as e:
+    print(f"Erreur de connexion: {e}")
+
+# Obtenir des informations sur le serveur
+server_info = client.server_info()
+print(f"Version MongoDB: {server_info['version']}")
+
+# Lister les bases de donnees
+print("Bases de donnees:", client.list_database_names())
+
+# Lister les collections
+print("Collections:", db.list_collection_names())
+
+# Fermer la connexion
+client.close()</code></pre>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h4>Bonnes pratiques de connexion</h4>
+                    <ul>
+                        <li>Utilisez des variables d'environnement pour les credentials</li>
+                        <li>Fermez toujours les connexions apres utilisation</li>
+                        <li>Utilisez un connection pool pour les applications en production</li>
+                        <li>Configurez des timeouts pour eviter les blocages</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="key-points">
+                <h3>Points cles a retenir</h3>
+                <ul>
+                    <li>Docker est la methode la plus simple pour installer MongoDB en dev</li>
+                    <li>docker-compose permet de configurer MongoDB + Mongo Express facilement</li>
+                    <li>mongosh est le shell interactif pour MongoDB</li>
+                    <li>PyMongo est le driver Python officiel pour MongoDB</li>
+                    <li>MongoDB Atlas offre un cluster gratuit dans le cloud</li>
+                </ul>
+            </div>
+
+            <div class="nav-buttons">
+                <a href="01-introduction.html" class="nav-button prev">Module 1: Introduction</a>
+                <a href="03-crud.html" class="nav-button next">Module 3: Operations CRUD</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Module 2/7 - Formation MongoDB pour Data Engineering - 2024</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>

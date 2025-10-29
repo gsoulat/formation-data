@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 2 - Installation et configuration</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ Partie 2</h1>
+            <p class="subtitle">Installation et configuration initiale</p>
+            <span class="duration">⏱️ Durée : 20 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie1.html">← Partie 1</a></li>
+                <li><a href="partie3.html">Partie 3 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="section">
+                <h2>2. Installation et configuration initiale</h2>
+
+                <h3>Installation de Git</h3>
+
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>🐧 Linux</h4>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-dot red"></span>
+                                <span class="code-dot yellow"></span>
+                                <span class="code-dot green"></span>
+                            </div>
+                            <pre><code class="language-bash"># Debian/Ubuntu
+sudo apt-get update
+sudo apt-get install git
+
+# Fedora/CentOS
+sudo dnf install git</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>🍎 macOS</h4>
+                        <div class="code-container">
+                            <div class="code-header">
+                                <span class="code-dot red"></span>
+                                <span class="code-dot yellow"></span>
+                                <span class="code-dot green"></span>
+                            </div>
+                            <pre><code class="language-bash"># Avec Homebrew
+brew install git
+
+# Ou via Xcode Command Line Tools
+xcode-select --install</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="grid-item">
+                        <h4>🪟 Windows</h4>
+                        <p>Téléchargez Git depuis <a href="https://git-scm.com/download/win" target="_blank">git-scm.com</a></p>
+                        <p>Ou utilisez <a href="https://gitforwindows.org/" target="_blank">Git for Windows</a></p>
+                    </div>
+                </div>
+
+                <h3>Vérifier l'installation</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash">git --version
+# Résultat attendu : git version 2.x.x</code></pre>
+                </div>
+
+                <h3>Configuration initiale (OBLIGATOIRE)</h3>
+
+                <p>Avant votre premier commit, vous devez configurer votre identité :</p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Configuration de votre identité (obligatoire)
+git config --global user.name "Prenom Nom"
+git config --global user.email "votre.email@example.com"
+
+# Configuration de l'éditeur par défaut
+git config --global core.editor "code --wait"  # VS Code
+# ou
+git config --global core.editor "vim"          # Vim
+# ou
+git config --global core.editor "nano"         # Nano
+
+# Définir la branche par défaut
+git config --global init.defaultBranch main
+
+# Activer les couleurs dans le terminal
+git config --global color.ui auto
+
+# Configuration pour éviter les problèmes de fins de ligne
+# Sur Windows :
+git config --global core.autocrlf true
+# Sur Mac/Linux :
+git config --global core.autocrlf input</code></pre>
+                </div>
+
+                <h3>Voir toute la configuration</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Lister toute la configuration
+git config --list
+
+# Voir une configuration spécifique
+git config user.name
+git config user.email
+
+# Voir où est stockée la configuration
+git config --list --show-origin</code></pre>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>Niveaux de configuration</h4>
+                    <ul>
+                        <li><code>--system</code> : Appliqué à tous les utilisateurs du système</li>
+                        <li><code>--global</code> : Appliqué à votre utilisateur (le plus courant)</li>
+                        <li><code>--local</code> : Appliqué uniquement au dépôt actuel</li>
+                    </ul>
+                </div>
+
+                <h3>Configurer un alias pour gagner du temps</h3>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                    </div>
+                    <pre><code class="language-bash"># Créer des raccourcis personnalisés
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.unstage 'reset HEAD --'
+git config --global alias.last 'log -1 HEAD'
+git config --global alias.lg 'log --oneline --graph --all --decorate'
+
+# Maintenant vous pouvez utiliser :
+git st        # au lieu de git status
+git lg        # pour un beau log graphique</code></pre>
+                </div>
+            </section>
+
+            <div class="alert alert-success">
+                <h4>✅ Partie 2 terminée !</h4>
+                <p>
+                    Vous avez installé Git et configuré votre environnement. Vous êtes prêt à créer votre premier dépôt !
+                </p>
+                <p style="margin-top: 20px;">
+                    <a href="../exercices.html" style="display: inline-block; padding: 12px 25px; background: #4caf50; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-right: 10px;">
+                        🎯 Faire les exercices
+                    </a>
+                    <a href="partie3.html" style="display: inline-block; padding: 12px 25px; background: #0066cc; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                        Partie 3 →
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Git pour Data Engineering - 2024</p>
+            <p><a href="../index.html">← Retour à l'accueil</a></p>
+        </footer>
+    </div>
+
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+</body>
+</html>

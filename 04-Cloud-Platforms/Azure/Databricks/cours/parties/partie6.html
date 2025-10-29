@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partie 6 : Workflows et orchestration</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 Partie 6 : Workflows et orchestration</h1>
+            <p class="subtitle">Orchestrez vos pipelines de données</p>
+            <span class="duration">⏱️ Durée : 40 minutes</span>
+        </header>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie5.html">← Partie 5</a></li>
+                <li><a href="partie6.html" class="active">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7 →</a></li>
+            </ul>
+        </nav>
+
+        <div class="content">
+            <section class="objectives">
+                <h2>🎯 Objectifs d'apprentissage</h2>
+                <ul>
+                    <li>Comprendre Databricks Workflows (anciennement Jobs)</li>
+                    <li>Créer des Jobs avec plusieurs tâches</li>
+                    <li>Gérer les dépendances entre tâches</li>
+                    <li>Planifier l'exécution automatique</li>
+                    <li>Monitorer et gérer les alertes</li>
+                    <li>Intégrer avec Azure Data Factory</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>1. Introduction aux Databricks Workflows</h2>
+
+                <p>Databricks Workflows est la plateforme d'orchestration native pour automatiser et orchestrer vos pipelines de données et ML.</p>
+
+                <h3>Composants principaux</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Jobs</h4>
+                        <p>Un job est un workflow automatisé composé d'une ou plusieurs tâches</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Tasks</h4>
+                        <p>Une tâche est une unité d'exécution (notebook, script, JAR, etc.)</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Triggers</h4>
+                        <p>Déclenchement par planification (cron) ou événements</p>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Runs</h4>
+                        <p>Une exécution d'un job avec son historique et statut</p>
+                    </div>
+                </div>
+
+                <div class="workflow-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                    DATABRICKS WORKFLOW                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                               │
+│  ┌────────────┐         Trigger (Schedule/Manual)           │
+│  │    Job     │                    │                         │
+│  └─────┬──────┘                    ▼                         │
+│        │              ┌──────────────────────┐               │
+│        │              │   Task 1: Ingestion  │               │
+│        │              └──────────┬───────────┘               │
+│        │                         │                           │
+│        │          ┌──────────────┴────────────┐              │
+│        │          ▼                           ▼              │
+│        │   ┌─────────────┐           ┌─────────────┐        │
+│        │   │Task 2: ETL  │           │Task 3: Check│        │
+│        │   └──────┬──────┘           └──────┬──────┘        │
+│        │          │                          │               │
+│        │          └──────────┬───────────────┘               │
+│        │                     ▼                               │
+│        │            ┌─────────────────┐                      │
+│        │            │Task 4: Analytics│                      │
+│        │            └─────────────────┘                      │
+│        │                                                     │
+│        │  Results → Notifications (Email, Slack, etc.)      │
+│        │                                                     │
+└─────────────────────────────────────────────────────────────┘
+</pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>2. Créer un Job via l'interface</h2>
+
+                <div class="exercise">
+                    <h4>Créer votre premier Job</h4>
+                    <ol>
+                        <li>Dans la barre latérale, cliquez sur <code>Workflows</code></li>
+                        <li>Cliquez sur <code>Create Job</code></li>
+                        <li>Nommez le job : "ETL Pipeline Daily"</li>
+                        <li>Créez la première tâche :
+                            <ul>
+                                <li><strong>Task name :</strong> "ingest_raw_data"</li>
+                                <li><strong>Type :</strong> Notebook</li>
+                                <li><strong>Source :</strong> Sélectionnez votre notebook d'ingestion</li>
+                                <li><strong>Cluster :</strong> Sélectionnez un job cluster</li>
+                                <li><strong>Parameters :</strong> Ajoutez des paramètres si nécessaire</li>
+                            </ul>
+                        </li>
+                        <li>Ajoutez d'autres tâches avec <code>+ Add task</code></li>
+                        <li>Définissez les dépendances en liant les tâches</li>
+                        <li>Configurez le déclenchement (schedule)</li>
+                        <li>Cliquez sur <code>Create</code></li>
+                    </ol>
+                </div>
+
+                <h3>Types de tâches</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Notebook</strong></td>
+                            <td>Exécute un notebook Databricks</td>
+                            <td>ETL, analyse, ML training</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Python script</strong></td>
+                            <td>Exécute un fichier .py</td>
+                            <td>Scripts standalone</td>
+                        </tr>
+                        <tr>
+                            <td><strong>JAR</strong></td>
+                            <td>Application Scala/Java</td>
+                            <td>Jobs Spark Scala</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Python wheel</strong></td>
+                            <td>Package Python (.whl)</td>
+                            <td>Applications Python packagees</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SQL</strong></td>
+                            <td>Exécute des requêtes SQL</td>
+                            <td>Data transformations SQL</td>
+                        </tr>
+                        <tr>
+                            <td><strong>dbt</strong></td>
+                            <td>Exécute des projets dbt</td>
+                            <td>Transformations avec dbt</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Delta Live Tables</strong></td>
+                            <td>Pipeline DLT</td>
+                            <td>Pipelines déclaratifs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <h2>3. Créer un Job via l'API</h2>
+
+                <pre><code class="language-python">import requests
+import json
+
+DATABRICKS_HOST = "https://&lt;workspace-url&gt;"
+DATABRICKS_TOKEN = "&lt;your-token&gt;"
+
+# Configuration du job
+job_config = {
+    "name": "ETL Pipeline Daily",
+    "email_notifications": {
+        "on_failure": ["data-team@company.com"],
+        "on_success": ["data-team@company.com"]
+    },
+    "timeout_seconds": 7200,  # 2 heures
+    "max_concurrent_runs": 1,
+    "tasks": [
+        {
+            "task_key": "ingest_raw_data",
+            "description": "Ingestion des données brutes",
+            "notebook_task": {
+                "notebook_path": "/Workspace/ETL/01_Ingestion",
+                "base_parameters": {
+                    "date": "{{job.start_date}}",
+                    "environment": "production"
+                }
+            },
+            "new_cluster": {
+                "spark_version": "13.3.x-scala2.12",
+                "node_type_id": "Standard_DS3_v2",
+                "num_workers": 2,
+                "autoscale": {
+                    "min_workers": 2,
+                    "max_workers": 8
+                }
+            },
+            "timeout_seconds": 3600,
+            "max_retries": 2,
+            "retry_on_timeout": True
+        },
+        {
+            "task_key": "transform_data",
+            "description": "Transformation des données",
+            "depends_on": [
+                {"task_key": "ingest_raw_data"}
+            ],
+            "notebook_task": {
+                "notebook_path": "/Workspace/ETL/02_Transform",
+                "base_parameters": {
+                    "date": "{{job.start_date}}"
+                }
+            },
+            "new_cluster": {
+                "spark_version": "13.3.x-scala2.12",
+                "node_type_id": "Standard_DS3_v2",
+                "num_workers": 4
+            }
+        },
+        {
+            "task_key": "data_quality_checks",
+            "description": "Vérifications qualité",
+            "depends_on": [
+                {"task_key": "transform_data"}
+            ],
+            "python_wheel_task": {
+                "package_name": "data_quality",
+                "entry_point": "run_checks",
+                "parameters": ["--date", "{{job.start_date}}"]
+            },
+            "libraries": [
+                {"pypi": {"package": "great-expectations==0.18.0"}}
+            ],
+            "existing_cluster_id": "&lt;cluster-id&gt;"
+        },
+        {
+            "task_key": "publish_analytics",
+            "description": "Publication analytics",
+            "depends_on": [
+                {"task_key": "data_quality_checks"}
+            ],
+            "sql_task": {
+                "query": {
+                    "query_id": "&lt;query-id&gt;"
+                },
+                "warehouse_id": "&lt;warehouse-id&gt;"
+            }
+        }
+    ],
+    "schedule": {
+        "quartz_cron_expression": "0 0 2 * * ?",  # 2h du matin
+        "timezone_id": "Europe/Paris",
+        "pause_status": "UNPAUSED"
+    },
+    "tags": {
+        "environment": "production",
+        "team": "data-engineering"
+    }
+}
+
+# Créer le job
+headers = {
+    "Authorization": f"Bearer {DATABRICKS_TOKEN}",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(
+    f"{DATABRICKS_HOST}/api/2.1/jobs/create",
+    headers=headers,
+    json=job_config
+)
+
+job_id = response.json()["job_id"]
+print(f"Job créé avec l'ID : {job_id}")
+
+# Déclencher une exécution immédiate
+run_response = requests.post(
+    f"{DATABRICKS_HOST}/api/2.1/jobs/run-now",
+    headers=headers,
+    json={"job_id": job_id}
+)
+
+run_id = run_response.json()["run_id"]
+print(f"Run démarré avec l'ID : {run_id}")
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>4. Gestion des dépendances</h2>
+
+                <h3>Types de dépendances</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <h4>Sequential (Séquentielle)</h4>
+                        <p>Tâche B attend que A se termine</p>
+                        <div class="workflow-diagram"><pre>A → B</pre></div>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Parallel (Parallèle)</h4>
+                        <p>B et C s'exécutent en parallèle après A</p>
+                        <div class="workflow-diagram"><pre>   ┌→ B
+A ─┤
+   └→ C</pre></div>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Fan-in (Convergence)</h4>
+                        <p>D attend B ET C</p>
+                        <div class="workflow-diagram"><pre>B ─┐
+   ├→ D
+C ─┘</pre></div>
+                    </div>
+                    <div class="grid-item">
+                        <h4>Conditional</h4>
+                        <p>Exécution conditionnelle basée sur le résultat</p>
+                        <div class="workflow-diagram"><pre>A → IF success → B
+  → IF failure → C</pre></div>
+                    </div>
+                </div>
+
+                <h3>Exemple de workflow complexe</h3>
+                <pre><code class="language-python"># Pipeline ETL complet avec branches conditionnelles
+workflow_config = {
+    "name": "Complex ETL Pipeline",
+    "tasks": [
+        # Tâche initiale
+        {
+            "task_key": "validate_source",
+            "description": "Valider la source de données",
+            "notebook_task": {
+                "notebook_path": "/ETL/00_Validate"
+            }
+        },
+        # Branches parallèles pour différentes sources
+        {
+            "task_key": "ingest_crm",
+            "depends_on": [{"task_key": "validate_source"}],
+            "notebook_task": {
+                "notebook_path": "/ETL/Ingest_CRM"
+            }
+        },
+        {
+            "task_key": "ingest_erp",
+            "depends_on": [{"task_key": "validate_source"}],
+            "notebook_task": {
+                "notebook_path": "/ETL/Ingest_ERP"
+            }
+        },
+        {
+            "task_key": "ingest_web",
+            "depends_on": [{"task_key": "validate_source"}],
+            "notebook_task": {
+                "notebook_path": "/ETL/Ingest_Web"
+            }
+        },
+        # Convergence : transformation après toutes les ingestions
+        {
+            "task_key": "transform_join",
+            "depends_on": [
+                {"task_key": "ingest_crm"},
+                {"task_key": "ingest_erp"},
+                {"task_key": "ingest_web"}
+            ],
+            "notebook_task": {
+                "notebook_path": "/ETL/Transform_Join"
+            }
+        },
+        # Branches parallèles analytics
+        {
+            "task_key": "analytics_sales",
+            "depends_on": [{"task_key": "transform_join"}],
+            "notebook_task": {
+                "notebook_path": "/Analytics/Sales"
+            }
+        },
+        {
+            "task_key": "analytics_customer",
+            "depends_on": [{"task_key": "transform_join"}],
+            "notebook_task": {
+                "notebook_path": "/Analytics/Customer"
+            }
+        },
+        # Notification finale
+        {
+            "task_key": "send_report",
+            "depends_on": [
+                {"task_key": "analytics_sales"},
+                {"task_key": "analytics_customer"}
+            ],
+            "python_wheel_task": {
+                "package_name": "reporting",
+                "entry_point": "send_daily_report"
+            }
+        }
+    ]
+}
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>5. Planification et déclenchement</h2>
+
+                <h3>Expressions Cron</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Expression</th>
+                            <th>Description</th>
+                            <th>Cas d'usage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>0 0 2 * * ?</code></td>
+                            <td>Tous les jours à 2h du matin</td>
+                            <td>ETL quotidien</td>
+                        </tr>
+                        <tr>
+                            <td><code>0 */4 * * * ?</code></td>
+                            <td>Toutes les 4 heures</td>
+                            <td>Synchronisation régulière</td>
+                        </tr>
+                        <tr>
+                            <td><code>0 0 0 * * MON</code></td>
+                            <td>Tous les lundis à minuit</td>
+                            <td>Rapport hebdomadaire</td>
+                        </tr>
+                        <tr>
+                            <td><code>0 0 9 1 * ?</code></td>
+                            <td>Le 1er de chaque mois à 9h</td>
+                            <td>Rapport mensuel</td>
+                        </tr>
+                        <tr>
+                            <td><code>0 30 8-17 * * MON-FRI</code></td>
+                            <td>Toutes les heures de 8h30 à 17h30 en semaine</td>
+                            <td>Monitoring business hours</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Déclenchement par événement</h3>
+                <pre><code class="language-python"># Déclencher un job lorsqu'un fichier arrive
+# Via Azure Event Grid + Logic App + Databricks API
+
+# 1. Event Grid détecte nouveau fichier dans Blob Storage
+# 2. Logic App reçoit l'événement
+# 3. Logic App appelle l'API Databricks
+
+# Exemple de déclenchement programmatique
+import requests
+
+def trigger_job_on_file_arrival(file_path):
+    job_id = "12345"
+
+    response = requests.post(
+        f"{DATABRICKS_HOST}/api/2.1/jobs/run-now",
+        headers=headers,
+        json={
+            "job_id": job_id,
+            "notebook_params": {
+                "file_path": file_path,
+                "triggered_by": "event"
+            }
+        }
+    )
+
+    return response.json()["run_id"]
+</code></pre>
+            </section>
+
+            <section class="section">
+                <h2>6. Monitoring et alertes</h2>
+
+                <h3>Types de notifications</h3>
+                <pre><code class="language-python"># Configuration des notifications
+notification_config = {
+    "email_notifications": {
+        "on_start": ["team@company.com"],
+        "on_success": ["team@company.com"],
+        "on_failure": ["team@company.com", "oncall@company.com"],
+        "on_duration_warning_threshold_exceeded": ["team@company.com"]
+    },
+    "webhook_notifications": {
+        "on_failure": [{
+            "id": "slack-webhook-id"
+        }]
+    }
+}
+</code></pre>
+
+                <h3>Monitoring des runs</h3>
+                <pre><code class="language-python"># Obtenir le statut d'un run
+run_status = requests.get(
+    f"{DATABRICKS_HOST}/api/2.1/jobs/runs/get",
+    headers=headers,
+    params={"run_id": run_id}
+).json()
+
+print(f"State: {run_status['state']['life_cycle_state']}")
+print(f"Result: {run_status['state'].get('result_state', 'N/A')}")
+
+# Lister tous les runs d'un job
+runs_list = requests.get(
+    f"{DATABRICKS_HOST}/api/2.1/jobs/runs/list",
+    headers=headers,
+    params={"job_id": job_id, "limit": 25}
+).json()
+
+for run in runs_list.get("runs", []):
+    print(f"Run {run['run_id']}: {run['state']['result_state']}")
+
+# Annuler un run en cours
+requests.post(
+    f"{DATABRICKS_HOST}/api/2.1/jobs/runs/cancel",
+    headers=headers,
+    json={"run_id": run_id}
+)
+</code></pre>
+
+                <h3>Métriques et dashboards</h3>
+                <div class="alert alert-info">
+                    <h4>Métriques clés à surveiller</h4>
+                    <ul>
+                        <li><strong>Success Rate :</strong> Taux de réussite des runs</li>
+                        <li><strong>Duration :</strong> Temps d'exécution (détection de dégradation)</li>
+                        <li><strong>Cost :</strong> Coût DBU par job</li>
+                        <li><strong>Failures :</strong> Nombre et type d'échecs</li>
+                        <li><strong>SLA Compliance :</strong> Respect des SLA de temps</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>7. Intégration Azure Data Factory</h2>
+
+                <p>Vous pouvez orchestrer Databricks depuis Azure Data Factory pour une intégration complète avec l'écosystème Azure.</p>
+
+                <pre><code class="language-json">{
+  "name": "DatabricksPipeline",
+  "properties": {
+    "activities": [
+      {
+        "name": "RunDatabricksNotebook",
+        "type": "DatabricksNotebook",
+        "linkedServiceName": {
+          "referenceName": "DatabricksLinkedService",
+          "type": "LinkedServiceReference"
+        },
+        "typeProperties": {
+          "notebookPath": "/Workspace/ETL/Transform",
+          "baseParameters": {
+            "date": "@formatDateTime(pipeline().TriggerTime, 'yyyy-MM-dd')",
+            "environment": "production"
+          }
+        }
+      },
+      {
+        "name": "RunSparkJob",
+        "type": "DatabricksSparkJar",
+        "dependsOn": [
+          {
+            "activity": "RunDatabricksNotebook",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "mainClassName": "com.company.etl.MainApp",
+          "parameters": ["--date", "@formatDateTime(pipeline().TriggerTime, 'yyyy-MM-dd')"]
+        }
+      }
+    ]
+  }
+}
+</code></pre>
+
+                <h3>Avantages ADF vs Databricks Workflows</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Critère</th>
+                            <th>Databricks Workflows</th>
+                            <th>Azure Data Factory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Simplicité</strong></td>
+                            <td>✅ Natif, intégré</td>
+                            <td>Interface visuelle ADF</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Intégration Azure</strong></td>
+                            <td>Via API/connectors</td>
+                            <td>✅ Natif (Blob, SQL, etc.)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Coût</strong></td>
+                            <td>Inclus dans Databricks</td>
+                            <td>Facturation ADF séparée</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Monitoring</strong></td>
+                            <td>Databricks UI</td>
+                            <td>✅ Azure Monitor intégré</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Orchestration hybride</strong></td>
+                            <td>Databricks uniquement</td>
+                            <td>✅ Multi-services Azure</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="section">
+                <div class="key-points">
+                    <h3>📌 Points clés à retenir</h3>
+                    <ul>
+                        <li>Workflows orchestre vos pipelines avec tâches et dépendances</li>
+                        <li>Supporté plusieurs types de tâches : notebooks, scripts, SQL, dbt, DLT</li>
+                        <li>Planification flexible avec expressions Cron</li>
+                        <li>Gestion avancée des dépendances (séquentiel, parallèle, conditionnel)</li>
+                        <li>Monitoring complet avec notifications multi-canaux</li>
+                        <li>Intégration Azure Data Factory pour orchestration hybride</li>
+                        <li>API complète pour automatisation et CI/CD</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="alert alert-warning">
+                <h4>Prochaine étape</h4>
+                <p>Vos workflows sont automatisés ! Dans la <strong>Partie 7</strong>, découvrez le Machine Learning avec MLflow.</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="../index.html">🏠 Accueil</a></li>
+                <li><a href="partie5.html">← Partie 5</a></li>
+                <li><a href="partie6.html" class="active">Partie 6</a></li>
+                <li><a href="partie7.html">Partie 7 : Machine Learning →</a></li>
+            </ul>
+        </nav>
+
+        <footer>
+            <p>&copy; 2024 Formation Simplon - Azure Databricks</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+</body>
+</html>

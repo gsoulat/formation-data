@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5 : Créer des Ressources Azure</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link href="../assets/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="terraform-logo">⚡</span> Module 5 : Créer des Ressources Azure</h1>
+            <p>Déployer des ressources Azure avec Terraform</p>
+        </header>
+
+        <div class="content">
+            <div class="objectives">
+                <h2>🎯 Objectifs du Module</h2>
+                <ul>
+                    <li>Créer des réseaux virtuels (VNet) et des subnets</li>
+                    <li>Déployer des machines virtuelles Linux</li>
+                    <li>Configurer des comptes de stockage Azure</li>
+                    <li>Créer des bases de données PostgreSQL</li>
+                    <li>Déployer des clusters Azure Kubernetes Service (AKS)</li>
+                </ul>
+            </div>
+
+            <section id="resources-azure">
+                <h2>🏗️ Créer des Ressources Azure</h2>
+
+                <h3>Virtual Network (VNet) et Subnets</h3>
+
+                <div class="example-box">
+                    <h4>📄 Réseau Azure complet</h4>
+                    <pre><code class="language-hcl"># Resource Group
+resource "azurerm_resource_group" "network" {
+  name     = "rg-network-prod"
+  location = "France Central"
+}
+
+# Virtual Network
+resource "azurerm_virtual_network" "main" {
+  name                = "vnet-production"
+  address_space       = ["10.0.0.0/16"]
+  location            = azurerm_resource_group.network.location
+  resource_group_name = azurerm_resource_group.network.name
+
+  tags = {
+    environment = "production"
+  }
+}
+
+# Subnets
+resource "azurerm_subnet" "web" {
+  name                 = "subnet-web"
+  resource_group_name  = azurerm_resource_group.network.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_subnet" "app" {
+  name                 = "subnet-app"
+  resource_group_name  = azurerm_resource_group.network.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.2.0/24"]
+}
+
+resource "azurerm_subnet" "data" {
+  name                 = "subnet-data"
+  resource_group_name  = azurerm_resource_group.network.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.3.0/24"]
+}
+
+# Network Security Group
+resource "azurerm_network_security_group" "web" {
+  name                = "nsg-web"
+  location            = azurerm_resource_group.network.location
+  resource_group_name = azurerm_resource_group.network.name
+
+  security_rule {
+    name                       = "allow-http"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "allow-https"
+    priority                   = 110
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+# Association NSG - Subnet
+resource "azurerm_subnet_network_security_group_association" "web" {
+  subnet_id                 = azurerm_subnet.web.id
+  network_security_group_id = azurerm_network_security_group.web.id
+}</code></pre>
+                </div>
+
+                <h3>Machine Virtuelle Linux</h3>
+
+                <div class="example-box">
+                    <h4>📄 VM Linux avec Nginx</h4>
+                    <pre><code class="language-hcl"># Public IP
+resource "azurerm_public_ip" "web" {
+  name                = "pip-web-vm"
+  location            = azurerm_resource_group.network.location
+  resource_group_name = azurerm_resource_group.network.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+# Network Interface
+resource "azurerm_network_interface" "web" {
+  name                = "nic-web-vm"
+  location            = azurerm_resource_group.network.location
+  resource_group_name = azurerm_resource_group.network.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.web.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.web.id
+  }
+}
+
+# Linux Virtual Machine
+resource "azurerm_linux_virtual_machine" "web" {
+  name                = "vm-web-001"
+  location            = azurerm_resource_group.network.location
+  resource_group_name = azurerm_resource_group.network.name
+  size                = "Standard_B2s"
+  admin_username      = "azureuser"
+
+  network_interface_ids = [
+    azurerm_network_interface.web.id,
+  ]
+
+  admin_ssh_key {
+    username   = "azureuser"
+    public_key = file("~/.ssh/id_rsa.pub")
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+    disk_size_gb         = 30
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts-gen2"
+    version   = "latest"
+  }
+
+  custom_data = base64encode(<<-EOF
+    #!/bin/bash
+    apt-get update
+    apt-get install -y nginx
+    systemctl start nginx
+    systemctl enable nginx
+    echo "<h1>Hello from Terraform!</h1>" > /var/www/html/index.html
+  EOF
+  )
+
+  tags = {
+    environment = "production"
+    role        = "web-server"
+  }
+}</code></pre>
+                </div>
+
+                <h3>Storage Account</h3>
+
+                <div class="example-box">
+                    <h4>📄 Compte de stockage Azure</h4>
+                    <pre><code class="language-hcl">resource "azurerm_storage_account" "data" {
+  name                     = "stdataprod${random_string.suffix.result}"
+  resource_group_name      = azurerm_resource_group.network.name
+  location                 = azurerm_resource_group.network.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+
+  # Sécurité
+  min_tls_version                 = "TLS1_2"
+  enable_https_traffic_only       = true
+  allow_nested_items_to_be_public = false
+
+  # Network rules
+  network_rules {
+    default_action             = "Deny"
+    ip_rules                   = ["your.public.ip.address"]
+    virtual_network_subnet_ids = [azurerm_subnet.data.id]
+    bypass                     = ["AzureServices"]
+  }
+
+  tags = {
+    environment = "production"
+  }
+}
+
+# Générer un suffixe aléatoire pour le nom du storage
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+# Blob Container
+resource "azurerm_storage_container" "data" {
+  name                  = "data"
+  storage_account_name  = azurerm_storage_account.data.name
+  container_access_type = "private"
+}</code></pre>
+                </div>
+
+                <h3>Azure Database for PostgreSQL</h3>
+
+                <div class="example-box">
+                    <h4>📄 Base de données PostgreSQL</h4>
+                    <pre><code class="language-hcl">resource "azurerm_postgresql_flexible_server" "main" {
+  name                   = "psql-prod-${random_string.suffix.result}"
+  resource_group_name    = azurerm_resource_group.network.name
+  location               = azurerm_resource_group.network.location
+  version                = "15"
+  administrator_login    = "psqladmin"
+  administrator_password = var.db_password
+
+  storage_mb             = 32768
+  sku_name               = "B_Standard_B1ms"
+
+  backup_retention_days  = 7
+  geo_redundant_backup_enabled = false
+
+  tags = {
+    environment = "production"
+  }
+}
+
+resource "azurerm_postgresql_flexible_server_database" "app" {
+  name      = "appdb"
+  server_id = azurerm_postgresql_flexible_server.main.id
+  collation = "en_US.utf8"
+  charset   = "utf8"
+}
+
+# Firewall rule pour accès Azure services
+resource "azurerm_postgresql_flexible_server_firewall_rule" "azure" {
+  name             = "allow-azure-services"
+  server_id        = azurerm_postgresql_flexible_server.main.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}</code></pre>
+                </div>
+
+                <h3>Azure Kubernetes Service (AKS)</h3>
+
+                <div class="example-box">
+                    <h4>📄 Cluster AKS</h4>
+                    <pre><code class="language-hcl">resource "azurerm_kubernetes_cluster" "main" {
+  name                = "aks-prod-cluster"
+  location            = azurerm_resource_group.network.location
+  resource_group_name = azurerm_resource_group.network.name
+  dns_prefix          = "aksprod"
+  kubernetes_version  = "1.27.3"
+
+  default_node_pool {
+    name                = "default"
+    node_count          = 2
+    vm_size             = "Standard_D2s_v3"
+    os_disk_size_gb     = 30
+    vnet_subnet_id      = azurerm_subnet.app.id
+    enable_auto_scaling = true
+    min_count           = 2
+    max_count           = 5
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin    = "azure"
+    load_balancer_sku = "standard"
+    service_cidr      = "10.1.0.0/16"
+    dns_service_ip    = "10.1.0.10"
+  }
+
+  tags = {
+    environment = "production"
+  }
+}
+
+# Output pour kubeconfig
+output "kube_config" {
+  value     = azurerm_kubernetes_cluster.main.kube_config_raw
+  sensitive = true
+}</code></pre>
+                </div>
+            </section>
+
+            <div style="margin-top: 50px; text-align: center;">
+                <a href="partie4.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">← Précédent : Module 4</a>
+                <a href="../index.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">🏠 Accueil</a>
+                <a href="partie6.html" style="display: inline-block; padding: 12px 30px; margin: 10px; background: linear-gradient(135deg, #0066cc 0%, #00a3e0 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Suivant → Module 6</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>Formation Data Engineering - Simplon</p>
+            <p>Terraform avec Azure - Module 5 : Créer des Ressources Azure</p>
+            <p>&copy; 2025 - Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-hcl.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+</body>
+</html>
