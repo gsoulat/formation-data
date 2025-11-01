@@ -92,7 +92,7 @@ resource "openstack_networking_secgroup_rule_v2" "http" {
 # Créer une instance
 resource "openstack_compute_instance_v2" "web" {
   name            = "web-server"
-  flavor_name     = "a1-ram2-disk20-perf1"  # 1 vCPU, 2GB RAM, 20GB
+  flavor_name     = "a1-ram2-disk20-perf1" # 1 vCPU, 2GB RAM, 20GB
   image_id        = data.openstack_images_image_v2.ubuntu.id
   key_pair        = openstack_compute_keypair_v2.keypair.name
   security_groups = [openstack_networking_secgroup_v2.secgroup.name]

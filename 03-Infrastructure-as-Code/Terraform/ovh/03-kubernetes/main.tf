@@ -23,7 +23,7 @@ resource "ovh_cloud_project_kube" "cluster" {
   region       = "GRA11"
   version      = "1.28"
 
-  private_network_id = null  # Optionnel: ID du vRack
+  private_network_id = null # Optionnel: ID du vRack
 }
 
 # Node Pool
@@ -31,12 +31,12 @@ resource "ovh_cloud_project_kube_nodepool" "pool" {
   service_name  = var.project_id
   kube_id       = ovh_cloud_project_kube.cluster.id
   name          = "default-pool"
-  flavor_name   = "b2-7"  # 2 vCore, 7GB RAM
+  flavor_name   = "b2-7" # 2 vCore, 7GB RAM
   desired_nodes = 3
   min_nodes     = 1
   max_nodes     = 5
 
-  autoscale     = true
+  autoscale      = true
   monthly_billed = false
 }
 

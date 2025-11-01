@@ -35,9 +35,9 @@ resource "ovh_cloud_project_user" "user" {
 resource "ovh_cloud_project_instance" "web" {
   service_name = var.project_id
   name         = "web-server"
-  flavor_name  = "s1-2"     # 1 vCore, 2GB RAM
+  flavor_name  = "s1-2" # 1 vCore, 2GB RAM
   image_name   = "Ubuntu 22.04"
-  region       = "GRA11"    # Gravelines
+  region       = "GRA11" # Gravelines
 
   ssh_key_ids = [
     ovh_cloud_project_user.user.id

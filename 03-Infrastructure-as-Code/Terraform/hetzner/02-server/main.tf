@@ -22,9 +22,9 @@ resource "hcloud_ssh_key" "default" {
 # Créer un serveur
 resource "hcloud_server" "web" {
   name        = "web-server"
-  server_type = "cx11"  # 1 vCPU, 2GB RAM
+  server_type = "cx11" # 1 vCPU, 2GB RAM
   image       = "ubuntu-22.04"
-  location    = "nbg1"  # Nuremberg
+  location    = "nbg1" # Nuremberg
   ssh_keys    = [hcloud_ssh_key.default.id]
 
   labels = {

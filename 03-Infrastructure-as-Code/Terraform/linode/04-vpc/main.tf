@@ -41,8 +41,8 @@ resource "linode_instance" "web" {
   }
 
   interface {
-    purpose    = "vpc"
-    subnet_id  = linode_vpc_subnet.main.id
+    purpose     = "vpc"
+    subnet_id   = linode_vpc_subnet.main.id
     ipv4_ranges = ["10.0.1.2/32"]
   }
 
@@ -63,8 +63,8 @@ resource "linode_instance" "backend" {
   }
 
   interface {
-    purpose    = "vpc"
-    subnet_id  = linode_vpc_subnet.main.id
+    purpose     = "vpc"
+    subnet_id   = linode_vpc_subnet.main.id
     ipv4_ranges = ["10.0.1.3/32"]
   }
 
