@@ -38,15 +38,11 @@ app-fastapi/
 app-django/
 data/
 03-Infrastructure-as-Code/Terraform/A trier/Terraform/Trainning terraform/AWS/creds/berry-devops.pem
-clean_terraform.sh
 .claude
 
-# Pre-commit
-.secrets.baseline
 
 # Node.js / NPM (pour semantic-release)
 node_modules/
-package-lock.json
 .npm/
 .npmrc
 
