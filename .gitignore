@@ -47,8 +47,7 @@ node_modules/
 .npmrc
 
 # Semantic Release
-.releaserc
-CHANGELOG.md
+# Configuration et CHANGELOG sont nécessaires pour semantic-release
 
 # Python
 *.pyc
