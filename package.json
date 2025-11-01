@@ -4,7 +4,7 @@
   "description": "Formation Data Engineer - Simplon",
   "repository": {
     "type": "git",
-    "url": "https://github.com/votre-organisation/formation.git"
+    "url": "https://github.com/gsoulat/formation-data-engineer.git"
   },
   "keywords": [
     "terraform",
