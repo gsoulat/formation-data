@@ -1,0 +1,28 @@
+# ===== prometheus/prometheus.yml =====
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Jobs de scraping
+scrape_configs:
+  # Prometheus lui-même
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # FastAPI - utiliser le nom du service Docker au lieu de localhost
+  - job_name: 'fastapi'
+    static_configs:
+      - targets: ['fastapi-app:8000']  # Nom du service Docker
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+# Chargement des règles d'alertes
+rule_files:
+  - "alert.rules.yml"
+

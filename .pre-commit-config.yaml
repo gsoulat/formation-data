@@ -1,0 +1,124 @@
+# Configuration pre-commit pour détecter les secrets et valider les commits
+# Installation: pip install pre-commit
+# Activation: pre-commit install
+
+repos:
+  # Hooks de base
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Vérifie qu'il n'y a pas de gros fichiers commités
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+
+      # Vérifie que les fichiers YAML sont valides
+      - id: check-yaml
+        exclude: ^03-Infrastructure-as-Code/Terraform/
+
+      # Vérifie que les fichiers JSON sont valides
+      - id: check-json
+
+      # Vérifie qu'il n'y a pas de merge conflict markers
+      - id: check-merge-conflict
+
+      # Vérifie que les fichiers se terminent par une nouvelle ligne
+      - id: end-of-file-fixer
+        exclude: \.(tfvars|json)$
+
+      # Supprime les espaces en fin de ligne
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+      # Détecte les clés privées AWS
+      - id: detect-aws-credentials
+        args: ['--allow-missing-credentials']
+
+      # Détecte les clés privées en général
+      - id: detect-private-key
+
+  # Détection de secrets avec detect-secrets
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        args:
+          - '--baseline'
+          - '.secrets.baseline'
+        exclude: |
+          (?x)^(
+              .*\.tfstate.*|
+              .*\.tfvars\.example$|
+              package-lock\.json|
+              .*\.lock$|
+              .*\.pem$|
+              .*\.key$|
+              .*/creds/.*
+          )$
+
+  # Gitleaks - Détection de secrets alternative (très efficace)
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.1
+    hooks:
+      - id: gitleaks
+
+  # Validation des commits conventionnels
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args:
+          - feat
+          - fix
+          - docs
+          - style
+          - refactor
+          - perf
+          - test
+          - build
+          - ci
+          - chore
+          - revert
+
+  # Terraform - validation et formatage
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.86.0
+    hooks:
+      # Formate les fichiers Terraform
+      - id: terraform_fmt
+
+      # Valide la syntaxe Terraform
+      - id: terraform_validate
+        exclude: ^03-Infrastructure-as-Code/Terraform/(aws|azure|gcp|hetzner|informaniak|linode|oracle|ovh|github)/
+
+      # Génère la documentation des modules Terraform
+      - id: terraform_docs
+        args:
+          - '--args=--lockfile=false'
+
+      # Analyse de sécurité avec tfsec
+      - id: terraform_tfsec
+        args:
+          - '--args=--minimum-severity=HIGH'
+
+  # Python - formatage et linting
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+        files: \.py$
+
+  # Python - imports
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+
+  # Markdown - linting
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.38.0
+    hooks:
+      - id: markdownlint
+        args: ['--fix']

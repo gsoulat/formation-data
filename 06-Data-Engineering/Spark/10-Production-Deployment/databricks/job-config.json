@@ -1,0 +1,179 @@
+{
+  "name": "Daily ETL Job",
+  "email_notifications": {
+    "on_start": ["data-team@company.com"],
+    "on_success": ["data-team@company.com"],
+    "on_failure": ["data-team@company.com", "oncall@company.com"]
+  },
+  "webhook_notifications": {
+    "on_failure": [
+      {
+        "id": "slack-webhook",
+        "url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+      }
+    ]
+  },
+  "timeout_seconds": 7200,
+  "max_retries": 2,
+  "min_retry_interval_millis": 300000,
+  "retry_on_timeout": true,
+  "schedule": {
+    "quartz_cron_expression": "0 0 2 * * ?",
+    "timezone_id": "Europe/Paris",
+    "pause_status": "UNPAUSED"
+  },
+  "max_concurrent_runs": 1,
+  "tasks": [
+    {
+      "task_key": "extract_data",
+      "description": "Extract data from source systems",
+      "notebook_task": {
+        "notebook_path": "/Repos/production/spark-jobs/01_extract",
+        "base_parameters": {
+          "date": "{{job.start_time.date}}",
+          "env": "production"
+        }
+      },
+      "new_cluster": {
+        "spark_version": "13.3.x-scala2.12",
+        "node_type_id": "i3.xlarge",
+        "num_workers": 4,
+        "spark_conf": {
+          "spark.sql.adaptive.enabled": "true",
+          "spark.sql.adaptive.coalescePartitions.enabled": "true",
+          "spark.databricks.delta.optimizeWrite.enabled": "true",
+          "spark.databricks.delta.autoCompact.enabled": "true"
+        },
+        "aws_attributes": {
+          "availability": "SPOT_WITH_FALLBACK",
+          "zone_id": "eu-west-1a",
+          "spot_bid_price_percent": 100,
+          "ebs_volume_type": "GENERAL_PURPOSE_SSD",
+          "ebs_volume_count": 1,
+          "ebs_volume_size": 100
+        },
+        "autoscale": {
+          "min_workers": 2,
+          "max_workers": 8
+        }
+      },
+      "timeout_seconds": 3600,
+      "email_notifications": {}
+    },
+    {
+      "task_key": "transform_data",
+      "description": "Transform and clean data",
+      "depends_on": [
+        {
+          "task_key": "extract_data"
+        }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Repos/production/spark-jobs/02_transform",
+        "base_parameters": {
+          "date": "{{job.start_time.date}}",
+          "env": "production"
+        }
+      },
+      "existing_cluster_id": "{{tasks.extract_data.cluster_id}}",
+      "timeout_seconds": 3600
+    },
+    {
+      "task_key": "load_data_warehouse",
+      "description": "Load data into warehouse",
+      "depends_on": [
+        {
+          "task_key": "transform_data"
+        }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Repos/production/spark-jobs/03_load",
+        "base_parameters": {
+          "date": "{{job.start_time.date}}",
+          "env": "production",
+          "target": "warehouse"
+        }
+      },
+      "existing_cluster_id": "{{tasks.extract_data.cluster_id}}",
+      "timeout_seconds": 1800
+    },
+    {
+      "task_key": "data_quality_checks",
+      "description": "Run data quality validations",
+      "depends_on": [
+        {
+          "task_key": "load_data_warehouse"
+        }
+      ],
+      "python_wheel_task": {
+        "package_name": "data_quality_checks",
+        "entry_point": "main",
+        "parameters": [
+          "--date={{job.start_time.date}}",
+          "--tables=fact_orders,dim_customers,dim_products"
+        ]
+      },
+      "libraries": [
+        {
+          "whl": "dbfs:/FileStore/jars/data_quality_checks-1.0.0-py3-none-any.whl"
+        }
+      ],
+      "new_cluster": {
+        "spark_version": "13.3.x-scala2.12",
+        "node_type_id": "i3.large",
+        "num_workers": 2
+      },
+      "timeout_seconds": 900
+    },
+    {
+      "task_key": "generate_report",
+      "description": "Generate daily report",
+      "depends_on": [
+        {
+          "task_key": "data_quality_checks"
+        }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Repos/production/spark-jobs/04_report",
+        "base_parameters": {
+          "date": "{{job.start_time.date}}",
+          "recipients": "business-team@company.com"
+        }
+      },
+      "new_cluster": {
+        "spark_version": "13.3.x-scala2.12",
+        "node_type_id": "i3.large",
+        "num_workers": 1
+      },
+      "timeout_seconds": 600
+    }
+  ],
+  "git_source": {
+    "git_url": "https://github.com/company/spark-jobs",
+    "git_provider": "gitHub",
+    "git_branch": "main"
+  },
+  "format": "MULTI_TASK",
+  "queue": {
+    "enabled": true
+  },
+  "parameters": [
+    {
+      "name": "environment",
+      "default": "production"
+    },
+    {
+      "name": "debug_mode",
+      "default": "false"
+    }
+  ],
+  "run_as": {
+    "user_name": "spark-service-account@company.com"
+  },
+  "tags": {
+    "team": "data-engineering",
+    "project": "etl-pipeline",
+    "environment": "production",
+    "cost_center": "analytics"
+  }
+}

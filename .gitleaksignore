@@ -1,0 +1,13 @@
+# Fichiers à ignorer pour gitleaks
+# Ces fichiers sont des exemples et ne contiennent pas de vrais secrets
+
+# Exemples Terraform
+**/*.tfvars.example
+**/terraform.tfvars.example
+
+# READMEs avec exemples de configuration
+**/README.md
+
+# Clés d'exemple dans les docs
+**/cours/**/*.html
+**/cours/**/*.md

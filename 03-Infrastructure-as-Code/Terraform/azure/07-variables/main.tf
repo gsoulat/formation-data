@@ -14,10 +14,15 @@ provider "azurerm" {
 }
 
 
-
+# Variable d'entrée
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
+  tags = {
+    lastName  = local.last_name
+    firstName = local.first_name
+
+  }
 }
 
 

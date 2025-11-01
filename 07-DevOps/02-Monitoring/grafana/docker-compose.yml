@@ -1,0 +1,17 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=changeme
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./fastapi-dashboard.json:/etc/grafana/provisioning/dashboards/fastapi-dashboard.json
+      - ./provisioning/dashboards/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+    restart: unless-stopped
+
+volumes:
+  grafana-data: {}

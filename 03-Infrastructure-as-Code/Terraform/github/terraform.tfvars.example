@@ -1,0 +1,47 @@
+# GitHub Configuration
+github_token = "your_github_token_here"
+
+# Organization Configuration
+organization_name         = "my-company-org"
+organization_display_name = "My Company"
+organization_description  = "My Company GitHub Organization"
+organization_email        = "admin@mycompany.com"
+
+# Reviewer Configuration
+reviewer_username = "your-github-username"
+
+# Users to add to the organization
+users = {
+  "developer1" = {
+    username = "dev1-github-username"
+    role     = "member"
+  }
+  "developer2" = {
+    username = "dev2-github-username"
+    role     = "member"
+  }
+}
+
+# Additional repositories (beyond the default backend, frontend, data)
+# repositories = {
+#   backend = {
+#     name        = "backend"
+#     description = "Backend application repository"
+#     private     = true
+#   }
+#   frontend = {
+#     name        = "frontend"
+#     description = "Frontend application repository"
+#     private     = true
+#   }
+#   data = {
+#     name        = "data"
+#     description = "Data processing repository"
+#     private     = true
+#   }
+#   mobile = {
+#     name        = "mobile-app"
+#     description = "Mobile application repository"
+#     private     = true
+#   }
+# }

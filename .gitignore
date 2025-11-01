@@ -19,3 +19,73 @@ terraform.rc
 # IDE
 .idea/
 .vscode/
+
+.venv
+
+gcp
+gcp.pub
+
+*.pyc
+
+08-Machine-Learning/
+09-Deep-Learning/
+10-Large-Language-Model/
+
+.DS_Store
+.env
+sa.json
+app-fastapi/
+app-django/
+data/
+03-Infrastructure-as-Code/Terraform/A trier/Terraform/Trainning terraform/AWS/creds/berry-devops.pem
+clean_terraform.sh
+.claude
+
+# Pre-commit
+.secrets.baseline
+
+# Node.js / NPM (pour semantic-release)
+node_modules/
+package-lock.json
+.npm/
+.npmrc
+
+# Semantic Release
+.releaserc
+CHANGELOG.md
+
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Credentials et secrets
+*.pem
+*.key
+*.p12
+*.pfx
+*credentials*.json
+*secrets*.json
+*token*.txt
+*password*.txt
+.env.local
+.env.*.local
+10-Large-Language-Model/LLM

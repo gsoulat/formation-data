@@ -1,0 +1,61 @@
+---
+# Installer et configurer un serveur web (Apache/Nginx)
+# Usage: ansible-playbook -i inventory webserver.yml
+
+- name: Setup Web Server
+  hosts: webservers
+  become: yes
+  vars:
+    web_server: nginx  # Changer en 'apache2' pour Apache
+    web_port: 80
+    document_root: /var/www/html
+
+  tasks:
+    - name: Update apt cache (Debian/Ubuntu)
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+    - name: Install Nginx
+      package:
+        name: "{{ web_server }}"
+        state: present
+
+    - name: Create index.html
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Ansible Managed Server</title>
+          </head>
+          <body>
+              <h1>Hello from {{ ansible_hostname }}!</h1>
+              <p>This server was configured by Ansible.</p>
+              <p>Server IP: {{ ansible_default_ipv4.address }}</p>
+          </body>
+          </html>
+        dest: "{{ document_root }}/index.html"
+        mode: '0644'
+
+    - name: Ensure web server is started and enabled
+      service:
+        name: "{{ web_server }}"
+        state: started
+        enabled: yes
+      notify: restart webserver
+
+    - name: Allow HTTP through firewall (UFW)
+      ufw:
+        rule: allow
+        port: "{{ web_port }}"
+        proto: tcp
+      when: ansible_os_family == "Debian"
+      ignore_errors: yes
+
+  handlers:
+    - name: restart webserver
+      service:
+        name: "{{ web_server }}"
+        state: restarted

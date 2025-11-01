@@ -1,0 +1,73 @@
+# GitHub Configuration
+github_token = "your_github_token_here"
+
+# Global Configuration
+organization_email = "admin@mycompany.com"
+reviewer_username  = "your-github-username"
+
+# Production Organization
+production_org_name = "mycompany-prod"
+production_users = {
+  "lead_dev" = {
+    username = "lead-developer-username"
+    role     = "admin"
+  }
+  "senior_dev1" = {
+    username = "senior-dev1-username"
+    role     = "member"
+  }
+  "devops_engineer" = {
+    username = "devops-engineer-username"
+    role     = "member"
+  }
+}
+
+# Staging Organization
+staging_org_name = "mycompany-staging"
+staging_users = {
+  "lead_dev" = {
+    username = "lead-developer-username"
+    role     = "admin"
+  }
+  "senior_dev1" = {
+    username = "senior-dev1-username"
+    role     = "member"
+  }
+  "senior_dev2" = {
+    username = "senior-dev2-username"
+    role     = "member"
+  }
+  "qa_engineer" = {
+    username = "qa-engineer-username"
+    role     = "member"
+  }
+}
+
+# Development Organization
+development_org_name = "mycompany-dev"
+development_users = {
+  "lead_dev" = {
+    username = "lead-developer-username"
+    role     = "admin"
+  }
+  "senior_dev1" = {
+    username = "senior-dev1-username"
+    role     = "member"
+  }
+  "senior_dev2" = {
+    username = "senior-dev2-username"
+    role     = "member"
+  }
+  "junior_dev1" = {
+    username = "junior-dev1-username"
+    role     = "member"
+  }
+  "junior_dev2" = {
+    username = "junior-dev2-username"
+    role     = "member"
+  }
+  "intern" = {
+    username = "intern-username"
+    role     = "member"
+  }
+}

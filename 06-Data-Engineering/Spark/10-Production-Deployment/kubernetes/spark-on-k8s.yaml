@@ -1,0 +1,248 @@
+# Déploiement Spark sur Kubernetes
+# Usage: kubectl apply -f spark-on-k8s.yaml
+
+---
+# Namespace pour Spark
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spark
+
+---
+# ServiceAccount pour Spark
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark
+  namespace: spark
+
+---
+# Role pour Spark (permissions nécessaires)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spark-role
+  namespace: spark
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps"]
+  verbs: ["create", "get", "list", "watch", "delete"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get"]
+
+---
+# RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spark-role-binding
+  namespace: spark
+subjects:
+- kind: ServiceAccount
+  name: spark
+  namespace: spark
+roleRef:
+  kind: Role
+  name: spark-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ConfigMap pour la configuration Spark
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spark-config
+  namespace: spark
+data:
+  spark-defaults.conf: |
+    spark.master                     k8s://https://kubernetes.default.svc
+    spark.submit.deployMode          cluster
+    spark.kubernetes.namespace       spark
+    spark.kubernetes.authenticate.driver.serviceAccountName spark
+
+    # Configuration mémoire
+    spark.driver.memory              2g
+    spark.executor.memory            4g
+    spark.executor.cores             2
+    spark.executor.instances         3
+
+    # Configuration Spark SQL
+    spark.sql.adaptive.enabled       true
+    spark.sql.shuffle.partitions     200
+
+    # Logs
+    spark.eventLog.enabled           true
+    spark.eventLog.dir               /tmp/spark-events
+
+---
+# PersistentVolumeClaim pour les données
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spark-data-pvc
+  namespace: spark
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+
+---
+# Exemple de Job Spark (batch)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: spark-pi-job
+  namespace: spark
+spec:
+  template:
+    spec:
+      serviceAccountName: spark
+      restartPolicy: Never
+      containers:
+      - name: spark-submit
+        image: apache/spark:3.5.0
+        command:
+          - /opt/spark/bin/spark-submit
+          - --master
+          - k8s://https://kubernetes.default.svc
+          - --deploy-mode
+          - cluster
+          - --name
+          - spark-pi
+          - --conf
+          - spark.kubernetes.container.image=apache/spark:3.5.0
+          - --conf
+          - spark.kubernetes.namespace=spark
+          - --conf
+          - spark.executor.instances=2
+          - --conf
+          - spark.executor.memory=2g
+          - --conf
+          - spark.driver.memory=1g
+          - local:///opt/spark/examples/jars/spark-examples_2.12-3.5.0.jar
+          - "1000"
+        volumeMounts:
+        - name: spark-data
+          mountPath: /data
+      volumes:
+      - name: spark-data
+        persistentVolumeClaim:
+          claimName: spark-data-pvc
+
+---
+# Service pour Spark UI (optionnel)
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-ui
+  namespace: spark
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 4040
+      targetPort: 4040
+      name: spark-ui
+  selector:
+    spark-role: driver
+
+---
+# Spark History Server (pour visualiser les jobs terminés)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-history-server
+  namespace: spark
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-history-server
+  template:
+    metadata:
+      labels:
+        app: spark-history-server
+    spec:
+      containers:
+      - name: spark-history-server
+        image: apache/spark:3.5.0
+        command:
+          - /opt/spark/bin/spark-class
+          - org.apache.spark.deploy.history.HistoryServer
+        ports:
+        - containerPort: 18080
+          name: web-ui
+        env:
+        - name: SPARK_HISTORY_OPTS
+          value: "-Dspark.history.fs.logDirectory=/tmp/spark-events"
+        volumeMounts:
+        - name: spark-events
+          mountPath: /tmp/spark-events
+      volumes:
+      - name: spark-events
+        persistentVolumeClaim:
+          claimName: spark-data-pvc
+
+---
+# Service pour History Server
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-history-server
+  namespace: spark
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 18080
+      targetPort: 18080
+      name: web-ui
+  selector:
+    app: spark-history-server
+
+---
+# Exemple: CronJob pour job quotidien
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-spark-job
+  namespace: spark
+spec:
+  schedule: "0 2 * * *"  # Tous les jours à 2h du matin
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: spark
+          restartPolicy: OnFailure
+          containers:
+          - name: spark-job
+            image: apache/spark:3.5.0
+            command:
+              - /opt/spark/bin/spark-submit
+              - --master
+              - k8s://https://kubernetes.default.svc
+              - --deploy-mode
+              - cluster
+              - --name
+              - daily-etl-job
+              - --conf
+              - spark.kubernetes.container.image=apache/spark:3.5.0
+              - --conf
+              - spark.kubernetes.namespace=spark
+              - --conf
+              - spark.executor.instances=5
+              - --conf
+              - spark.executor.memory=4g
+              - --conf
+              - spark.driver.memory=2g
+              - s3a://my-bucket/jobs/etl_job.py
+            volumeMounts:
+            - name: spark-data
+              mountPath: /data
+          volumes:
+          - name: spark-data
+            persistentVolumeClaim:
+              claimName: spark-data-pvc

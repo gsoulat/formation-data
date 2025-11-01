@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  app-django:
+    build: ./app-django
+    container_name: app-django
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn app.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - ./app-django:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    volumes:
+      - uptime-kuma-data:/app/data
+    ports:
+      - "3001:3001"
+    restart: always
+
+volumes:
+  uptime-kuma-data:

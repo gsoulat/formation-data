@@ -1,0 +1,247 @@
+# Workflow Docker Build and Push
+# Build une image Docker, la scanne pour les vulnérabilités, et la push sur Docker Hub
+
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOCKER_IMAGE: mycompany/myapp
+  REGISTRY: docker.io
+
+jobs:
+  # Job 1: Build l'image Docker
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+            VERSION=${{ steps.meta.outputs.version }}
+
+      - name: Export image for scanning
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: ${{ env.DOCKER_IMAGE }}:test
+
+  # Job 2: Scanner l'image pour les vulnérabilités
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build image for scanning
+        run: docker build -t ${{ env.DOCKER_IMAGE }}:test .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.DOCKER_IMAGE }}:test
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Run Snyk container scan
+        uses: snyk/actions/docker@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ${{ env.DOCKER_IMAGE }}:test
+          args: --severity-threshold=high
+
+  # Job 3: Tests de l'image
+  test:
+    name: Test Docker Image
+    runs-on: ubuntu-latest
+    needs: build
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: testpassword
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build test image
+        run: docker build -t ${{ env.DOCKER_IMAGE }}:test .
+
+      - name: Run container tests
+        run: |
+          # Démarrer le container
+          docker run -d \
+            --name app-test \
+            -p 3000:3000 \
+            -e DATABASE_URL=postgresql://postgres:testpassword@postgres:5432/testdb \
+            ${{ env.DOCKER_IMAGE }}:test
+
+          # Attendre que l'app démarre
+          sleep 10
+
+          # Tests de santé
+          curl -f http://localhost:3000/health || exit 1
+
+          # Tests API basiques
+          curl -f http://localhost:3000/api/status || exit 1
+
+          # Arrêter le container
+          docker stop app-test
+
+      - name: Check image size
+        run: |
+          SIZE=$(docker images ${{ env.DOCKER_IMAGE }}:test --format "{{.Size}}")
+          echo "Image size: $SIZE"
+          # Ajouter une alerte si l'image est trop grosse
+          # [ "$SIZE" -gt "500MB" ] && echo "::warning::Image size exceeds 500MB"
+
+  # Job 4: Push vers Azure Container Registry (optionnel)
+  push-acr:
+    name: Push to Azure Container Registry
+    runs-on: ubuntu-latest
+    needs: [build, security-scan, test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: |
+          az acr login --name myregistry
+
+      - name: Pull image from Docker Hub
+        run: docker pull ${{ env.DOCKER_IMAGE }}:latest
+
+      - name: Tag for ACR
+        run: docker tag ${{ env.DOCKER_IMAGE }}:latest myregistry.azurecr.io/myapp:latest
+
+      - name: Push to ACR
+        run: docker push myregistry.azurecr.io/myapp:latest
+
+  # Job 5: Déployer sur Azure Container Instances (optionnel)
+  deploy-aci:
+    name: Deploy to Azure Container Instances
+    runs-on: ubuntu-latest
+    needs: push-acr
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    environment:
+      name: production
+      url: https://myapp.azurewebsites.net
+
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to ACI
+        uses: azure/aci-deploy@v1
+        with:
+          resource-group: myapp-rg
+          dns-name-label: myapp
+          image: myregistry.azurecr.io/myapp:latest
+          name: myapp-container
+          location: westeurope
+          registry-login-server: myregistry.azurecr.io
+          registry-username: ${{ secrets.ACR_USERNAME }}
+          registry-password: ${{ secrets.ACR_PASSWORD }}
+          ports: 80 443
+          cpu: 1
+          memory: 1.5
+
+      - name: Health check
+        run: |
+          echo "Waiting for deployment..."
+          sleep 30
+          curl -f https://myapp.azurewebsites.net/health || exit 1
+
+  # Job 6: Notification
+  notify:
+    name: Send Notification
+    runs-on: ubuntu-latest
+    needs: [build, security-scan, test]
+    if: always()
+
+    steps:
+      - name: Slack notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: |
+            Docker build ${{ job.status }}
+            Image: ${{ env.DOCKER_IMAGE }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        if: always()

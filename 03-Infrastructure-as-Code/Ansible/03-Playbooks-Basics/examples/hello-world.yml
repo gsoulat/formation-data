@@ -1,0 +1,21 @@
+---
+# Premier playbook Ansible - Hello World
+# Usage: ansible-playbook hello-world.yml
+
+- name: Hello World Playbook
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+    - name: Print hello world message
+      debug:
+        msg: "Hello, World! Bienvenue dans Ansible!"
+
+    - name: Display current date and time
+      debug:
+        msg: "Date actuelle: {{ ansible_date_time.iso8601 }}"
+      when: ansible_date_time is defined
+
+    - name: Show Ansible version
+      debug:
+        msg: "Ansible version: {{ ansible_version.full }}"

@@ -1,0 +1,118 @@
+name: Branch Naming Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches-ignore:
+      - main
+      - develop
+
+jobs:
+  branch-naming:
+    name: Validate Branch Names
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Validate branch name
+        run: |
+          branch_name="$$${{ github.head_ref || github.ref_name }}"
+          echo "Validating branch name: $branch_name"
+          
+          # Define allowed branch patterns
+          allowed_patterns=(
+            "^feature/.+"
+            "^bugfix/.+"
+            "^hotfix/.+"
+            "^release/.+"
+            "^chore/.+"
+            "^docs/.+"
+            "^refactor/.+"
+            "^test/.+"
+          )
+          
+          # Check if branch name matches any allowed pattern
+          valid=false
+          for pattern in "$$${allowed_patterns[@]}"; do
+            if [[ $branch_name =~ $pattern ]]; then
+              valid=true
+              break
+            fi
+          done
+          
+          if [ "$valid" = false ]; then
+            echo "❌ Branch name $branch_name does not follow semantic naming convention"
+            echo ""
+            echo "Allowed patterns:"
+            echo "  - feature/description (for new features)"
+            echo "  - bugfix/description (for bug fixes)"  
+            echo "  - hotfix/description (for urgent fixes)"
+            echo "  - release/version (for release branches)"
+            echo "  - chore/description (for maintenance tasks)"
+            echo "  - docs/description (for documentation)"
+            echo "  - refactor/description (for code refactoring)"
+            echo "  - test/description (for test improvements)"
+            echo ""
+            echo "Examples:"
+            echo "  - feature/user-authentication"
+            echo "  - bugfix/fix-login-error"
+            echo "  - hotfix/security-patch"
+            exit 1
+          else
+            echo "✅ Branch name '$branch_name' follows semantic naming convention"
+          fi
+          
+      - name: Comment PR on failure
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = '$$${{ github.head_ref }}';
+            const message = `❌ **Branch Naming Validation Failed**
+            
+            Your branch name \`$${branchName}\` does not follow the semantic naming convention.
+            
+            **Allowed patterns:**
+            - \`feature/description\` - for new features
+            - \`bugfix/description\` - for bug fixes  
+            - \`hotfix/description\` - for urgent fixes
+            - \`release/version\` - for release branches
+            - \`chore/description\` - for maintenance tasks
+            - \`docs/description\` - for documentation
+            - \`refactor/description\` - for code refactoring
+            - \`test/description\` - for test improvements
+            
+            **Examples:**
+            - \`feature/user-authentication\`
+            - \`bugfix/fix-login-error\`
+            - \`hotfix/security-patch\`
+            
+            Please rename your branch to follow the convention and update this PR.
+            
+            Contact @$${reviewer_username} if you need help.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+            
+      - name: Set status check
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conclusion = '$$${{ job.status }}' === 'success' ? 'success' : 'failure';
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: conclusion,
+              target_url: `$$${{ github.server_url }}/$$${{ github.repository }}/actions/runs/$$${{ github.run_id }}`,
+              description: conclusion === 'success' ? 'Branch name follows semantic convention' : 'Branch name does not follow semantic convention',
+              context: 'ci/branch-naming'
+            });

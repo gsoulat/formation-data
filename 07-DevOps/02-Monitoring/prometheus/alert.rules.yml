@@ -1,0 +1,34 @@
+groups:
+  - name: fastapi_alerts_instant
+    interval: 5s  # ← Evaluation toutes les 5 secondes
+    rules:
+    - alert: FastAPIDown
+      expr: up{job="fastapi"} == 0
+      for: 5s  # ← Alerte après seulement 5 secondes
+      labels:
+        severity: critical
+        alert_frequency: "high"
+      annotations:
+        summary: "URGENT - FastAPI Application Down"
+        description: "L'application FastAPI est indisponible depuis 5 secondes - Alerte immediate"
+
+    - alert: FastAPIUp
+      expr: up{job="fastapi"} == 1
+      for: 10s
+      labels:
+        severity: info
+      annotations:
+        summary: "FastAPI Application Running"
+        description: "L'application FastAPI fonctionne correctement"
+
+  - name: system_alerts
+    interval: 1m
+    rules:
+    - alert: HighCPUUsage
+      expr: rate(process_cpu_seconds_total[1m]) * 100 > 20
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "CPU Usage High"
+        description: "Utilisation CPU elevee"

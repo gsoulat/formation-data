@@ -1,0 +1,10 @@
+# Global code ownership
+# The reviewer will be automatically requested for review on all PRs
+* @${reviewer_username}
+
+# Specific file patterns can be added here as needed
+# Example:
+# *.md @${reviewer_username}
+# /src/ @${reviewer_username}
+# /docs/ @${reviewer_username}
+# /.github/ @${reviewer_username}

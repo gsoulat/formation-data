@@ -1,0 +1,22 @@
+# Exemple de configuration
+hcloud_token   = "votre_token_hetzner"
+ssh_public_key = "ssh-rsa AAAAB3..."
+
+project_name = "myapp"
+environment  = "dev"
+location     = "nbg1"
+
+servers = {
+  web = {
+    type  = "cx11"
+    image = "ubuntu-22.04"
+  }
+  api = {
+    type  = "cx21"
+    image = "ubuntu-22.04"
+  }
+  db = {
+    type  = "cx31"
+    image = "ubuntu-22.04"
+  }
+}

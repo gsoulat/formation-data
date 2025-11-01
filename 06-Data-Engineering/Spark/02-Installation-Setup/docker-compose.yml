@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # Spark Master
+  spark-master:
+    image: bitnami/spark:3.5
+    container_name: spark-master
+    hostname: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_MASTER_WEBUI_PORT=8080
+    ports:
+      - "8080:8080"  # Spark Master UI
+      - "7077:7077"  # Spark Master port
+    volumes:
+      - ./data:/opt/spark-data
+      - ./apps:/opt/spark-apps
+    networks:
+      - spark-network
+
+  # Spark Worker 1
+  spark-worker-1:
+    image: bitnami/spark:3.5
+    container_name: spark-worker-1
+    hostname: spark-worker-1
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    depends_on:
+      - spark-master
+    volumes:
+      - ./data:/opt/spark-data
+      - ./apps:/opt/spark-apps
+    networks:
+      - spark-network
+
+  # Spark Worker 2
+  spark-worker-2:
+    image: bitnami/spark:3.5
+    container_name: spark-worker-2
+    hostname: spark-worker-2
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=2G
+      - SPARK_WORKER_CORES=2
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    depends_on:
+      - spark-master
+    volumes:
+      - ./data:/opt/spark-data
+      - ./apps:/opt/spark-apps
+    networks:
+      - spark-network
+
+  # Jupyter Notebook avec PySpark
+  jupyter:
+    image: jupyter/pyspark-notebook:latest
+    container_name: spark-jupyter
+    hostname: jupyter
+    ports:
+      - "8888:8888"
+      - "4040:4040"  # Spark Application UI
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - SPARK_MASTER=spark://spark-master:7077
+      - GRANT_SUDO=yes
+    user: root
+    volumes:
+      - ./notebooks:/home/jovyan/work
+      - ./data:/home/jovyan/data
+      - ./apps:/home/jovyan/apps
+    depends_on:
+      - spark-master
+    networks:
+      - spark-network
+    command: >
+      bash -c "
+      pip install pyspark==3.5.0 &&
+      start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+      "
+
+networks:
+  spark-network:
+    driver: bridge
+
+volumes:
+  data:
+  apps:
+  notebooks:

@@ -1,0 +1,197 @@
+# Pipeline GitLab CI/CD complet pour une application Node.js
+
+stages:
+  - build
+  - test
+  - security
+  - deploy
+
+variables:
+  NODE_VERSION: "18"
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+# Template pour les jobs Node.js
+.node_template:
+  image: node:${NODE_VERSION}
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+      - .npm/
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+
+# Job: Install dependencies
+install:
+  extends: .node_template
+  stage: build
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+
+# Job: Build application
+build:
+  extends: .node_template
+  stage: build
+  needs: [install]
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+
+# Job: Lint
+lint:
+  extends: .node_template
+  stage: test
+  needs: [install]
+  script:
+    - npm run lint
+
+# Job: Unit tests
+test:unit:
+  extends: .node_template
+  stage: test
+  needs: [install]
+  script:
+    - npm run test:unit
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+
+# Job: Integration tests
+test:integration:
+  extends: .node_template
+  stage: test
+  needs: [install]
+  services:
+    - name: postgres:15
+      alias: postgres
+  variables:
+    POSTGRES_DB: testdb
+    POSTGRES_USER: testuser
+    POSTGRES_PASSWORD: testpass
+    DATABASE_URL: postgresql://testuser:testpass@postgres:5432/testdb
+  script:
+    - npm run test:integration
+
+# Job: E2E tests
+test:e2e:
+  extends: .node_template
+  stage: test
+  needs: [build]
+  services:
+    - name: selenium/standalone-chrome:latest
+      alias: selenium
+  script:
+    - npm run test:e2e
+  artifacts:
+    when: on_failure
+    paths:
+      - cypress/screenshots/
+      - cypress/videos/
+    expire_in: 1 week
+
+# Job: Security scan - npm audit
+security:npm-audit:
+  extends: .node_template
+  stage: security
+  needs: [install]
+  script:
+    - npm audit --audit-level=moderate
+  allow_failure: true
+
+# Job: Security scan - SAST
+security:sast:
+  stage: security
+  image: returntocorp/semgrep
+  script:
+    - semgrep --config=auto --json --output=sast-report.json .
+  artifacts:
+    reports:
+      sast: sast-report.json
+  allow_failure: true
+
+# Job: Docker build
+docker:build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - main
+    - develop
+
+# Job: Deploy to staging
+deploy:staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - echo "Deploying to staging..."
+    - curl -X POST $STAGING_WEBHOOK_URL
+  environment:
+    name: staging
+    url: https://staging.myapp.com
+    on_stop: stop:staging
+  only:
+    - develop
+
+# Job: Stop staging
+stop:staging:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Stopping staging environment..."
+  environment:
+    name: staging
+    action: stop
+  when: manual
+  only:
+    - develop
+
+# Job: Deploy to production
+deploy:production:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - echo "Deploying to production..."
+    - curl -X POST $PRODUCTION_WEBHOOK_URL
+  environment:
+    name: production
+    url: https://myapp.com
+  only:
+    - main
+  when: manual
+
+# Job: Rollback production
+rollback:production:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Rolling back production..."
+    - curl -X POST $ROLLBACK_WEBHOOK_URL
+  environment:
+    name: production
+    action: rollback
+  when: manual
+  only:
+    - main

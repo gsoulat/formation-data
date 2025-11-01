@@ -1,0 +1,96 @@
+name: Conventional Commits
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches-ignore:
+      - main
+      - develop
+
+jobs:
+  conventional-commits:
+    name: Validate Conventional Commits
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Validate Conventional Commits
+        uses: wagoid/commitlint-github-action@v5
+        with:
+          configFile: .commitlintrc.json
+          
+      - name: Create commitlint config
+        if: failure()
+        run: |
+          cat > .commitlintrc.json << 'EOF'
+          {
+            "extends": ["@commitlint/config-conventional"],
+            "rules": {
+              "type-enum": [2, "always", [
+                "feat", "fix", "docs", "style", "refactor", 
+                "perf", "test", "chore", "ci", "build", "revert"
+              ]],
+              "type-case": [2, "always", "lower-case"],
+              "type-empty": [2, "never"],
+              "scope-case": [2, "always", "lower-case"],
+              "subject-case": [2, "never", ["sentence-case", "start-case", "pascal-case", "upper-case"]],
+              "subject-empty": [2, "never"],
+              "subject-full-stop": [2, "never", "."],
+              "header-max-length": [2, "always", 72],
+              "body-leading-blank": [1, "always"],
+              "body-max-line-length": [2, "always", 100],
+              "footer-leading-blank": [1, "always"],
+              "footer-max-line-length": [2, "always", 100]
+            }
+          }
+          EOF
+          
+      - name: Comment PR on failure
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message = `❌ **Conventional Commits Validation Failed**
+            
+            Your commit messages do not follow the conventional commit format.
+            
+            **Required format:** \`type(scope): description\`
+            
+            **Valid types:** feat, fix, docs, style, refactor, perf, test, chore, ci, build, revert
+            
+            **Examples:**
+            - \`feat(auth): add login functionality\`
+            - \`fix(api): resolve null pointer exception\`
+            - \`docs: update README with installation steps\`
+            
+            Please fix your commit messages and force push to update this PR.
+            
+            Contact @${reviewer_username} if you need help.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+            
+      - name: Set status check
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const conclusion = ("$$${{ job.status }}" === "success") ? "success" : "failure";
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: conclusion,
+              target_url: `$${{ github.server_url }}/$${{ github.repository }}/actions/runs/$${{ github.run_id }}`,
+              description: (conclusion === "success") ? "All commits follow conventional format" : "Some commits do not follow conventional format",
+              context: 'ci/conventional-commits'
+            });
