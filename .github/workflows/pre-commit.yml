@@ -1,0 +1,32 @@
+# Workflow GitHub Actions pour exécuter pre-commit sur les PRs
+# Vérifie que les commits suivent les standards
+
+name: Pre-commit checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  pre-commit:
+    name: Pre-commit checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pre-commit
+        run: |
+          pip install pre-commit
+          pre-commit install
+
+      - name: Run pre-commit
+        run: pre-commit run --all-files
