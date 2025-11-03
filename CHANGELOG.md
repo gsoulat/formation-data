@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/gsoulat/formation-data-engineer/compare/v1.0.0...v1.1.0) (2025-11-03)
+
+
+### Features
+
+* **update:** update terraform ([6e92f5b](https://github.com/gsoulat/formation-data-engineer/commit/6e92f5bfb3d5a254dd356d1d36e6867ed2f56281))
+
 # 1.0.0 (2025-11-01)
 
 
