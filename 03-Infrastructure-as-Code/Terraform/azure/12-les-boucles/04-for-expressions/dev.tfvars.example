@@ -1,0 +1,3 @@
+subscription_id      = ""
+resource_group_name  = "rg-for-expressions"
+location             = "westeurope"

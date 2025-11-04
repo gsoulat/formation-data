@@ -1,0 +1,5 @@
+subscription_id      = ""
+resource_group_name  = "rg-depend-on-example"
+location             = "westeurope"
+storage_account_name = "stdependon123"  # Doit être unique globalement
+container_name       = "data"

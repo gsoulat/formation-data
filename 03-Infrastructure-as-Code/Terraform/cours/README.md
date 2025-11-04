@@ -1,260 +1,290 @@
-# Formation Terraform - Infrastructure as Code
+# 🎓 Formation Terraform avec Azure
 
-> **Formation complète pour maîtriser Terraform de zéro à expert**
-> _Formation Data Engineering - Simplon_
+## Bienvenue dans votre formation Infrastructure as Code !
 
-## 🚀 Bienvenue !
+Ce cours vous permettra de maîtriser Terraform pour gérer votre infrastructure Azure de manière automatisée, reproductible et versionnée.
 
-Cette formation vous guide à travers l'apprentissage complet de Terraform, de l'installation jusqu'au déploiement d'infrastructures complexes en production. Avec **8 modules théoriques**, **5+ exemples de code pratiques**, et **6 exercices progressifs**, vous aurez toutes les clés pour devenir autonome sur Terraform.
+## 📺 Vidéo d'introduction
 
----
+Avant de commencer, regardez cette vidéo qui présente Terraform et ses concepts fondamentaux :
 
-## 📋 Table des Matières
+[![Introduction à Terraform](https://img.youtube.com/vi/225uiqGmXsM/maxresdefault.jpg)](https://www.youtube.com/watch?v=225uiqGmXsM&t=6s)
 
-- [À propos](#-à-propos)
-- [Prérequis](#-prérequis)
-- [Modules de Formation](#-modules-de-formation)
-- [Structure du Cours](#-structure-du-cours)
-- [Comment Utiliser Ce Cours](#-comment-utiliser-ce-cours)
-- [Ressources Complémentaires](#-ressources-complémentaires)
+**[▶️ Regarder la vidéo d'introduction sur YouTube](https://www.youtube.com/watch?v=225uiqGmXsM&t=6s)**
 
----
+## 🎯 Objectifs de la formation
 
-## 🎯 À propos
+À la fin de cette formation, vous serez capable de :
 
-Cette formation vous guide à travers l'apprentissage de **Terraform**, l'outil d'Infrastructure as Code (IaC) le plus populaire. Vous apprendrez à provisionner, gérer et versionner votre infrastructure cloud de manière déclarative et automatisée.
+- ✅ Installer et configurer Terraform sur votre OS
+- ✅ Comprendre les concepts clés de l'Infrastructure as Code
+- ✅ Créer et gérer des ressources Azure avec Terraform
+- ✅ Organiser votre code Terraform de manière professionnelle
+- ✅ Utiliser les variables, outputs et modules
+- ✅ Gérer plusieurs environnements (dev, staging, prod)
+- ✅ Collaborer en équipe avec un état distant
+- ✅ Appliquer les bonnes pratiques du marché
 
-### Objectifs de la formation
+## 👥 Public visé
 
-- ✅ Comprendre les concepts fondamentaux de l'Infrastructure as Code
-- ✅ Maîtriser la syntaxe et les commandes Terraform
-- ✅ Déployer des infrastructures complètes sur Azure et AWS
-- ✅ Gérer l'état (state) et les backends distants
-- ✅ Créer des modules réutilisables
-- ✅ Implémenter les best practices et l'automatisation CI/CD
+Ce cours s'adresse aux :
+- Développeurs souhaitant automatiser leurs déploiements
+- DevOps débutants ou intermédiaires
+- Administrateurs systèmes et cloud
+- Toute personne voulant apprendre l'Infrastructure as Code
 
-### Durée estimée
-**6 à 8 heures** pour l'ensemble de la formation (théorie + pratique)
+**Prérequis** :
+- Connaissances de base en ligne de commande
+- Compréhension des concepts cloud (VM, réseau, stockage)
+- Un compte Azure (gratuit pour débuter)
 
----
+## 📚 Structure du cours
 
-## 📚 Prérequis
+### Module 1 : Introduction et Installation
+**Durée estimée : 2 heures**
 
-### Connaissances
-- Bases de la ligne de commande (bash/shell)
-- Compréhension générale du cloud computing
-- Notions de Git (versionning)
+- [01 - Qu'est-ce que l'Infrastructure as Code ?](./parties/01-introduction.md)
+- [02 - Installation de Terraform](./parties/02-installation.md)
+- [03 - Installation et configuration Azure CLI](./parties/03-azure-cli.md)
+- [04 - Premier projet Terraform](./parties/04-premier-projet.md)
 
-### Outils requis
-- Un compte Azure ou AWS (niveau gratuit acceptable)
-- Un terminal (bash, zsh, PowerShell)
-- Un éditeur de code (VS Code recommandé)
-- Git installé
+### Module 2 : Les Fondamentaux
+**Durée estimée : 4 heures**
 
----
+- [05 - Syntaxe HCL (HashiCorp Configuration Language)](./parties/05-syntaxe-hcl.md)
+- [06 - Providers et Resources](./parties/06-providers-resources.md)
+- [07 - Variables et Outputs](./parties/07-variables-outputs.md)
+- [08 - Le cycle de vie Terraform](./parties/08-cycle-de-vie.md)
+- [09 - L'état Terraform (State)](./parties/09-etat-terraform.md)
 
-## 📖 Modules de Formation
+### Module 3 : Concepts Avancés
+**Durée estimée : 6 heures**
 
-### [Module 1 : Introduction à Terraform](modules/01-introduction.md)
-**Durée : 45 min**
+- [10 - Gestion des dépendances](./parties/10-dependances.md)
+- [11 - Les boucles (count, for_each, for)](./parties/11-boucles.md)
+- [12 - Les modules](./parties/12-modules.md)
+- [13 - Data Sources](./parties/13-data-sources.md)
+- [14 - Workspaces](./parties/14-workspaces.md)
 
-Découvrez Terraform et les concepts de l'Infrastructure as Code
-- Qu'est-ce que Terraform ?
-- Infrastructure as Code (IaC)
-- Terraform vs autres outils (ARM, Bicep, Ansible, CloudFormation)
-- Architecture et workflow Terraform
-- Concepts clés : Providers, Resources, State
+### Module 4 : Pratiques Professionnelles
+**Durée estimée : 4 heures**
 
-### [Module 2 : Installation et Configuration](modules/02-installation.md)
-**Durée : 30 min**
+- [15 - Backend distant](./parties/15-backend-distant.md)
+- [16 - Organisation du code](./parties/16-organisation-code.md)
+- [17 - Bonnes pratiques](./parties/17-bonnes-pratiques.md)
+- [18 - Tests et validation](./parties/18-tests-validation.md)
+- [19 - CI/CD avec Terraform](./parties/19-cicd.md)
 
-Installez et configurez votre environnement de développement
-- Installation de Terraform (macOS, Windows, Linux)
-- Installation des CLI cloud (Azure CLI, AWS CLI)
-- Authentification avec les providers cloud
-- Configuration de VS Code et extensions
+### Module 5 : Projet Final
+**Durée estimée : 4 heures**
 
-### [Module 3 : Premier Projet Terraform](modules/03-premier-projet.md)
-**Durée : 1h**
+- [20 - Projet guidé : Infrastructure complète](./parties/20-projet-final.md)
 
-Créez votre première infrastructure avec Terraform
-- Structure d'un projet Terraform
-- Fichiers de configuration (.tf)
-- Commandes de base : `init`, `plan`, `apply`, `destroy`
-- Workflow complet de déploiement
-- Projet pratique : Déployer un Resource Group Azure
-
-### [Module 4 : Variables et Outputs](modules/04-variables-outputs.md)
-**Durée : 1h**
-
-Rendez votre code flexible et réutilisable
-- Déclarer et utiliser des variables
-- Types de variables (string, number, bool, list, map, object)
-- Valeurs par défaut et validation
-- Fichiers .tfvars et variables d'environnement
-- Outputs pour extraire des informations
-- Projet pratique : Infrastructure paramétrable
-
-### [Module 5 : Créer des Ressources Cloud](modules/05-ressources-cloud.md)
-**Durée : 1h30**
-
-Déployez des ressources complètes sur Azure et AWS
-- **Azure** : VNet, VMs, Storage Account, Azure SQL, AKS
-- **AWS** : VPC, EC2, S3, RDS, EKS
-- Dépendances entre ressources
-- Data sources pour référencer des ressources existantes
-- Projet pratique : Application 3-tier sur Azure
-
-### [Module 6 : Gestion du State](modules/06-gestion-state.md)
-**Durée : 45 min**
-
-Maîtrisez la gestion du state pour la production
-- Comprendre le fichier terraform.tfstate
-- State local vs remote
-- Backends distants (Azure Storage, S3, Terraform Cloud)
-- Verrouillage du state (state locking)
-- Commandes state : list, show, mv, rm
-- Sécurité et best practices
-
-### [Module 7 : Modules Terraform](modules/07-modules.md)
-**Durée : 1h**
-
-Créez des composants d'infrastructure réutilisables
-- Qu'est-ce qu'un module ?
-- Structure d'un module
-- Variables d'entrée et outputs de module
-- Créer un module custom
-- Utiliser des modules du Terraform Registry
-- Versioning des modules
-- Projet pratique : Module réseau Azure réutilisable
-
-### [Module 8 : Best Practices et CI/CD](modules/08-best-practices-cicd.md)
-**Durée : 1h30**
-
-Professionnalisez vos déploiements Terraform
-- Structure de projet recommandée
-- Conventions de nommage et tags
-- Gestion des secrets (Azure Key Vault, AWS Secrets Manager)
-- Workspaces Terraform
-- Pipelines CI/CD avec Azure DevOps
-- Pipelines CI/CD avec GitHub Actions
-- Tests automatisés (terratest)
-- Projet final : Infrastructure complète avec CI/CD
-
----
-
-## 📁 Structure du Cours
+## 🗂️ Organisation des fichiers
 
 ```
-markdown/
-├── README.md                           # 👋 Ce fichier - Guide principal
-│
-├── modules/                            # 📚 Modules théoriques
-│   ├── 01-introduction.md              #     Introduction à Terraform & IaC
-│   ├── 02-installation.md              #     Installation et configuration
-│   ├── 03-premier-projet.md            #     Premier projet Terraform
-│   ├── 04-variables-outputs.md         #     Variables et Outputs
-│   ├── 05-ressources-cloud.md          #     Créer des ressources cloud
-│   ├── 06-gestion-state.md             #     Gestion du State
-│   ├── 07-modules.md                   #     Modules Terraform
-│   └── 08-best-practices-cicd.md       #     Best Practices & CI/CD
-│
-├── exemples/                           # 💻 Exemples de code prêts à l'emploi
-│   ├── README.md                       #     Guide des exemples
-│   ├── azure/                          #     Exemples Azure
-│   │   ├── README.md                   #     Guide exemples Azure
-│   │   ├── storage-account/            #     ✅ Storage Account simple
-│   │   ├── simple-vm/                  #     ✅ VM Linux complète
-│   │   ├── network-module/             #     ✅ Module réseau réutilisable
-│   │   ├── 3-tier-app/                 #     🚧 Application 3-tier
-│   │   └── aks-cluster/                #     🚧 Cluster AKS
-│   └── aws/                            #     Exemples AWS
-│       ├── README.md                   #     Guide exemples AWS
-│       ├── s3-bucket/                  #     ✅ S3 Bucket sécurisé
-│       ├── simple-ec2/                 #     ✅ Instance EC2 + VPC
-│       └── vpc-module/                 #     🚧 Module VPC
-│
-└── exercices/                          # ✏️ Exercices pratiques progressifs
-    ├── README.md                       #     Guide des exercices
-    ├── exercice-01-premiers-pas.md     #     Débutant - Premier projet
-    ├── exercice-02-variables.md        #     Débutant - Variables & Outputs
-    ├── exercice-03-ressources-multiples.md # Intermédiaire
-    ├── exercice-04-remote-state.md     #     Intermédiaire
-    ├── exercice-05-module.md           #     Avancé - Créer un module
-    ├── exercice-06-cicd.md             #     Avancé - Pipeline CI/CD
-    └── projet-final.md                 #     Expert - Projet complet
+cours/
+├── README.md                    # Ce fichier
+├── parties/                     # Modules du cours
+│   ├── 01-introduction.md
+│   ├── 02-installation.md
+│   ├── ...
+│   └── 20-projet-final.md
+└── assets/                      # Images et ressources
+    ├── diagrams/
+    └── screenshots/
+
+../azure/                        # Exemples pratiques (16 exemples)
+├── 01-resource-group/
+├── 02-depend_on/
+├── 03-locals/
+├── ...
+└── 16-workspace/
 ```
 
-**Légende :**
-- ✅ Disponible et complet
-- 🚧 En construction (structure définie)
+## 💻 Exemples pratiques
 
----
+Le cours est accompagné de **16 exemples pratiques** disponibles dans le dossier `../azure/` :
 
-## 🚀 Comment Utiliser Ce Cours
+| Exemple | Concept | Difficulté |
+|---------|---------|------------|
+| 01 | Resource Group | ⭐ Débutant |
+| 02 | Dépendances (depends_on) | ⭐⭐ Intermédiaire |
+| 03 | Locals | ⭐ Débutant |
+| 04 | Provisionneurs | ⭐⭐ Intermédiaire |
+| 05 | Data Sources | ⭐⭐ Intermédiaire |
+| 06 | Null Resources | ⭐⭐ Intermédiaire |
+| 07 | Random Provider | ⭐ Débutant |
+| 08 | Variables (tfvars) | ⭐⭐ Intermédiaire |
+| 09 | Outputs | ⭐ Débutant |
+| 10 | Backend distant | ⭐⭐⭐ Avancé |
+| 11 | Import | ⭐⭐ Intermédiaire |
+| 12 | Les boucles (count, for_each, for, dynamic) | ⭐⭐⭐ Avancé |
+| 13 | Modules | ⭐⭐⭐ Avancé |
+| 14 | Data Sources avancés | ⭐⭐ Intermédiaire |
+| 15 | Provisionneurs avancés | ⭐⭐ Intermédiaire |
+| 16 | Workspaces | ⭐⭐⭐ Avancé |
 
-### 1. Parcours Recommandé
-Suivez les modules dans l'ordre numérique. Chaque module s'appuie sur les connaissances des précédents.
+**Chaque exemple contient** :
+- 📄 `main.tf` - Code principal
+- 📝 `variables.tf` - Déclaration des variables
+- 📤 `outputs.tf` - Sorties
+- 📖 `README.md` - Documentation complète
+- 📋 `dev.tfvars.example` - Exemple de configuration
 
-### 2. Apprentissage Pratique
-- 📖 Lisez la théorie dans chaque module
-- 💻 Testez tous les exemples de code
-- ✏️ Réalisez les exercices pratiques
-- 🎯 Complétez les projets de fin de module
+## 📖 Comment suivre ce cours ?
 
-### 3. Environnement de Pratique
-Créez un dossier de travail pour vos exercices :
-```bash
-mkdir -p ~/terraform-formation
-cd ~/terraform-formation
-```
+### Approche recommandée
 
-### 4. Versioning
-Utilisez Git pour versionner vos exercices :
-```bash
-git init
-git add .
-git commit -m "Mon premier projet Terraform"
-```
+1. **Suivez l'ordre des modules** - Ils sont conçus pour progresser graduellement
+2. **Pratiquez avec les exemples** - Testez chaque exemple dans `../azure/`
+3. **Tapez le code vous-même** - Ne copiez-collez pas, c'est en codant qu'on apprend
+4. **Prenez des notes** - Notez ce qui vous semble important
+5. **Expérimentez** - Modifiez le code, cassez des choses, apprenez en corrigeant
 
----
+### Temps estimé
 
-## 📚 Ressources Complémentaires
+- **Mode intensif** : 3-4 jours (temps plein)
+- **Mode normal** : 2 semaines (2-3h par jour)
+- **Mode tranquille** : 1 mois (1h par jour)
 
-### Documentation Officielle
-- [Terraform Documentation](https://www.terraform.io/docs)
-- [Terraform Registry](https://registry.terraform.io/)
-- [Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
-- [AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+### Environnement de travail
 
-### Outils Utiles
-- [Terraform Extension for VS Code](https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform)
-- [Azure CLI](https://docs.microsoft.com/cli/azure/)
-- [AWS CLI](https://aws.amazon.com/cli/)
-- [Terraform Cloud](https://app.terraform.io/)
+Vous aurez besoin de :
+- Un ordinateur (Windows, macOS ou Linux)
+- Un compte Azure (gratuit pour commencer)
+- Un éditeur de texte (VS Code recommandé)
+- 2-3 heures de temps concentré
+
+## 🛠️ Outils requis
+
+### Obligatoires
+- **Terraform** - L'outil que nous allons apprendre
+- **Azure CLI** - Pour interagir avec Azure
+- **Éditeur de texte** - VS Code recommandé
+
+### Recommandés
+- **Git** - Pour versionner votre code
+- **VS Code extensions** :
+  - HashiCorp Terraform
+  - Azure Terraform
+  - Azure Account
+  - GitLens
+
+## 💰 Coûts Azure
+
+### Compte gratuit Azure
+
+Microsoft offre :
+- **200$ de crédit** valable 30 jours
+- **Services gratuits** pendant 12 mois
+- **Services toujours gratuits**
+
+**Important** :
+- ⚠️ Surveillez votre consommation
+- ⚠️ Détruisez les ressources après les exercices
+- ⚠️ Activez les alertes de budget
+
+### Estimer les coûts
+
+Pour ce cours, les ressources créées coûteront environ :
+- **Resource Groups** : Gratuit
+- **Storage Accounts** : ~0.50€/mois
+- **App Services (B1)** : ~10€/mois
+- **SQL Database (Basic)** : ~5€/mois
+
+**Total estimé** : 15-20€ si vous laissez tourner un mois complet
+
+**Astuce** : Détruisez tout avec `terraform destroy` après chaque session !
+
+## 📋 Checklist avant de commencer
+
+Avant de démarrer le Module 1, assurez-vous d'avoir :
+
+- [ ] Un compte Azure actif
+- [ ] Un ordinateur avec droits d'administration
+- [ ] Une connexion internet stable
+- [ ] 2-3 heures de disponibilité
+- [ ] Un espace de travail calme
+
+## 🎓 Méthodologie pédagogique
+
+Chaque module suit cette structure :
+
+1. **📖 Théorie** - Explication des concepts
+2. **💡 Exemples** - Code commenté et expliqué
+3. **🔧 Pratique** - Exercices guidés
+4. **✅ Quiz** - Validation des acquis
+5. **🎯 Projet** - Mise en application réelle
+
+## 🆘 Besoin d'aide ?
+
+### Ressources officielles
+- [Documentation Terraform](https://www.terraform.io/docs)
+- [Registry Terraform](https://registry.terraform.io/)
+- [Documentation Azure Provider](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs)
+- [Documentation Azure](https://docs.microsoft.com/azure)
 
 ### Communauté
-- [HashiCorp Learn](https://learn.hashicorp.com/terraform)
-- [Terraform GitHub](https://github.com/hashicorp/terraform)
-- [r/Terraform sur Reddit](https://www.reddit.com/r/Terraform/)
+- [Forum Terraform](https://discuss.hashicorp.com/c/terraform-core)
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/terraform)
+- [Reddit r/Terraform](https://www.reddit.com/r/Terraform/)
 
----
+### Erreurs courantes
+Consultez le fichier [FAQ.md](./FAQ.md) pour les problèmes fréquents
 
-## 🤝 Contribution et Feedback
+## 🎯 Par où commencer ?
 
-Cette formation est un document vivant. Si vous trouvez des erreurs, avez des suggestions d'amélioration ou souhaitez contribuer :
+➡️ **Démarrez par le [Module 1 : Introduction](./parties/01-introduction.md)**
 
-1. Ouvrez une issue
-2. Proposez une pull request
-3. Contactez l'équipe pédagogique
+Cliquez sur le lien ci-dessus ou naviguez vers `parties/01-introduction.md` pour commencer votre apprentissage !
 
----
+## 📊 Progression
+
+Cochez au fur et à mesure de votre avancement :
+
+### Module 1 : Introduction et Installation
+- [ ] 01 - Introduction
+- [ ] 02 - Installation
+- [ ] 03 - Azure CLI
+- [ ] 04 - Premier projet
+
+### Module 2 : Les Fondamentaux
+- [ ] 05 - Syntaxe HCL
+- [ ] 06 - Providers et Resources
+- [ ] 07 - Variables et Outputs
+- [ ] 08 - Cycle de vie
+- [ ] 09 - État Terraform
+
+### Module 3 : Concepts Avancés
+- [ ] 10 - Dépendances
+- [ ] 11 - Boucles
+- [ ] 12 - Modules
+- [ ] 13 - Data Sources
+- [ ] 14 - Workspaces
+
+### Module 4 : Pratiques Professionnelles
+- [ ] 15 - Backend distant
+- [ ] 16 - Organisation
+- [ ] 17 - Bonnes pratiques
+- [ ] 18 - Tests
+- [ ] 19 - CI/CD
+
+### Module 5 : Projet Final
+- [ ] 20 - Projet complet
+
+## 🏆 Certification
+
+Après avoir terminé ce cours, vous serez prêt pour :
+- **HashiCorp Certified: Terraform Associate**
+- **Microsoft Azure certifications** (AZ-104, AZ-400)
 
 ## 📝 Licence
 
-© 2025 - Formation Data Engineering - Simplon
-Tous droits réservés - Usage pédagogique uniquement
+Ce cours est fourni à des fins éducatives.
 
 ---
 
-**Prêt à commencer ?** 👉 [Module 1 : Introduction à Terraform](modules/01-introduction.md)
+**Prêt à commencer ?** ➡️ [Module 1 : Introduction](./parties/01-introduction.md)
+
+Bonne formation ! 🚀

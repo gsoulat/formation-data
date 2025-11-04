@@ -5,15 +5,6 @@ terraform {
       version = "4.50.0"
     }
   }
-  # backend "local" {
-  #   path = "./states/terraform.tfstate"
-  # }
-  backend "azurerm" {
-    resource_group_name  = "RG-STATES"
-    storage_account_name = "remotestates"
-    container_name       = "tfstate"
-    key                  = "terraform.tfstate"
-  }
 }
 
 # Déclaré un provider

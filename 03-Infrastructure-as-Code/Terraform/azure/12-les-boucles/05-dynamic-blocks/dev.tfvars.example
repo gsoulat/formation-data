@@ -1,0 +1,24 @@
+subscription_id      = ""
+resource_group_name  = "rg-dynamic-blocks"
+location             = "westeurope"
+
+# Activer les règles réseau
+enable_network_rules = false
+allowed_ips          = [] # ["1.2.3.4", "5.6.7.8"]
+
+# Blob versioning
+enable_blob_versioning = true
+blob_retention_days    = 7
+
+# CORS
+cors_allowed_origins     = [] # ["https://example.com"]
+cors_support_credentials = false
+
+# App settings personnalisés
+custom_app_settings = {
+  "MY_CUSTOM_VAR" = "my_value"
+}
+
+# Key Vault
+enable_kv_network_rules = false
+key_vault_access_policies = [] # Ajoutez vos policies ici
