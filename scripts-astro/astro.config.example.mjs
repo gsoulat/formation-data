@@ -33,7 +33,7 @@ export default defineConfig({
       //   alt: 'Formation Data Engineer Logo',
       // },
 
-      // Liens sociaux
+      // Liens sociaux (syntaxe v0.33+)
       social: {
         github: 'https://github.com/votre-username/formation-data-engineer',
       },
@@ -260,17 +260,6 @@ export default defineConfig({
           ],
         },
       ],
-
-      // Configuration de la recherche
-      search: {
-        provider: 'pagefind',
-      },
-
-      // Composants personnalisés (optionnel)
-      components: {
-        // Personnaliser le header, footer, etc.
-        // Head: './src/components/CustomHead.astro',
-      },
 
       // CSS personnalisé
       customCss: [

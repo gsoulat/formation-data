@@ -46,6 +46,9 @@ node_modules/
 .npm/
 .npmrc
 
+# Astro docs (généré par les scripts)
+docs/
+
 # Semantic Release
 # Configuration et CHANGELOG sont nécessaires pour semantic-release
 
