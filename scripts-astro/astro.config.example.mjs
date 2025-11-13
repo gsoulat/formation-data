@@ -7,8 +7,9 @@ import starlight from '@astrojs/starlight';
 // https://astro.build/config
 export default defineConfig({
   // Site de base (à modifier pour le déploiement)
+  // IMPORTANT: Commenter 'base' en développement local, décommenter pour GitHub Pages
   site: 'https://votre-username.github.io',
-  base: '/formation-data-engineer',
+  // base: '/formation-data-engineer',  // Décommenter pour le déploiement GitHub Pages
 
   integrations: [
     starlight({
