@@ -62,6 +62,40 @@ description: "Description extraite du contenu"
 
 ---
 
+### 4. `copy-images.sh` - Copie des images
+
+Copie toutes les images (PNG, JPG, SVG, etc.) vers le dossier public d'Astro.
+
+```bash
+chmod +x scripts-astro/copy-images.sh
+./scripts-astro/copy-images.sh
+```
+
+**Ce que fait le script :**
+- 📸 Trouve toutes les images dans vos cours
+- 📁 Copie vers `docs/public/images/`
+- ✅ Préserve la structure des dossiers
+- 📊 Affiche un rapport détaillé
+
+---
+
+### 5. `fix-image-paths.sh` - Correction des chemins d'images
+
+Corrige les chemins d'images dans les fichiers Markdown pour Astro.
+
+```bash
+chmod +x scripts-astro/fix-image-paths.sh
+./scripts-astro/fix-image-paths.sh
+```
+
+**Ce que fait le script :**
+- 🔧 Corrige `images/xxx.png` → `/images/xxx.png`
+- 🔧 Corrige `../images/xxx.png` → `/images/xxx.png`
+- 🔧 Corrige `./images/xxx.png` → `/images/xxx.png`
+- 💾 Crée des backups automatiques
+
+---
+
 ## 🚀 Workflow complet
 
 Exécutez les scripts dans cet ordre :
@@ -70,13 +104,24 @@ Exécutez les scripts dans cet ordre :
 # 1. Installer Astro
 ./scripts-astro/setup-astro.sh
 
-# 2. Copier le contenu
+# 2. Copier la configuration
+cp scripts-astro/astro.config.example.mjs docs/astro.config.mjs
+mkdir -p docs/src/styles
+cp scripts-astro/custom.example.css docs/src/styles/custom.css
+
+# 3. Copier le contenu
 ./scripts-astro/copy-content.sh
 
-# 3. Ajouter le frontmatter
+# 4. Ajouter le frontmatter
 ./scripts-astro/add-frontmatter.sh
 
-# 4. Tester
+# 5. Copier les images
+./scripts-astro/copy-images.sh
+
+# 6. Corriger les chemins d'images
+./scripts-astro/fix-image-paths.sh
+
+# 7. Tester
 cd docs
 npm run dev
 ```
