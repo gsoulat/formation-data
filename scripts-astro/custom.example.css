@@ -1,0 +1,399 @@
+/*
+ * CSS personnalisé pour le site Astro Starlight
+ * À copier dans docs/src/styles/custom.css
+ */
+
+/* ===========================
+   Variables de couleurs
+   =========================== */
+
+:root {
+  /* Couleur d'accentuation principale */
+  --sl-color-accent: #4f46e5;
+  --sl-color-accent-low: #312e81;
+  --sl-color-accent-high: #6366f1;
+
+  /* Couleurs personnalisées */
+  --color-primary: #4f46e5;
+  --color-secondary: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Espacement */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+}
+
+/* Mode sombre */
+:root[data-theme='dark'] {
+  --sl-color-accent: #6366f1;
+  --sl-color-accent-low: #4f46e5;
+  --sl-color-accent-high: #818cf8;
+}
+
+
+/* ===========================
+   Typographie
+   =========================== */
+
+/* Titres */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--sl-color-gray-5);
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Paragraphes */
+p {
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* Liens */
+a {
+  color: var(--sl-color-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--sl-color-accent-high);
+  text-decoration: underline;
+}
+
+
+/* ===========================
+   Code et blocs de code
+   =========================== */
+
+/* Code inline */
+code {
+  background-color: var(--sl-color-gray-6);
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+  font-family: 'Courier New', Courier, monospace;
+  color: var(--sl-color-accent-high);
+}
+
+/* Blocs de code */
+pre {
+  background-color: var(--sl-color-gray-6);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--sl-color-gray-5);
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+
+/* ===========================
+   Listes
+   =========================== */
+
+ul, ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+  line-height: 1.7;
+}
+
+li {
+  margin-bottom: 0.5rem;
+}
+
+/* Listes à puces personnalisées */
+ul li::marker {
+  color: var(--sl-color-accent);
+}
+
+/* Listes de tâches */
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+
+/* ===========================
+   Tables
+   =========================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+th, td {
+  border: 1px solid var(--sl-color-gray-5);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+th {
+  background-color: var(--sl-color-gray-6);
+  font-weight: 600;
+  color: var(--sl-color-accent);
+}
+
+tr:nth-child(even) {
+  background-color: var(--sl-color-gray-7);
+}
+
+tr:hover {
+  background-color: var(--sl-color-gray-6);
+}
+
+
+/* ===========================
+   Alertes et callouts
+   =========================== */
+
+/* Blockquotes */
+blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 4px solid var(--sl-color-accent);
+  background-color: var(--sl-color-gray-6);
+  border-radius: 0.25rem;
+}
+
+blockquote p {
+  margin: 0;
+}
+
+/* Alertes personnalisées */
+.alert {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  border-left: 4px solid;
+}
+
+.alert-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--color-secondary);
+}
+
+.alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: var(--color-warning);
+}
+
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--color-danger);
+}
+
+
+/* ===========================
+   Cartes (Cards)
+   =========================== */
+
+.card {
+  background-color: var(--sl-color-gray-6);
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--sl-color-accent);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+
+/* ===========================
+   Badges
+   =========================== */
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  margin-right: 0.5rem;
+}
+
+.badge-primary {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.badge-success {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.badge-warning {
+  background-color: var(--color-warning);
+  color: white;
+}
+
+
+/* ===========================
+   Images
+   =========================== */
+
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+figure {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+  font-style: italic;
+}
+
+
+/* ===========================
+   Navigation et Sidebar
+   =========================== */
+
+/* Personnalisation de la sidebar */
+.sidebar-content {
+  padding: 1rem;
+}
+
+/* Liens actifs */
+.sidebar-content a[aria-current="page"] {
+  color: var(--sl-color-accent-high);
+  font-weight: 600;
+  border-left: 3px solid var(--sl-color-accent);
+  padding-left: 0.5rem;
+}
+
+
+/* ===========================
+   Footer
+   =========================== */
+
+footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--sl-color-gray-5);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--sl-color-gray-3);
+}
+
+
+/* ===========================
+   Animations
+   =========================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+
+/* ===========================
+   Responsive
+   =========================== */
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ===========================
+   Utilitaires
+   =========================== */
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
