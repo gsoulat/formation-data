@@ -36,8 +36,9 @@ export default defineConfig({
       // Liens sociaux (syntaxe v0.33+ - TABLEAU requis)
       social: [
         {
-          name: 'GitHub',
-          url: 'https://github.com/votre-username/formation-data-engineer',
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/votre-username/formation-data-engineer',
         },
       ],
 
