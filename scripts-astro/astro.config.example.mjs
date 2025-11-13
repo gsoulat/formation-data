@@ -288,17 +288,6 @@ export default defineConfig({
 
       // Pagination
       pagination: true,
-
-      // Head tags personnalisés
-      head: [
-        {
-          tag: 'meta',
-          attrs: {
-            property: 'og:image',
-            content: 'https://votre-site.com/og-image.png',
-          },
-        },
-      ],
     }),
   ],
 
