@@ -33,10 +33,13 @@ export default defineConfig({
       //   alt: 'Formation Data Engineer Logo',
       // },
 
-      // Liens sociaux (syntaxe v0.33+)
-      social: {
-        github: 'https://github.com/votre-username/formation-data-engineer',
-      },
+      // Liens sociaux (syntaxe v0.33+ - TABLEAU requis)
+      social: [
+        {
+          name: 'GitHub',
+          url: 'https://github.com/votre-username/formation-data-engineer',
+        },
+      ],
 
       // Navigation latérale (sidebar)
       sidebar: [
