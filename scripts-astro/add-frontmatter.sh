@@ -66,6 +66,8 @@ find "$DOCS_PATH" -name "*.md" -type f | while read file; do
         echo "---"
         echo "title: \"$title\""
         echo "description: \"$description\""
+        echo "sidebar:"
+        echo "  hidden: false"
         echo "---"
         echo ""
         cat "$file"
