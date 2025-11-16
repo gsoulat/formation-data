@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/gsoulat/formation-data-engineer/compare/v1.3.0...v1.4.0) (2025-11-16)
+
+
+### Features
+
+* **brief:** add brief fabric eolienne ([2adae9a](https://github.com/gsoulat/formation-data-engineer/commit/2adae9a941954e223067fca669137b9b852700d0))
+
 # [1.3.0](https://github.com/gsoulat/formation-data-engineer/compare/v1.2.0...v1.3.0) (2025-11-16)
 
 
