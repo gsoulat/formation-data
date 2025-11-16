@@ -1,0 +1,501 @@
+product_id,product_name,category,subcategory,brand,unit_cost,unit_price,margin_percent,weight_kg,stock_quantity,reorder_level,supplier_id,is_active,launch_date
+PROD00001,NaturalStyle Furniture Product 1,Home & Garden,Furniture,NaturalStyle,346.61,586.95,69.3,29.38,481,51,SUP028,True,2022-05-26
+PROD00002,FashionPlus Kids Product 2,Clothing,Kids,FashionPlus,238.6,322.91,35.3,26.6,378,37,SUP022,True,2021-09-18
+PROD00003,NaturalStyle Kitchen Product 3,Home & Garden,Kitchen,NaturalStyle,206.3,283.12,37.2,32.04,422,27,SUP014,True,2023-02-26
+PROD00004,StyleHub Women Product 4,Clothing,Women,StyleHub,338.34,455.44,34.6,19.94,651,42,SUP032,True,2021-05-27
+PROD00005,ComfortFit Kids Product 5,Clothing,Kids,ComfortFit,365.54,560.06,53.2,13.77,439,41,SUP030,False,2022-10-16
+PROD00006,GadgetMax Video Product 6,Electronics,Video,GadgetMax,249.82,369.3,47.8,1.02,583,43,SUP045,True,2024-10-07
+PROD00007,NaturalStyle Kitchen Product 7,Home & Garden,Kitchen,NaturalStyle,68.84,90.01,30.8,14.45,552,60,SUP001,True,2023-09-05
+PROD00008,UrbanStyle Women Product 8,Clothing,Women,UrbanStyle,405.62,617.98,52.4,29.6,462,10,SUP017,True,2020-11-11
+PROD00009,NaturalStyle Garden Product 9,Home & Garden,Garden,NaturalStyle,33.87,56.14,65.7,32.39,5,66,SUP043,True,2020-06-08
+PROD00010,DigiWorld Computers Product 10,Electronics,Computers,DigiWorld,205.38,293.01,42.7,26.96,408,14,SUP050,True,2023-11-22
+PROD00011,GardenPro Kitchen Product 11,Home & Garden,Kitchen,GardenPro,201.34,285.96,42.0,12.41,316,50,SUP018,True,2022-08-02
+PROD00012,NaturalStyle Garden Product 12,Home & Garden,Garden,NaturalStyle,307.0,511.82,66.7,45.66,639,14,SUP006,True,2022-10-11
+PROD00013,TechCorp Accessories Product 13,Electronics,Accessories,TechCorp,491.54,688.4,40.0,9.53,783,59,SUP011,False,2020-02-05
+PROD00014,FashionPlus Sports Product 14,Clothing,Sports,FashionPlus,21.78,37.87,73.9,27.49,935,27,SUP015,True,2023-10-05
+PROD00015,ModernHome Garden Product 15,Home & Garden,Garden,ModernHome,361.57,642.83,77.8,12.32,596,98,SUP040,True,2022-01-28
+PROD00016,FashionPlus Accessories Product 16,Clothing,Accessories,FashionPlus,323.17,489.63,51.5,19.95,100,88,SUP012,False,2023-12-19
+PROD00017,HomeEssentials Kitchen Product 17,Home & Garden,Kitchen,HomeEssentials,295.37,503.6,70.5,37.81,940,100,SUP048,True,2022-09-05
+PROD00018,HomeEssentials Storage Product 18,Home & Garden,Storage,HomeEssentials,411.73,684.54,66.3,19.08,405,25,SUP043,False,2022-11-04
+PROD00019,UrbanStyle Men Product 19,Clothing,Men,UrbanStyle,106.58,188.96,77.3,46.46,93,73,SUP002,True,2022-01-07
+PROD00020,UrbanStyle Women Product 20,Clothing,Women,UrbanStyle,277.33,428.78,54.6,4.23,426,23,SUP007,True,2022-08-13
+PROD00021,ComfortFit Women Product 21,Clothing,Women,ComfortFit,68.11,101.75,49.4,45.7,745,57,SUP032,True,2024-02-21
+PROD00022,GadgetMax Audio Product 22,Electronics,Audio,GadgetMax,458.68,818.87,78.5,10.84,901,66,SUP021,True,2021-04-05
+PROD00023,ComfortFit Women Product 23,Clothing,Women,ComfortFit,306.44,448.59,46.4,12.47,492,93,SUP036,True,2022-05-29
+PROD00024,DigiWorld Accessories Product 24,Electronics,Accessories,DigiWorld,384.84,583.33,51.6,6.7,722,33,SUP044,False,2023-08-31
+PROD00025,DigiWorld Mobile Product 25,Electronics,Mobile,DigiWorld,57.66,101.96,76.8,8.33,488,97,SUP032,True,2022-05-17
+PROD00026,GardenPro Kitchen Product 26,Home & Garden,Kitchen,GardenPro,27.63,38.07,37.8,12.34,289,36,SUP003,False,2024-02-21
+PROD00027,NaturalStyle Garden Product 27,Home & Garden,Garden,NaturalStyle,113.09,186.67,65.1,34.34,928,56,SUP001,True,2020-04-30
+PROD00028,GardenPro Kitchen Product 28,Home & Garden,Kitchen,GardenPro,69.38,122.02,75.9,22.74,248,54,SUP003,True,2021-03-11
+PROD00029,UrbanStyle Men Product 29,Clothing,Men,UrbanStyle,44.77,70.82,58.2,27.91,641,26,SUP026,True,2020-10-12
+PROD00030,FashionPlus Women Product 30,Clothing,Women,FashionPlus,301.76,507.67,68.2,27.81,369,42,SUP035,True,2023-12-26
+PROD00031,ElectroPro Accessories Product 31,Electronics,Accessories,ElectroPro,376.14,588.81,56.5,41.16,827,29,SUP012,True,2024-08-02
+PROD00032,UrbanStyle Women Product 32,Clothing,Women,UrbanStyle,347.86,469.52,35.0,13.63,967,68,SUP018,True,2022-03-22
+PROD00033,ElectroPro Computers Product 33,Electronics,Computers,ElectroPro,451.31,665.6,47.5,42.9,231,55,SUP002,True,2022-08-26
+PROD00034,GardenPro Furniture Product 34,Home & Garden,Furniture,GardenPro,130.54,209.69,60.6,10.26,841,19,SUP049,True,2021-11-15
+PROD00035,FashionPlus Sports Product 35,Clothing,Sports,FashionPlus,166.33,232.2,39.6,4.56,823,32,SUP032,False,2020-07-31
+PROD00036,CozyLiving Furniture Product 36,Home & Garden,Furniture,CozyLiving,183.11,298.27,62.9,41.41,49,34,SUP044,False,2024-09-26
+PROD00037,NaturalStyle Decor Product 37,Home & Garden,Decor,NaturalStyle,99.86,178.16,78.4,28.99,585,16,SUP048,True,2023-03-29
+PROD00038,TrendyWear Sports Product 38,Clothing,Sports,TrendyWear,415.6,661.32,59.1,31.41,411,87,SUP027,True,2023-01-13
+PROD00039,ElectroPro Video Product 39,Electronics,Video,ElectroPro,264.37,456.95,72.8,41.24,543,97,SUP004,True,2020-12-06
+PROD00040,FashionPlus Kids Product 40,Clothing,Kids,FashionPlus,129.91,171.17,31.8,43.6,25,49,SUP029,True,2020-08-27
+PROD00041,HomeEssentials Kitchen Product 41,Home & Garden,Kitchen,HomeEssentials,142.1,196.02,37.9,30.7,100,75,SUP038,True,2023-01-18
+PROD00042,TrendyWear Men Product 42,Clothing,Men,TrendyWear,467.75,673.61,44.0,0.81,204,27,SUP018,True,2022-09-29
+PROD00043,DigiWorld Audio Product 43,Electronics,Audio,DigiWorld,280.49,368.92,31.5,27.37,935,18,SUP016,True,2022-07-22
+PROD00044,TrendyWear Sports Product 44,Clothing,Sports,TrendyWear,201.07,298.67,48.5,16.01,486,38,SUP023,True,2021-11-17
+PROD00045,FashionPlus Sports Product 45,Clothing,Sports,FashionPlus,415.84,603.15,45.0,23.4,886,10,SUP017,True,2021-10-11
+PROD00046,CozyLiving Storage Product 46,Home & Garden,Storage,CozyLiving,144.8,240.68,66.2,26.9,291,55,SUP027,True,2024-10-07
+PROD00047,TechCorp Audio Product 47,Electronics,Audio,TechCorp,480.15,765.56,59.4,1.97,451,36,SUP010,True,2022-09-10
+PROD00048,ModernHome Garden Product 48,Home & Garden,Garden,ModernHome,377.86,497.8,31.7,40.88,303,30,SUP034,True,2020-09-04
+PROD00049,StyleHub Men Product 49,Clothing,Men,StyleHub,107.34,183.14,70.6,34.69,110,84,SUP003,False,2021-02-03
+PROD00050,UrbanStyle Women Product 50,Clothing,Women,UrbanStyle,330.7,439.35,32.9,40.54,416,60,SUP038,True,2020-10-16
+PROD00051,ElectroPro Computers Product 51,Electronics,Computers,ElectroPro,353.16,471.91,33.6,20.05,778,34,SUP038,True,2022-01-27
+PROD00052,GadgetMax Accessories Product 52,Electronics,Accessories,GadgetMax,247.93,428.59,72.9,0.86,356,21,SUP046,True,2021-02-12
+PROD00053,HomeEssentials Furniture Product 53,Home & Garden,Furniture,HomeEssentials,347.65,562.61,61.8,10.75,644,62,SUP006,True,2022-03-15
+PROD00054,ComfortFit Kids Product 54,Clothing,Kids,ComfortFit,94.43,133.77,41.7,45.47,61,11,SUP008,True,2024-08-29
+PROD00055,HomeEssentials Garden Product 55,Home & Garden,Garden,HomeEssentials,84.3,119.4,41.6,40.67,157,26,SUP044,True,2022-04-09
+PROD00056,DigiWorld Mobile Product 56,Electronics,Mobile,DigiWorld,154.47,269.4,74.4,46.43,483,61,SUP049,True,2024-06-11
+PROD00057,ComfortFit Sports Product 57,Clothing,Sports,ComfortFit,168.16,270.04,60.6,1.86,219,32,SUP039,True,2020-09-10
+PROD00058,ModernHome Garden Product 58,Home & Garden,Garden,ModernHome,456.85,750.72,64.3,27.41,897,45,SUP042,True,2020-07-18
+PROD00059,GardenPro Storage Product 59,Home & Garden,Storage,GardenPro,119.44,207.06,73.4,34.54,623,53,SUP013,True,2022-12-30
+PROD00060,UrbanStyle Women Product 60,Clothing,Women,UrbanStyle,380.29,544.19,43.1,39.33,79,89,SUP010,True,2024-08-13
+PROD00061,ComfortFit Accessories Product 61,Clothing,Accessories,ComfortFit,373.31,637.68,70.8,2.39,6,83,SUP013,True,2021-08-01
+PROD00062,CozyLiving Furniture Product 62,Home & Garden,Furniture,CozyLiving,83.94,139.12,65.7,26.9,519,54,SUP009,False,2023-09-27
+PROD00063,GardenPro Kitchen Product 63,Home & Garden,Kitchen,GardenPro,62.84,97.08,54.5,34.61,737,98,SUP041,True,2021-12-19
+PROD00064,NaturalStyle Garden Product 64,Home & Garden,Garden,NaturalStyle,310.09,542.13,74.8,5.68,616,100,SUP012,True,2021-12-27
+PROD00065,ComfortFit Kids Product 65,Clothing,Kids,ComfortFit,357.55,529.8,48.2,3.1,923,30,SUP038,True,2024-05-25
+PROD00066,CozyLiving Kitchen Product 66,Home & Garden,Kitchen,CozyLiving,368.96,543.42,47.3,6.17,816,57,SUP029,False,2021-04-13
+PROD00067,HomeEssentials Decor Product 67,Home & Garden,Decor,HomeEssentials,435.47,685.23,57.4,1.35,293,76,SUP007,True,2024-09-26
+PROD00068,NaturalStyle Garden Product 68,Home & Garden,Garden,NaturalStyle,176.86,271.58,53.6,38.9,576,26,SUP029,True,2024-03-05
+PROD00069,HomeEssentials Storage Product 69,Home & Garden,Storage,HomeEssentials,170.66,297.41,74.3,16.15,596,96,SUP017,True,2020-11-29
+PROD00070,TrendyWear Men Product 70,Clothing,Men,TrendyWear,214.93,377.64,75.7,43.24,668,42,SUP046,True,2023-01-13
+PROD00071,NaturalStyle Kitchen Product 71,Home & Garden,Kitchen,NaturalStyle,338.39,511.56,51.2,48.24,491,37,SUP024,True,2023-08-08
+PROD00072,DigiWorld Computers Product 72,Electronics,Computers,DigiWorld,228.24,372.04,63.0,43.5,300,52,SUP012,False,2023-01-20
+PROD00073,NaturalStyle Garden Product 73,Home & Garden,Garden,NaturalStyle,368.54,607.03,64.7,43.58,358,24,SUP037,True,2022-12-04
+PROD00074,NaturalStyle Garden Product 74,Home & Garden,Garden,NaturalStyle,250.89,398.39,58.8,42.17,931,54,SUP044,True,2020-01-20
+PROD00075,SmartTech Accessories Product 75,Electronics,Accessories,SmartTech,344.81,578.44,67.8,45.62,590,70,SUP016,True,2024-09-29
+PROD00076,DigiWorld Mobile Product 76,Electronics,Mobile,DigiWorld,252.8,430.03,70.1,1.11,73,82,SUP041,False,2021-11-20
+PROD00077,GardenPro Decor Product 77,Home & Garden,Decor,GardenPro,149.49,203.1,35.9,24.87,230,92,SUP044,True,2021-12-18
+PROD00078,FashionPlus Sports Product 78,Clothing,Sports,FashionPlus,214.74,287.9,34.1,30.12,181,22,SUP039,True,2022-08-24
+PROD00079,ElectroPro Mobile Product 79,Electronics,Mobile,ElectroPro,486.45,796.28,63.7,49.9,551,12,SUP034,True,2024-07-08
+PROD00080,UrbanStyle Women Product 80,Clothing,Women,UrbanStyle,178.92,301.84,68.7,26.65,195,47,SUP045,True,2023-09-02
+PROD00081,FashionPlus Women Product 81,Clothing,Women,FashionPlus,22.61,38.63,70.9,9.16,583,20,SUP046,False,2022-02-06
+PROD00082,SmartTech Computers Product 82,Electronics,Computers,SmartTech,327.61,540.27,64.9,37.46,185,100,SUP008,True,2020-07-25
+PROD00083,StyleHub Accessories Product 83,Clothing,Accessories,StyleHub,305.47,485.74,59.0,26.85,700,82,SUP026,True,2024-07-17
+PROD00084,ElectroPro Mobile Product 84,Electronics,Mobile,ElectroPro,267.95,472.68,76.4,30.29,969,80,SUP014,True,2022-03-31
+PROD00085,ElectroPro Accessories Product 85,Electronics,Accessories,ElectroPro,60.27,102.57,70.2,29.02,866,29,SUP027,False,2023-01-18
+PROD00086,TechCorp Audio Product 86,Electronics,Audio,TechCorp,239.4,412.26,72.2,22.94,264,33,SUP037,False,2023-03-20
+PROD00087,StyleHub Women Product 87,Clothing,Women,StyleHub,148.05,197.56,33.4,39.68,790,83,SUP009,True,2021-11-17
+PROD00088,UrbanStyle Sports Product 88,Clothing,Sports,UrbanStyle,23.34,39.08,67.5,49.67,526,21,SUP038,True,2024-01-29
+PROD00089,FashionPlus Men Product 89,Clothing,Men,FashionPlus,395.86,661.58,67.1,2.47,443,13,SUP035,True,2021-02-27
+PROD00090,DigiWorld Accessories Product 90,Electronics,Accessories,DigiWorld,222.67,356.02,59.9,27.77,17,99,SUP006,True,2024-12-06
+PROD00091,TrendyWear Women Product 91,Clothing,Women,TrendyWear,390.32,511.48,31.0,13.94,578,56,SUP030,True,2021-10-21
+PROD00092,TechCorp Audio Product 92,Electronics,Audio,TechCorp,421.31,623.55,48.0,22.07,244,16,SUP031,False,2023-12-04
+PROD00093,NaturalStyle Kitchen Product 93,Home & Garden,Kitchen,NaturalStyle,229.61,380.04,65.5,48.57,214,61,SUP013,True,2021-01-05
+PROD00094,TechCorp Audio Product 94,Electronics,Audio,TechCorp,299.74,420.33,40.2,32.72,729,61,SUP028,False,2020-07-05
+PROD00095,TrendyWear Men Product 95,Clothing,Men,TrendyWear,85.79,123.8,44.3,13.94,174,98,SUP037,False,2023-05-19
+PROD00096,CozyLiving Furniture Product 96,Home & Garden,Furniture,CozyLiving,232.69,392.92,68.9,13.57,722,63,SUP013,True,2023-05-26
+PROD00097,ElectroPro Video Product 97,Electronics,Video,ElectroPro,240.61,346.49,44.0,44.19,324,26,SUP021,False,2022-10-27
+PROD00098,UrbanStyle Kids Product 98,Clothing,Kids,UrbanStyle,135.45,212.87,57.2,9.03,970,64,SUP031,False,2024-01-06
+PROD00099,GardenPro Storage Product 99,Home & Garden,Storage,GardenPro,95.17,144.02,51.3,38.21,373,48,SUP017,True,2022-11-13
+PROD00100,GadgetMax Mobile Product 100,Electronics,Mobile,GadgetMax,100.81,160.13,58.8,40.49,418,11,SUP025,False,2024-05-14
+PROD00101,ElectroPro Accessories Product 101,Electronics,Accessories,ElectroPro,57.35,81.35,41.9,29.87,897,46,SUP029,True,2023-07-27
+PROD00102,HomeEssentials Storage Product 102,Home & Garden,Storage,HomeEssentials,179.04,235.58,31.6,30.23,132,72,SUP036,True,2023-07-17
+PROD00103,HomeEssentials Storage Product 103,Home & Garden,Storage,HomeEssentials,230.53,311.35,35.1,1.44,685,30,SUP019,True,2023-04-20
+PROD00104,CozyLiving Furniture Product 104,Home & Garden,Furniture,CozyLiving,117.85,205.49,74.4,25.98,756,64,SUP046,True,2022-03-27
+PROD00105,SmartTech Video Product 105,Electronics,Video,SmartTech,101.06,181.83,79.9,14.43,671,81,SUP004,False,2023-08-22
+PROD00106,ModernHome Decor Product 106,Home & Garden,Decor,ModernHome,301.93,433.32,43.5,12.23,804,94,SUP017,False,2023-02-28
+PROD00107,CozyLiving Decor Product 107,Home & Garden,Decor,CozyLiving,385.76,649.23,68.3,45.71,275,36,SUP021,True,2020-03-29
+PROD00108,FashionPlus Accessories Product 108,Clothing,Accessories,FashionPlus,97.65,140.26,43.6,3.3,108,32,SUP043,True,2024-12-20
+PROD00109,TrendyWear Women Product 109,Clothing,Women,TrendyWear,258.08,381.33,47.8,26.58,224,23,SUP046,True,2020-01-04
+PROD00110,GardenPro Kitchen Product 110,Home & Garden,Kitchen,GardenPro,316.99,427.98,35.0,38.22,696,43,SUP049,True,2020-08-23
+PROD00111,ModernHome Garden Product 111,Home & Garden,Garden,ModernHome,251.52,368.04,46.3,31.94,667,49,SUP013,True,2022-02-07
+PROD00112,TrendyWear Men Product 112,Clothing,Men,TrendyWear,240.55,418.22,73.9,4.16,552,83,SUP042,True,2023-01-27
+PROD00113,NaturalStyle Storage Product 113,Home & Garden,Storage,NaturalStyle,29.96,46.47,55.1,6.69,892,91,SUP041,True,2022-04-23
+PROD00114,NaturalStyle Decor Product 114,Home & Garden,Decor,NaturalStyle,269.48,368.07,36.6,23.83,903,76,SUP049,True,2024-11-08
+PROD00115,SmartTech Audio Product 115,Electronics,Audio,SmartTech,301.93,445.21,47.5,23.7,574,33,SUP038,True,2020-10-17
+PROD00116,TrendyWear Accessories Product 116,Clothing,Accessories,TrendyWear,385.82,662.36,71.7,33.46,539,52,SUP039,True,2022-07-19
+PROD00117,DigiWorld Accessories Product 117,Electronics,Accessories,DigiWorld,333.3,563.2,69.0,4.56,364,18,SUP011,True,2022-01-14
+PROD00118,TechCorp Audio Product 118,Electronics,Audio,TechCorp,275.95,404.5,46.6,29.46,599,75,SUP048,False,2020-02-14
+PROD00119,GardenPro Furniture Product 119,Home & Garden,Furniture,GardenPro,353.38,541.34,53.2,16.53,919,87,SUP019,True,2022-06-13
+PROD00120,GardenPro Decor Product 120,Home & Garden,Decor,GardenPro,437.34,618.18,41.4,19.35,802,47,SUP014,True,2020-08-06
+PROD00121,ModernHome Decor Product 121,Home & Garden,Decor,ModernHome,422.32,697.73,65.2,31.85,669,77,SUP002,True,2022-07-18
+PROD00122,CozyLiving Furniture Product 122,Home & Garden,Furniture,CozyLiving,183.23,290.83,58.7,42.35,984,11,SUP005,True,2024-05-20
+PROD00123,ModernHome Storage Product 123,Home & Garden,Storage,ModernHome,151.46,227.86,50.4,12.37,114,19,SUP024,True,2024-06-15
+PROD00124,TechCorp Audio Product 124,Electronics,Audio,TechCorp,332.84,546.99,64.3,40.61,14,79,SUP010,True,2022-04-15
+PROD00125,FashionPlus Sports Product 125,Clothing,Sports,FashionPlus,134.7,204.21,51.6,37.66,668,65,SUP027,True,2020-06-30
+PROD00126,ComfortFit Kids Product 126,Clothing,Kids,ComfortFit,240.59,381.77,58.7,42.47,872,75,SUP041,True,2022-10-25
+PROD00127,ElectroPro Mobile Product 127,Electronics,Mobile,ElectroPro,319.1,522.84,63.8,44.88,840,53,SUP041,True,2022-08-24
+PROD00128,CozyLiving Garden Product 128,Home & Garden,Garden,CozyLiving,486.08,789.69,62.5,43.74,767,51,SUP032,True,2022-03-04
+PROD00129,ModernHome Garden Product 129,Home & Garden,Garden,ModernHome,28.84,40.24,39.5,4.37,879,85,SUP029,True,2021-01-21
+PROD00130,TechCorp Mobile Product 130,Electronics,Mobile,TechCorp,438.75,726.48,65.6,20.55,9,62,SUP031,True,2023-01-27
+PROD00131,ModernHome Garden Product 131,Home & Garden,Garden,ModernHome,376.89,557.04,47.8,26.8,749,91,SUP004,True,2022-07-15
+PROD00132,FashionPlus Men Product 132,Clothing,Men,FashionPlus,130.13,185.31,42.4,14.0,409,17,SUP011,True,2023-09-13
+PROD00133,FashionPlus Women Product 133,Clothing,Women,FashionPlus,417.14,674.38,61.7,43.18,694,92,SUP035,True,2022-05-01
+PROD00134,GardenPro Decor Product 134,Home & Garden,Decor,GardenPro,357.36,615.06,72.1,6.05,404,67,SUP032,True,2022-05-17
+PROD00135,TechCorp Mobile Product 135,Electronics,Mobile,TechCorp,434.92,621.55,42.9,3.4,0,46,SUP001,True,2020-09-18
+PROD00136,HomeEssentials Garden Product 136,Home & Garden,Garden,HomeEssentials,175.11,314.63,79.7,7.66,819,53,SUP032,True,2022-12-03
+PROD00137,ComfortFit Women Product 137,Clothing,Women,ComfortFit,478.26,645.14,34.9,27.97,529,63,SUP024,False,2021-07-10
+PROD00138,FashionPlus Women Product 138,Clothing,Women,FashionPlus,245.39,412.81,68.2,29.87,851,58,SUP010,True,2024-12-13
+PROD00139,NaturalStyle Decor Product 139,Home & Garden,Decor,NaturalStyle,240.44,337.75,40.5,0.78,278,93,SUP009,True,2023-07-06
+PROD00140,TrendyWear Accessories Product 140,Clothing,Accessories,TrendyWear,39.13,68.8,75.8,35.44,369,91,SUP050,True,2022-07-30
+PROD00141,TechCorp Accessories Product 141,Electronics,Accessories,TechCorp,393.89,633.45,60.8,20.07,289,100,SUP032,True,2020-07-22
+PROD00142,HomeEssentials Kitchen Product 142,Home & Garden,Kitchen,HomeEssentials,415.57,740.21,78.1,41.55,124,96,SUP029,True,2024-06-09
+PROD00143,TechCorp Computers Product 143,Electronics,Computers,TechCorp,455.49,741.32,62.8,7.17,9,16,SUP006,True,2023-02-22
+PROD00144,SmartTech Video Product 144,Electronics,Video,SmartTech,45.59,76.54,67.9,34.08,548,38,SUP025,False,2022-12-28
+PROD00145,CozyLiving Garden Product 145,Home & Garden,Garden,CozyLiving,384.29,593.24,54.4,12.95,141,27,SUP010,True,2021-05-03
+PROD00146,TechCorp Video Product 146,Electronics,Video,TechCorp,44.04,59.1,34.2,1.33,511,52,SUP004,False,2020-12-11
+PROD00147,SmartTech Video Product 147,Electronics,Video,SmartTech,57.28,81.75,42.7,26.75,136,93,SUP015,True,2022-08-29
+PROD00148,ElectroPro Mobile Product 148,Electronics,Mobile,ElectroPro,97.05,132.31,36.3,27.35,314,80,SUP043,False,2020-08-08
+PROD00149,UrbanStyle Men Product 149,Clothing,Men,UrbanStyle,415.11,663.53,59.8,47.44,978,31,SUP002,True,2023-06-11
+PROD00150,ComfortFit Kids Product 150,Clothing,Kids,ComfortFit,239.29,343.55,43.6,2.64,997,75,SUP046,True,2022-06-29
+PROD00151,SmartTech Computers Product 151,Electronics,Computers,SmartTech,297.73,409.7,37.6,25.96,166,41,SUP043,False,2023-02-08
+PROD00152,TechCorp Mobile Product 152,Electronics,Mobile,TechCorp,187.84,278.95,48.5,20.55,717,98,SUP043,False,2024-08-23
+PROD00153,GadgetMax Video Product 153,Electronics,Video,GadgetMax,363.21,534.12,47.1,1.77,26,27,SUP039,True,2022-03-12
+PROD00154,UrbanStyle Accessories Product 154,Clothing,Accessories,UrbanStyle,88.18,118.11,33.9,0.16,342,17,SUP004,True,2024-12-27
+PROD00155,HomeEssentials Furniture Product 155,Home & Garden,Furniture,HomeEssentials,86.74,127.13,46.6,26.66,998,36,SUP010,True,2020-11-24
+PROD00156,StyleHub Sports Product 156,Clothing,Sports,StyleHub,171.29,267.7,56.3,19.49,762,63,SUP045,False,2021-10-23
+PROD00157,TechCorp Accessories Product 157,Electronics,Accessories,TechCorp,25.21,38.0,50.8,8.36,75,52,SUP014,False,2023-05-09
+PROD00158,SmartTech Audio Product 158,Electronics,Audio,SmartTech,389.36,542.32,39.3,17.1,347,79,SUP022,True,2023-02-03
+PROD00159,FashionPlus Accessories Product 159,Clothing,Accessories,FashionPlus,260.01,339.2,30.5,4.24,727,60,SUP007,False,2024-10-01
+PROD00160,GadgetMax Audio Product 160,Electronics,Audio,GadgetMax,19.78,29.39,48.5,16.7,840,56,SUP006,True,2020-04-02
+PROD00161,TrendyWear Men Product 161,Clothing,Men,TrendyWear,269.97,388.42,43.9,18.14,459,44,SUP046,True,2024-08-24
+PROD00162,CozyLiving Storage Product 162,Home & Garden,Storage,CozyLiving,450.35,672.28,49.3,10.15,974,14,SUP022,True,2023-02-08
+PROD00163,ModernHome Decor Product 163,Home & Garden,Decor,ModernHome,352.07,540.42,53.5,23.4,378,52,SUP041,True,2024-02-14
+PROD00164,UrbanStyle Men Product 164,Clothing,Men,UrbanStyle,86.83,148.82,71.4,34.11,885,47,SUP008,True,2020-03-08
+PROD00165,UrbanStyle Men Product 165,Clothing,Men,UrbanStyle,59.0,92.9,57.5,19.2,313,42,SUP049,True,2022-07-28
+PROD00166,DigiWorld Audio Product 166,Electronics,Audio,DigiWorld,60.15,79.07,31.4,35.09,665,46,SUP028,False,2024-11-17
+PROD00167,ComfortFit Accessories Product 167,Clothing,Accessories,ComfortFit,394.1,701.45,78.0,30.73,262,62,SUP014,True,2023-02-16
+PROD00168,UrbanStyle Kids Product 168,Clothing,Kids,UrbanStyle,285.07,421.2,47.8,19.19,674,23,SUP007,True,2022-11-11
+PROD00169,UrbanStyle Men Product 169,Clothing,Men,UrbanStyle,189.92,314.85,65.8,17.85,110,83,SUP005,True,2021-10-31
+PROD00170,StyleHub Women Product 170,Clothing,Women,StyleHub,371.32,536.1,44.4,14.5,829,20,SUP013,True,2021-04-08
+PROD00171,ModernHome Decor Product 171,Home & Garden,Decor,ModernHome,189.16,285.69,51.0,28.54,813,11,SUP008,True,2021-03-06
+PROD00172,UrbanStyle Men Product 172,Clothing,Men,UrbanStyle,256.88,334.26,30.1,23.89,310,60,SUP021,True,2023-01-03
+PROD00173,GardenPro Kitchen Product 173,Home & Garden,Kitchen,GardenPro,13.13,19.18,46.0,35.37,774,59,SUP025,False,2021-08-31
+PROD00174,ComfortFit Women Product 174,Clothing,Women,ComfortFit,187.87,329.46,75.4,16.52,584,61,SUP031,True,2024-05-25
+PROD00175,NaturalStyle Kitchen Product 175,Home & Garden,Kitchen,NaturalStyle,440.05,673.08,53.0,2.77,650,10,SUP044,True,2024-08-02
+PROD00176,GardenPro Kitchen Product 176,Home & Garden,Kitchen,GardenPro,142.16,226.03,59.0,16.88,433,56,SUP024,True,2022-01-18
+PROD00177,HomeEssentials Kitchen Product 177,Home & Garden,Kitchen,HomeEssentials,372.04,525.67,41.3,17.96,971,13,SUP035,True,2022-09-16
+PROD00178,NaturalStyle Garden Product 178,Home & Garden,Garden,NaturalStyle,120.3,163.48,35.9,23.37,975,30,SUP047,True,2020-06-19
+PROD00179,UrbanStyle Accessories Product 179,Clothing,Accessories,UrbanStyle,214.92,347.78,61.8,36.82,797,54,SUP049,False,2022-09-11
+PROD00180,TechCorp Accessories Product 180,Electronics,Accessories,TechCorp,88.17,123.13,39.7,27.79,625,69,SUP039,True,2024-08-12
+PROD00181,ComfortFit Women Product 181,Clothing,Women,ComfortFit,193.96,288.43,48.7,11.21,588,13,SUP043,False,2020-11-29
+PROD00182,NaturalStyle Decor Product 182,Home & Garden,Decor,NaturalStyle,259.62,449.44,73.1,34.41,762,21,SUP022,True,2020-01-06
+PROD00183,UrbanStyle Men Product 183,Clothing,Men,UrbanStyle,227.25,373.84,64.5,20.38,184,22,SUP004,True,2024-06-19
+PROD00184,HomeEssentials Furniture Product 184,Home & Garden,Furniture,HomeEssentials,218.75,307.36,40.5,47.68,270,43,SUP017,True,2020-07-14
+PROD00185,TechCorp Video Product 185,Electronics,Video,TechCorp,65.74,99.17,50.8,1.39,0,12,SUP020,True,2022-04-23
+PROD00186,ModernHome Storage Product 186,Home & Garden,Storage,ModernHome,360.67,555.33,54.0,41.07,626,44,SUP007,True,2022-08-23
+PROD00187,SmartTech Video Product 187,Electronics,Video,SmartTech,494.05,668.47,35.3,47.39,793,57,SUP030,True,2021-09-10
+PROD00188,StyleHub Men Product 188,Clothing,Men,StyleHub,232.15,339.9,46.4,9.1,259,74,SUP006,False,2024-12-14
+PROD00189,StyleHub Accessories Product 189,Clothing,Accessories,StyleHub,288.93,414.8,43.6,28.98,718,61,SUP013,False,2020-08-22
+PROD00190,TechCorp Accessories Product 190,Electronics,Accessories,TechCorp,350.67,552.02,57.4,26.22,395,58,SUP044,False,2024-09-03
+PROD00191,GardenPro Kitchen Product 191,Home & Garden,Kitchen,GardenPro,213.96,316.75,48.0,44.69,519,34,SUP025,False,2024-07-09
+PROD00192,UrbanStyle Men Product 192,Clothing,Men,UrbanStyle,302.24,493.49,63.3,41.03,32,84,SUP016,True,2024-01-15
+PROD00193,StyleHub Men Product 193,Clothing,Men,StyleHub,283.17,490.51,73.2,3.24,156,40,SUP001,True,2022-06-21
+PROD00194,GadgetMax Video Product 194,Electronics,Video,GadgetMax,308.63,468.24,51.7,8.54,751,73,SUP028,False,2022-08-20
+PROD00195,HomeEssentials Decor Product 195,Home & Garden,Decor,HomeEssentials,498.57,759.12,52.3,10.74,20,78,SUP022,True,2023-04-29
+PROD00196,ModernHome Storage Product 196,Home & Garden,Storage,ModernHome,481.93,753.86,56.4,0.4,290,78,SUP047,True,2023-12-16
+PROD00197,GardenPro Storage Product 197,Home & Garden,Storage,GardenPro,316.45,524.49,65.7,18.41,21,47,SUP018,True,2020-03-06
+PROD00198,ModernHome Furniture Product 198,Home & Garden,Furniture,ModernHome,460.04,750.75,63.2,15.79,500,18,SUP046,True,2024-03-21
+PROD00199,StyleHub Accessories Product 199,Clothing,Accessories,StyleHub,342.39,522.72,52.7,23.82,334,50,SUP023,False,2023-06-16
+PROD00200,CozyLiving Furniture Product 200,Home & Garden,Furniture,CozyLiving,117.78,178.99,52.0,34.81,964,97,SUP044,True,2022-09-30
+PROD00201,GardenPro Furniture Product 201,Home & Garden,Furniture,GardenPro,64.75,84.37,30.3,35.63,139,71,SUP004,True,2021-10-19
+PROD00202,DigiWorld Computers Product 202,Electronics,Computers,DigiWorld,19.64,33.15,68.8,34.6,504,57,SUP039,True,2024-12-08
+PROD00203,StyleHub Women Product 203,Clothing,Women,StyleHub,217.01,345.74,59.3,46.24,621,13,SUP037,True,2023-02-18
+PROD00204,UrbanStyle Accessories Product 204,Clothing,Accessories,UrbanStyle,264.34,466.9,76.6,20.17,684,97,SUP032,True,2022-10-08
+PROD00205,ElectroPro Computers Product 205,Electronics,Computers,ElectroPro,241.12,369.25,53.1,26.92,678,56,SUP029,True,2021-12-19
+PROD00206,ModernHome Furniture Product 206,Home & Garden,Furniture,ModernHome,442.17,646.99,46.3,10.06,199,39,SUP016,True,2024-05-22
+PROD00207,GardenPro Storage Product 207,Home & Garden,Storage,GardenPro,212.94,381.26,79.0,41.34,55,17,SUP009,True,2024-12-18
+PROD00208,FashionPlus Sports Product 208,Clothing,Sports,FashionPlus,383.31,513.0,33.8,42.59,945,20,SUP036,True,2024-02-05
+PROD00209,SmartTech Computers Product 209,Electronics,Computers,SmartTech,370.79,570.39,53.8,44.14,320,98,SUP043,True,2022-07-21
+PROD00210,CozyLiving Kitchen Product 210,Home & Garden,Kitchen,CozyLiving,405.12,554.92,37.0,31.01,437,51,SUP011,True,2023-01-27
+PROD00211,NaturalStyle Storage Product 211,Home & Garden,Storage,NaturalStyle,236.8,417.82,76.4,18.72,402,15,SUP013,True,2020-05-06
+PROD00212,ModernHome Garden Product 212,Home & Garden,Garden,ModernHome,277.44,480.88,73.3,30.4,813,44,SUP025,False,2023-01-26
+PROD00213,ElectroPro Mobile Product 213,Electronics,Mobile,ElectroPro,456.75,618.49,35.4,19.03,946,44,SUP047,True,2023-04-15
+PROD00214,SmartTech Audio Product 214,Electronics,Audio,SmartTech,412.82,676.83,64.0,8.05,253,46,SUP038,False,2021-11-02
+PROD00215,SmartTech Mobile Product 215,Electronics,Mobile,SmartTech,417.93,646.74,54.7,3.28,684,52,SUP033,False,2020-05-28
+PROD00216,TechCorp Video Product 216,Electronics,Video,TechCorp,238.87,414.35,73.5,3.48,727,47,SUP001,True,2020-05-20
+PROD00217,HomeEssentials Storage Product 217,Home & Garden,Storage,HomeEssentials,72.58,128.27,76.7,2.04,868,61,SUP018,True,2024-05-10
+PROD00218,StyleHub Accessories Product 218,Clothing,Accessories,StyleHub,398.86,655.62,64.4,32.77,230,98,SUP044,True,2022-08-11
+PROD00219,HomeEssentials Garden Product 219,Home & Garden,Garden,HomeEssentials,73.61,124.3,68.8,12.55,969,84,SUP009,True,2023-02-26
+PROD00220,CozyLiving Storage Product 220,Home & Garden,Storage,CozyLiving,151.14,205.53,36.0,31.75,907,82,SUP033,True,2021-08-24
+PROD00221,UrbanStyle Sports Product 221,Clothing,Sports,UrbanStyle,356.13,524.78,47.4,18.06,139,24,SUP022,False,2020-04-17
+PROD00222,GardenPro Furniture Product 222,Home & Garden,Furniture,GardenPro,203.19,280.71,38.2,27.14,97,45,SUP001,True,2023-09-26
+PROD00223,NaturalStyle Furniture Product 223,Home & Garden,Furniture,NaturalStyle,208.75,373.81,79.1,7.06,181,53,SUP036,True,2021-07-05
+PROD00224,ElectroPro Accessories Product 224,Electronics,Accessories,ElectroPro,271.11,362.25,33.6,20.01,481,39,SUP042,True,2020-08-26
+PROD00225,TrendyWear Women Product 225,Clothing,Women,TrendyWear,23.5,38.98,65.9,20.78,680,63,SUP033,False,2020-02-05
+PROD00226,CozyLiving Kitchen Product 226,Home & Garden,Kitchen,CozyLiving,188.3,274.11,45.6,19.39,106,72,SUP039,True,2021-04-14
+PROD00227,TechCorp Accessories Product 227,Electronics,Accessories,TechCorp,307.35,416.96,35.7,14.44,178,14,SUP049,True,2022-11-26
+PROD00228,ComfortFit Men Product 228,Clothing,Men,ComfortFit,137.13,189.6,38.3,48.28,775,64,SUP005,True,2020-07-14
+PROD00229,ComfortFit Accessories Product 229,Clothing,Accessories,ComfortFit,220.36,298.8,35.6,49.52,802,60,SUP046,True,2024-10-21
+PROD00230,GardenPro Storage Product 230,Home & Garden,Storage,GardenPro,332.04,587.8,77.0,0.72,582,75,SUP025,False,2020-06-11
+PROD00231,UrbanStyle Men Product 231,Clothing,Men,UrbanStyle,131.77,183.61,39.3,45.49,56,73,SUP045,True,2020-05-12
+PROD00232,DigiWorld Computers Product 232,Electronics,Computers,DigiWorld,284.74,441.85,55.2,1.56,951,57,SUP009,True,2023-03-30
+PROD00233,SmartTech Mobile Product 233,Electronics,Mobile,SmartTech,172.16,287.55,67.0,35.51,659,52,SUP048,True,2022-02-18
+PROD00234,GardenPro Decor Product 234,Home & Garden,Decor,GardenPro,391.53,524.95,34.1,6.14,294,17,SUP034,True,2023-09-07
+PROD00235,UrbanStyle Accessories Product 235,Clothing,Accessories,UrbanStyle,329.9,566.08,71.6,10.38,403,58,SUP009,True,2023-02-22
+PROD00236,DigiWorld Video Product 236,Electronics,Video,DigiWorld,255.2,449.94,76.3,21.86,69,14,SUP011,True,2022-07-18
+PROD00237,CozyLiving Garden Product 237,Home & Garden,Garden,CozyLiving,222.74,362.28,62.7,28.77,795,20,SUP027,False,2020-05-26
+PROD00238,HomeEssentials Garden Product 238,Home & Garden,Garden,HomeEssentials,412.67,642.77,55.8,44.78,982,12,SUP032,True,2022-09-06
+PROD00239,GadgetMax Mobile Product 239,Electronics,Mobile,GadgetMax,173.55,230.05,32.6,40.66,229,38,SUP003,True,2022-12-10
+PROD00240,DigiWorld Video Product 240,Electronics,Video,DigiWorld,69.06,105.13,52.2,14.18,119,92,SUP002,True,2024-12-03
+PROD00241,SmartTech Accessories Product 241,Electronics,Accessories,SmartTech,158.6,237.6,49.8,14.24,31,51,SUP009,True,2020-09-17
+PROD00242,HomeEssentials Storage Product 242,Home & Garden,Storage,HomeEssentials,59.77,94.52,58.1,31.28,372,99,SUP029,True,2024-05-24
+PROD00243,HomeEssentials Kitchen Product 243,Home & Garden,Kitchen,HomeEssentials,101.76,146.2,43.7,37.15,381,95,SUP031,True,2020-11-14
+PROD00244,DigiWorld Accessories Product 244,Electronics,Accessories,DigiWorld,468.72,830.9,77.3,27.1,419,90,SUP003,True,2021-12-19
+PROD00245,StyleHub Accessories Product 245,Clothing,Accessories,StyleHub,82.33,146.05,77.4,22.5,871,21,SUP013,False,2024-12-11
+PROD00246,TrendyWear Women Product 246,Clothing,Women,TrendyWear,394.01,644.93,63.7,22.46,242,62,SUP013,True,2023-05-25
+PROD00247,ElectroPro Accessories Product 247,Electronics,Accessories,ElectroPro,162.59,260.52,60.2,15.39,786,72,SUP005,True,2020-08-06
+PROD00248,DigiWorld Video Product 248,Electronics,Video,DigiWorld,174.3,309.42,77.5,6.08,637,22,SUP021,False,2024-07-19
+PROD00249,ModernHome Kitchen Product 249,Home & Garden,Kitchen,ModernHome,298.15,402.73,35.1,3.59,939,57,SUP037,True,2024-08-07
+PROD00250,TechCorp Computers Product 250,Electronics,Computers,TechCorp,129.55,198.59,53.3,13.2,873,81,SUP005,True,2024-05-17
+PROD00251,CozyLiving Garden Product 251,Home & Garden,Garden,CozyLiving,255.1,416.57,63.3,24.74,81,12,SUP012,True,2020-11-29
+PROD00252,ComfortFit Accessories Product 252,Clothing,Accessories,ComfortFit,492.24,651.65,32.4,18.24,237,27,SUP014,True,2023-07-06
+PROD00253,TechCorp Video Product 253,Electronics,Video,TechCorp,165.05,260.15,57.6,15.97,318,58,SUP014,True,2023-11-22
+PROD00254,SmartTech Audio Product 254,Electronics,Audio,SmartTech,360.31,517.14,43.5,44.26,641,28,SUP039,True,2024-02-16
+PROD00255,ComfortFit Women Product 255,Clothing,Women,ComfortFit,433.8,744.94,71.7,3.5,529,12,SUP049,True,2021-05-24
+PROD00256,TechCorp Accessories Product 256,Electronics,Accessories,TechCorp,184.41,272.1,47.5,47.74,81,90,SUP025,True,2024-01-02
+PROD00257,ElectroPro Audio Product 257,Electronics,Audio,ElectroPro,271.19,373.43,37.7,10.2,722,72,SUP022,False,2021-09-14
+PROD00258,DigiWorld Accessories Product 258,Electronics,Accessories,DigiWorld,387.08,691.45,78.6,33.91,178,50,SUP003,True,2020-04-07
+PROD00259,CozyLiving Decor Product 259,Home & Garden,Decor,CozyLiving,463.68,748.34,61.4,42.66,469,55,SUP013,True,2024-06-27
+PROD00260,TechCorp Video Product 260,Electronics,Video,TechCorp,348.19,467.21,34.2,16.98,998,43,SUP004,True,2022-04-22
+PROD00261,TrendyWear Accessories Product 261,Clothing,Accessories,TrendyWear,494.85,794.67,60.6,41.29,154,26,SUP014,True,2020-06-19
+PROD00262,FashionPlus Sports Product 262,Clothing,Sports,FashionPlus,74.44,108.66,46.0,32.4,737,32,SUP016,True,2020-12-11
+PROD00263,SmartTech Computers Product 263,Electronics,Computers,SmartTech,396.67,659.46,66.2,17.3,613,13,SUP033,True,2024-06-28
+PROD00264,SmartTech Accessories Product 264,Electronics,Accessories,SmartTech,165.29,255.93,54.8,15.68,869,55,SUP011,False,2020-08-17
+PROD00265,SmartTech Audio Product 265,Electronics,Audio,SmartTech,162.68,288.57,77.4,9.35,56,10,SUP013,False,2024-09-19
+PROD00266,TrendyWear Accessories Product 266,Clothing,Accessories,TrendyWear,267.46,417.42,56.1,24.95,739,70,SUP023,False,2020-01-21
+PROD00267,StyleHub Accessories Product 267,Clothing,Accessories,StyleHub,245.64,355.17,44.6,22.47,764,38,SUP037,True,2023-05-19
+PROD00268,GardenPro Garden Product 268,Home & Garden,Garden,GardenPro,128.68,227.5,76.8,26.31,257,55,SUP006,True,2021-06-15
+PROD00269,HomeEssentials Storage Product 269,Home & Garden,Storage,HomeEssentials,66.7,100.98,51.4,40.33,943,23,SUP045,True,2022-06-11
+PROD00270,UrbanStyle Accessories Product 270,Clothing,Accessories,UrbanStyle,170.82,269.93,58.0,28.46,317,10,SUP012,True,2023-07-13
+PROD00271,NaturalStyle Furniture Product 271,Home & Garden,Furniture,NaturalStyle,249.75,424.48,70.0,17.11,737,79,SUP038,True,2022-06-20
+PROD00272,FashionPlus Women Product 272,Clothing,Women,FashionPlus,388.24,582.73,50.1,45.34,127,94,SUP034,True,2023-12-12
+PROD00273,TrendyWear Accessories Product 273,Clothing,Accessories,TrendyWear,342.8,596.2,73.9,19.8,219,62,SUP033,True,2023-02-28
+PROD00274,CozyLiving Storage Product 274,Home & Garden,Storage,CozyLiving,281.31,490.67,74.4,10.84,928,18,SUP030,True,2021-05-06
+PROD00275,TechCorp Computers Product 275,Electronics,Computers,TechCorp,40.61,65.9,62.3,44.43,243,38,SUP022,False,2022-02-05
+PROD00276,NaturalStyle Garden Product 276,Home & Garden,Garden,NaturalStyle,163.82,218.39,33.3,27.07,417,31,SUP042,False,2020-09-05
+PROD00277,NaturalStyle Decor Product 277,Home & Garden,Decor,NaturalStyle,196.56,348.27,77.2,9.82,814,57,SUP050,True,2020-05-16
+PROD00278,FashionPlus Men Product 278,Clothing,Men,FashionPlus,58.35,101.53,74.0,21.91,6,70,SUP037,True,2020-02-17
+PROD00279,DigiWorld Accessories Product 279,Electronics,Accessories,DigiWorld,183.7,276.54,50.5,43.78,580,93,SUP001,True,2023-05-23
+PROD00280,GadgetMax Video Product 280,Electronics,Video,GadgetMax,492.52,644.9,30.9,4.11,116,85,SUP043,True,2024-06-15
+PROD00281,TechCorp Computers Product 281,Electronics,Computers,TechCorp,149.9,211.62,41.2,25.96,189,12,SUP026,False,2022-06-14
+PROD00282,GadgetMax Audio Product 282,Electronics,Audio,GadgetMax,274.05,438.8,60.1,25.79,933,88,SUP025,True,2024-10-07
+PROD00283,ModernHome Furniture Product 283,Home & Garden,Furniture,ModernHome,72.7,97.47,34.1,46.12,959,36,SUP030,True,2023-08-05
+PROD00284,HomeEssentials Decor Product 284,Home & Garden,Decor,HomeEssentials,119.39,181.51,52.0,16.12,482,25,SUP019,True,2023-04-07
+PROD00285,HomeEssentials Garden Product 285,Home & Garden,Garden,HomeEssentials,189.29,333.99,76.4,36.46,993,58,SUP039,True,2022-07-18
+PROD00286,TrendyWear Men Product 286,Clothing,Men,TrendyWear,113.9,155.18,36.2,22.91,188,22,SUP036,False,2023-06-15
+PROD00287,SmartTech Accessories Product 287,Electronics,Accessories,SmartTech,89.96,161.91,80.0,24.73,319,80,SUP016,False,2023-06-10
+PROD00288,ElectroPro Mobile Product 288,Electronics,Mobile,ElectroPro,438.43,767.28,75.0,17.83,867,11,SUP047,True,2021-03-20
+PROD00289,TechCorp Audio Product 289,Electronics,Audio,TechCorp,475.01,709.94,49.5,3.24,885,98,SUP016,True,2022-08-23
+PROD00290,HomeEssentials Furniture Product 290,Home & Garden,Furniture,HomeEssentials,107.96,152.67,41.4,42.96,443,58,SUP018,False,2021-06-18
+PROD00291,TechCorp Video Product 291,Electronics,Video,TechCorp,396.98,667.05,68.0,26.76,191,27,SUP041,True,2022-11-04
+PROD00292,GadgetMax Mobile Product 292,Electronics,Mobile,GadgetMax,249.58,403.76,61.8,38.9,226,99,SUP014,True,2021-02-25
+PROD00293,DigiWorld Audio Product 293,Electronics,Audio,DigiWorld,402.47,585.47,45.5,23.29,121,18,SUP022,True,2022-06-28
+PROD00294,TrendyWear Sports Product 294,Clothing,Sports,TrendyWear,292.83,401.96,37.3,20.06,496,24,SUP025,False,2021-10-13
+PROD00295,GardenPro Garden Product 295,Home & Garden,Garden,GardenPro,425.08,725.58,70.7,0.36,230,79,SUP039,True,2020-10-03
+PROD00296,UrbanStyle Accessories Product 296,Clothing,Accessories,UrbanStyle,421.99,553.05,31.1,37.23,635,38,SUP020,True,2022-10-10
+PROD00297,ModernHome Storage Product 297,Home & Garden,Storage,ModernHome,80.71,134.4,66.5,30.4,401,30,SUP049,True,2020-07-22
+PROD00298,ElectroPro Video Product 298,Electronics,Video,ElectroPro,137.14,214.95,56.7,18.67,120,85,SUP011,True,2021-08-31
+PROD00299,TechCorp Audio Product 299,Electronics,Audio,TechCorp,493.51,835.8,69.4,0.63,204,87,SUP010,True,2020-07-29
+PROD00300,SmartTech Accessories Product 300,Electronics,Accessories,SmartTech,187.58,302.27,61.1,0.49,826,52,SUP045,True,2022-06-03
+PROD00301,GardenPro Kitchen Product 301,Home & Garden,Kitchen,GardenPro,151.3,266.29,76.0,9.46,588,100,SUP043,True,2022-07-02
+PROD00302,SmartTech Accessories Product 302,Electronics,Accessories,SmartTech,274.19,435.24,58.7,33.77,150,83,SUP035,False,2021-05-11
+PROD00303,ElectroPro Audio Product 303,Electronics,Audio,ElectroPro,155.37,244.44,57.3,9.07,877,54,SUP025,True,2022-12-26
+PROD00304,UrbanStyle Women Product 304,Clothing,Women,UrbanStyle,294.55,455.22,54.5,27.74,603,54,SUP018,True,2020-03-14
+PROD00305,StyleHub Sports Product 305,Clothing,Sports,StyleHub,95.22,133.04,39.7,8.21,83,96,SUP048,False,2024-01-01
+PROD00306,GadgetMax Computers Product 306,Electronics,Computers,GadgetMax,139.73,225.63,61.5,5.75,979,34,SUP004,True,2022-02-20
+PROD00307,TechCorp Video Product 307,Electronics,Video,TechCorp,427.36,642.33,50.3,1.34,367,23,SUP024,True,2023-03-07
+PROD00308,TechCorp Mobile Product 308,Electronics,Mobile,TechCorp,300.42,485.75,61.7,12.18,992,21,SUP033,True,2021-06-28
+PROD00309,HomeEssentials Garden Product 309,Home & Garden,Garden,HomeEssentials,172.58,281.14,62.9,43.94,265,100,SUP036,False,2024-11-24
+PROD00310,GardenPro Kitchen Product 310,Home & Garden,Kitchen,GardenPro,138.97,211.68,52.3,30.8,836,21,SUP015,True,2024-11-02
+PROD00311,DigiWorld Video Product 311,Electronics,Video,DigiWorld,24.23,33.97,40.2,12.06,160,51,SUP010,True,2021-01-31
+PROD00312,HomeEssentials Kitchen Product 312,Home & Garden,Kitchen,HomeEssentials,326.68,505.15,54.6,26.99,469,84,SUP019,True,2020-10-05
+PROD00313,ModernHome Kitchen Product 313,Home & Garden,Kitchen,ModernHome,269.67,382.08,41.7,11.2,604,93,SUP030,True,2023-10-15
+PROD00314,TechCorp Computers Product 314,Electronics,Computers,TechCorp,397.5,565.31,42.2,43.03,746,14,SUP043,True,2024-03-29
+PROD00315,GardenPro Kitchen Product 315,Home & Garden,Kitchen,GardenPro,460.43,675.45,46.7,9.83,869,31,SUP007,True,2024-05-18
+PROD00316,GadgetMax Accessories Product 316,Electronics,Accessories,GadgetMax,366.44,626.41,70.9,14.38,465,55,SUP005,False,2021-06-07
+PROD00317,ModernHome Decor Product 317,Home & Garden,Decor,ModernHome,81.37,133.56,64.1,38.6,12,100,SUP031,False,2024-09-25
+PROD00318,HomeEssentials Furniture Product 318,Home & Garden,Furniture,HomeEssentials,196.06,323.53,65.0,13.33,694,75,SUP046,True,2023-01-08
+PROD00319,ModernHome Decor Product 319,Home & Garden,Decor,ModernHome,214.32,288.17,34.5,16.12,793,49,SUP002,False,2020-01-20
+PROD00320,DigiWorld Mobile Product 320,Electronics,Mobile,DigiWorld,114.44,189.34,65.5,43.52,713,67,SUP029,False,2022-04-29
+PROD00321,CozyLiving Storage Product 321,Home & Garden,Storage,CozyLiving,412.87,545.42,32.1,42.86,198,12,SUP025,False,2023-03-21
+PROD00322,SmartTech Video Product 322,Electronics,Video,SmartTech,443.11,747.54,68.7,30.98,495,71,SUP027,True,2024-11-05
+PROD00323,CozyLiving Kitchen Product 323,Home & Garden,Kitchen,CozyLiving,393.3,697.75,77.4,38.88,686,92,SUP043,False,2021-08-09
+PROD00324,HomeEssentials Kitchen Product 324,Home & Garden,Kitchen,HomeEssentials,467.16,687.19,47.1,27.7,145,48,SUP043,True,2021-07-11
+PROD00325,TrendyWear Women Product 325,Clothing,Women,TrendyWear,448.63,587.49,31.0,41.83,421,95,SUP013,True,2023-04-27
+PROD00326,FashionPlus Accessories Product 326,Clothing,Accessories,FashionPlus,497.11,795.54,60.0,49.83,920,60,SUP008,True,2023-07-11
+PROD00327,GardenPro Storage Product 327,Home & Garden,Storage,GardenPro,348.14,479.93,37.9,26.63,857,78,SUP030,True,2021-12-20
+PROD00328,UrbanStyle Sports Product 328,Clothing,Sports,UrbanStyle,79.99,128.27,60.4,18.01,83,32,SUP041,True,2024-10-18
+PROD00329,ComfortFit Kids Product 329,Clothing,Kids,ComfortFit,393.37,589.14,49.8,18.67,935,70,SUP021,True,2022-11-08
+PROD00330,ComfortFit Accessories Product 330,Clothing,Accessories,ComfortFit,76.24,101.31,32.9,5.36,214,29,SUP045,True,2021-05-12
+PROD00331,ElectroPro Mobile Product 331,Electronics,Mobile,ElectroPro,384.86,511.88,33.0,9.17,633,35,SUP011,False,2023-06-28
+PROD00332,TrendyWear Sports Product 332,Clothing,Sports,TrendyWear,135.15,178.2,31.8,20.13,85,29,SUP018,False,2021-06-04
+PROD00333,ElectroPro Audio Product 333,Electronics,Audio,ElectroPro,336.75,465.42,38.2,47.74,770,69,SUP018,True,2020-09-16
+PROD00334,NaturalStyle Decor Product 334,Home & Garden,Decor,NaturalStyle,366.08,622.56,70.1,25.16,22,24,SUP005,True,2024-11-09
+PROD00335,ModernHome Furniture Product 335,Home & Garden,Furniture,ModernHome,73.56,98.5,33.9,21.34,388,78,SUP013,False,2023-11-15
+PROD00336,ModernHome Furniture Product 336,Home & Garden,Furniture,ModernHome,266.92,392.29,47.0,15.94,766,56,SUP047,True,2022-07-31
+PROD00337,TechCorp Audio Product 337,Electronics,Audio,TechCorp,417.48,703.43,68.5,36.18,499,53,SUP019,True,2023-06-01
+PROD00338,StyleHub Kids Product 338,Clothing,Kids,StyleHub,427.61,557.5,30.4,14.98,773,49,SUP002,True,2020-02-06
+PROD00339,GadgetMax Accessories Product 339,Electronics,Accessories,GadgetMax,186.98,330.62,76.8,49.11,932,70,SUP036,True,2023-09-15
+PROD00340,TrendyWear Kids Product 340,Clothing,Kids,TrendyWear,317.21,550.8,73.6,8.49,439,62,SUP012,False,2021-05-20
+PROD00341,NaturalStyle Storage Product 341,Home & Garden,Storage,NaturalStyle,279.54,472.16,68.9,47.86,101,88,SUP033,True,2022-03-03
+PROD00342,ComfortFit Accessories Product 342,Clothing,Accessories,ComfortFit,227.45,341.12,50.0,42.75,554,56,SUP008,False,2022-10-20
+PROD00343,HomeEssentials Storage Product 343,Home & Garden,Storage,HomeEssentials,385.48,562.43,45.9,11.37,526,97,SUP033,True,2020-08-04
+PROD00344,HomeEssentials Garden Product 344,Home & Garden,Garden,HomeEssentials,294.23,526.37,78.9,0.97,60,17,SUP043,False,2024-02-09
+PROD00345,GadgetMax Audio Product 345,Electronics,Audio,GadgetMax,346.19,600.53,73.5,38.8,643,22,SUP047,False,2023-02-21
+PROD00346,DigiWorld Accessories Product 346,Electronics,Accessories,DigiWorld,456.9,808.99,77.1,6.63,618,88,SUP035,True,2021-02-24
+PROD00347,UrbanStyle Kids Product 347,Clothing,Kids,UrbanStyle,350.39,501.28,43.1,20.92,994,37,SUP018,True,2020-04-27
+PROD00348,SmartTech Mobile Product 348,Electronics,Mobile,SmartTech,336.79,577.86,71.6,45.3,843,66,SUP001,False,2024-05-04
+PROD00349,HomeEssentials Garden Product 349,Home & Garden,Garden,HomeEssentials,417.13,643.38,54.2,6.31,965,70,SUP012,True,2021-02-27
+PROD00350,StyleHub Women Product 350,Clothing,Women,StyleHub,383.42,609.76,59.0,37.86,118,62,SUP038,True,2021-03-19
+PROD00351,FashionPlus Men Product 351,Clothing,Men,FashionPlus,97.57,128.66,31.9,20.82,442,27,SUP022,True,2022-06-16
+PROD00352,UrbanStyle Women Product 352,Clothing,Women,UrbanStyle,403.12,533.1,32.2,17.84,659,78,SUP045,True,2020-11-24
+PROD00353,DigiWorld Accessories Product 353,Electronics,Accessories,DigiWorld,397.67,634.95,59.7,2.17,819,57,SUP020,True,2023-11-22
+PROD00354,UrbanStyle Sports Product 354,Clothing,Sports,UrbanStyle,101.92,142.78,40.1,24.27,667,78,SUP012,True,2024-05-11
+PROD00355,TrendyWear Accessories Product 355,Clothing,Accessories,TrendyWear,48.89,76.26,56.0,31.94,576,100,SUP045,False,2022-08-05
+PROD00356,DigiWorld Computers Product 356,Electronics,Computers,DigiWorld,260.65,352.38,35.2,9.97,20,53,SUP005,False,2024-07-14
+PROD00357,ComfortFit Kids Product 357,Clothing,Kids,ComfortFit,187.79,264.62,40.9,2.77,687,42,SUP027,True,2021-10-25
+PROD00358,GadgetMax Accessories Product 358,Electronics,Accessories,GadgetMax,308.99,516.09,67.0,31.15,315,98,SUP017,True,2022-06-22
+PROD00359,UrbanStyle Men Product 359,Clothing,Men,UrbanStyle,376.96,674.79,79.0,23.99,630,88,SUP007,False,2024-08-03
+PROD00360,StyleHub Accessories Product 360,Clothing,Accessories,StyleHub,32.93,58.89,78.8,26.79,643,94,SUP045,True,2024-06-08
+PROD00361,FashionPlus Kids Product 361,Clothing,Kids,FashionPlus,72.23,117.79,63.1,11.06,919,56,SUP004,True,2023-01-02
+PROD00362,DigiWorld Mobile Product 362,Electronics,Mobile,DigiWorld,232.98,303.08,30.1,17.68,718,85,SUP024,True,2020-02-25
+PROD00363,CozyLiving Furniture Product 363,Home & Garden,Furniture,CozyLiving,357.1,573.82,60.7,27.47,51,31,SUP048,True,2020-01-08
+PROD00364,GardenPro Storage Product 364,Home & Garden,Storage,GardenPro,244.25,325.46,33.3,32.73,629,68,SUP030,False,2021-05-12
+PROD00365,ComfortFit Sports Product 365,Clothing,Sports,ComfortFit,209.94,344.58,64.1,46.88,925,89,SUP022,True,2023-01-22
+PROD00366,ElectroPro Accessories Product 366,Electronics,Accessories,ElectroPro,178.55,273.8,53.3,6.68,652,53,SUP036,True,2024-12-12
+PROD00367,TechCorp Video Product 367,Electronics,Video,TechCorp,477.27,844.64,77.0,26.97,71,19,SUP018,False,2022-07-11
+PROD00368,GadgetMax Mobile Product 368,Electronics,Mobile,GadgetMax,330.75,575.84,74.1,45.15,224,54,SUP044,True,2024-07-21
+PROD00369,UrbanStyle Accessories Product 369,Clothing,Accessories,UrbanStyle,220.66,324.88,47.2,5.22,826,74,SUP048,True,2023-10-03
+PROD00370,TrendyWear Sports Product 370,Clothing,Sports,TrendyWear,76.25,102.67,34.6,25.32,842,93,SUP011,False,2021-02-12
+PROD00371,CozyLiving Kitchen Product 371,Home & Garden,Kitchen,CozyLiving,156.48,250.08,59.8,48.96,103,36,SUP015,True,2024-05-27
+PROD00372,DigiWorld Video Product 372,Electronics,Video,DigiWorld,107.78,193.01,79.1,14.06,460,67,SUP040,True,2024-09-11
+PROD00373,TrendyWear Kids Product 373,Clothing,Kids,TrendyWear,72.11,118.88,64.9,43.72,639,66,SUP039,False,2023-10-01
+PROD00374,ModernHome Furniture Product 374,Home & Garden,Furniture,ModernHome,303.49,490.28,61.5,6.45,597,56,SUP044,True,2021-02-07
+PROD00375,StyleHub Accessories Product 375,Clothing,Accessories,StyleHub,258.63,359.96,39.2,15.63,924,22,SUP044,True,2023-01-29
+PROD00376,DigiWorld Accessories Product 376,Electronics,Accessories,DigiWorld,271.18,441.6,62.8,17.45,436,47,SUP042,False,2024-04-22
+PROD00377,GadgetMax Video Product 377,Electronics,Video,GadgetMax,388.08,650.27,67.6,1.82,901,89,SUP023,True,2024-10-04
+PROD00378,ElectroPro Mobile Product 378,Electronics,Mobile,ElectroPro,127.94,173.44,35.6,49.05,232,28,SUP025,True,2024-07-14
+PROD00379,NaturalStyle Decor Product 379,Home & Garden,Decor,NaturalStyle,485.39,719.54,48.2,11.83,377,40,SUP008,False,2020-09-27
+PROD00380,GadgetMax Computers Product 380,Electronics,Computers,GadgetMax,454.27,685.45,50.9,48.61,49,69,SUP026,True,2020-06-29
+PROD00381,TrendyWear Kids Product 381,Clothing,Kids,TrendyWear,383.82,543.73,41.7,44.29,411,40,SUP043,True,2024-09-14
+PROD00382,GadgetMax Computers Product 382,Electronics,Computers,GadgetMax,131.77,227.95,73.0,26.61,280,78,SUP040,False,2020-01-20
+PROD00383,TrendyWear Men Product 383,Clothing,Men,TrendyWear,257.9,356.1,38.1,17.53,203,97,SUP040,False,2021-07-18
+PROD00384,SmartTech Audio Product 384,Electronics,Audio,SmartTech,433.74,596.34,37.5,8.92,320,77,SUP034,True,2020-07-01
+PROD00385,TrendyWear Sports Product 385,Clothing,Sports,TrendyWear,249.42,404.26,62.1,36.76,244,70,SUP030,True,2020-06-25
+PROD00386,FashionPlus Women Product 386,Clothing,Women,FashionPlus,180.57,257.04,42.4,21.27,430,23,SUP027,True,2024-03-29
+PROD00387,FashionPlus Sports Product 387,Clothing,Sports,FashionPlus,269.0,428.14,59.2,4.98,677,14,SUP010,True,2022-08-22
+PROD00388,CozyLiving Garden Product 388,Home & Garden,Garden,CozyLiving,134.33,185.3,37.9,11.73,881,31,SUP034,True,2023-05-24
+PROD00389,ModernHome Kitchen Product 389,Home & Garden,Kitchen,ModernHome,80.64,117.05,45.2,48.36,118,72,SUP049,True,2024-03-22
+PROD00390,GardenPro Storage Product 390,Home & Garden,Storage,GardenPro,52.39,89.62,71.1,39.47,893,76,SUP030,False,2023-05-14
+PROD00391,UrbanStyle Accessories Product 391,Clothing,Accessories,UrbanStyle,142.96,231.35,61.8,32.37,16,55,SUP019,True,2022-04-15
+PROD00392,ModernHome Garden Product 392,Home & Garden,Garden,ModernHome,97.29,152.47,56.7,32.2,888,59,SUP028,True,2023-10-13
+PROD00393,StyleHub Women Product 393,Clothing,Women,StyleHub,297.56,465.07,56.3,32.3,983,59,SUP047,True,2024-01-02
+PROD00394,ElectroPro Computers Product 394,Electronics,Computers,ElectroPro,383.63,659.84,72.0,24.58,833,35,SUP050,False,2020-07-30
+PROD00395,GadgetMax Computers Product 395,Electronics,Computers,GadgetMax,302.71,447.61,47.9,19.6,473,35,SUP035,True,2020-01-28
+PROD00396,GardenPro Storage Product 396,Home & Garden,Storage,GardenPro,85.2,130.76,53.5,38.33,103,39,SUP045,True,2022-01-10
+PROD00397,TechCorp Video Product 397,Electronics,Video,TechCorp,198.26,345.18,74.1,5.18,258,55,SUP036,False,2022-04-10
+PROD00398,TechCorp Computers Product 398,Electronics,Computers,TechCorp,52.97,73.45,38.7,35.37,742,50,SUP007,True,2023-11-01
+PROD00399,NaturalStyle Garden Product 399,Home & Garden,Garden,NaturalStyle,371.92,622.93,67.5,44.57,906,32,SUP001,True,2020-08-24
+PROD00400,ComfortFit Accessories Product 400,Clothing,Accessories,ComfortFit,240.22,417.14,73.7,23.09,400,11,SUP030,True,2022-03-11
+PROD00401,TrendyWear Kids Product 401,Clothing,Kids,TrendyWear,183.28,278.85,52.1,47.61,361,54,SUP024,True,2024-12-28
+PROD00402,GadgetMax Computers Product 402,Electronics,Computers,GadgetMax,28.35,50.76,79.0,40.08,149,21,SUP002,True,2020-04-23
+PROD00403,TechCorp Accessories Product 403,Electronics,Accessories,TechCorp,30.18,39.29,30.2,6.62,841,46,SUP030,True,2023-12-10
+PROD00404,DigiWorld Video Product 404,Electronics,Video,DigiWorld,491.73,854.35,73.7,43.93,591,85,SUP007,True,2020-11-14
+PROD00405,ComfortFit Men Product 405,Clothing,Men,ComfortFit,439.09,644.16,46.7,7.75,281,90,SUP027,True,2020-03-05
+PROD00406,TechCorp Video Product 406,Electronics,Video,TechCorp,220.48,366.68,66.3,43.63,110,46,SUP001,True,2020-09-27
+PROD00407,GadgetMax Mobile Product 407,Electronics,Mobile,GadgetMax,303.31,515.03,69.8,16.8,402,100,SUP028,True,2021-02-09
+PROD00408,UrbanStyle Kids Product 408,Clothing,Kids,UrbanStyle,299.03,488.92,63.5,35.44,364,46,SUP049,True,2021-06-11
+PROD00409,TrendyWear Sports Product 409,Clothing,Sports,TrendyWear,170.44,249.34,46.3,35.9,455,16,SUP017,True,2023-10-06
+PROD00410,SmartTech Video Product 410,Electronics,Video,SmartTech,184.09,270.19,46.8,4.32,141,61,SUP030,True,2023-07-22
+PROD00411,ModernHome Furniture Product 411,Home & Garden,Furniture,ModernHome,348.61,501.95,44.0,41.32,519,76,SUP033,False,2023-09-13
+PROD00412,TechCorp Video Product 412,Electronics,Video,TechCorp,13.78,19.16,39.0,43.45,905,73,SUP046,True,2023-09-15
+PROD00413,ComfortFit Accessories Product 413,Clothing,Accessories,ComfortFit,11.19,18.33,63.8,25.68,285,50,SUP010,True,2023-06-07
+PROD00414,ModernHome Garden Product 414,Home & Garden,Garden,ModernHome,353.19,590.7,67.2,32.02,634,76,SUP029,True,2021-12-02
+PROD00415,GardenPro Garden Product 415,Home & Garden,Garden,GardenPro,341.31,512.54,50.2,43.89,651,69,SUP023,False,2023-12-17
+PROD00416,TrendyWear Kids Product 416,Clothing,Kids,TrendyWear,23.88,36.03,50.9,25.62,259,33,SUP007,True,2024-07-23
+PROD00417,StyleHub Kids Product 417,Clothing,Kids,StyleHub,455.51,727.21,59.6,10.65,174,41,SUP043,False,2021-09-26
+PROD00418,GardenPro Storage Product 418,Home & Garden,Storage,GardenPro,48.04,73.23,52.4,16.45,329,49,SUP005,False,2023-12-15
+PROD00419,GardenPro Decor Product 419,Home & Garden,Decor,GardenPro,328.15,563.49,71.7,31.2,994,96,SUP027,False,2021-11-02
+PROD00420,ComfortFit Accessories Product 420,Clothing,Accessories,ComfortFit,28.96,43.37,49.8,24.01,778,12,SUP033,False,2023-01-21
+PROD00421,ElectroPro Accessories Product 421,Electronics,Accessories,ElectroPro,122.41,194.8,59.1,13.52,725,33,SUP033,True,2024-10-30
+PROD00422,ModernHome Garden Product 422,Home & Garden,Garden,ModernHome,101.17,179.68,77.6,36.41,468,80,SUP036,True,2020-12-16
+PROD00423,UrbanStyle Women Product 423,Clothing,Women,UrbanStyle,186.06,243.62,30.9,13.22,733,34,SUP021,True,2022-08-13
+PROD00424,FashionPlus Women Product 424,Clothing,Women,FashionPlus,138.27,217.78,57.5,16.08,112,56,SUP025,True,2021-05-20
+PROD00425,GadgetMax Accessories Product 425,Electronics,Accessories,GadgetMax,25.48,42.34,66.2,1.61,832,39,SUP001,True,2021-05-26
+PROD00426,SmartTech Computers Product 426,Electronics,Computers,SmartTech,342.39,542.9,58.6,29.62,115,35,SUP001,True,2024-12-01
+PROD00427,NaturalStyle Garden Product 427,Home & Garden,Garden,NaturalStyle,344.73,458.81,33.1,14.57,231,30,SUP003,False,2020-08-12
+PROD00428,GardenPro Kitchen Product 428,Home & Garden,Kitchen,GardenPro,497.16,769.18,54.7,16.72,575,87,SUP026,False,2020-02-22
+PROD00429,ModernHome Garden Product 429,Home & Garden,Garden,ModernHome,358.68,537.35,49.8,2.9,936,42,SUP039,True,2024-08-11
+PROD00430,GardenPro Garden Product 430,Home & Garden,Garden,GardenPro,385.45,561.29,45.6,47.58,709,70,SUP023,True,2022-08-19
+PROD00431,NaturalStyle Storage Product 431,Home & Garden,Storage,NaturalStyle,194.84,294.91,51.4,21.54,615,22,SUP034,True,2023-11-23
+PROD00432,UrbanStyle Men Product 432,Clothing,Men,UrbanStyle,478.58,649.56,35.7,37.64,100,35,SUP010,False,2023-07-19
+PROD00433,NaturalStyle Kitchen Product 433,Home & Garden,Kitchen,NaturalStyle,387.27,558.45,44.2,21.2,191,38,SUP002,True,2024-01-12
+PROD00434,TrendyWear Men Product 434,Clothing,Men,TrendyWear,341.16,492.6,44.4,42.04,628,100,SUP031,False,2024-11-08
+PROD00435,SmartTech Mobile Product 435,Electronics,Mobile,SmartTech,299.75,531.08,77.2,2.89,799,64,SUP018,True,2021-04-06
+PROD00436,ModernHome Storage Product 436,Home & Garden,Storage,ModernHome,318.77,536.61,68.3,3.52,461,100,SUP009,True,2021-06-07
+PROD00437,StyleHub Accessories Product 437,Clothing,Accessories,StyleHub,262.83,385.49,46.7,27.87,110,57,SUP043,True,2020-04-04
+PROD00438,DigiWorld Computers Product 438,Electronics,Computers,DigiWorld,384.71,534.65,39.0,27.7,348,25,SUP012,True,2021-05-05
+PROD00439,ElectroPro Accessories Product 439,Electronics,Accessories,ElectroPro,229.73,303.29,32.0,40.11,65,96,SUP004,False,2024-08-19
+PROD00440,SmartTech Accessories Product 440,Electronics,Accessories,SmartTech,261.45,456.07,74.4,17.92,682,19,SUP009,True,2024-03-02
+PROD00441,ModernHome Decor Product 441,Home & Garden,Decor,ModernHome,443.2,797.19,79.9,31.92,266,44,SUP050,False,2024-09-20
+PROD00442,FashionPlus Kids Product 442,Clothing,Kids,FashionPlus,131.78,227.64,72.7,41.49,675,50,SUP035,False,2023-05-24
+PROD00443,TrendyWear Men Product 443,Clothing,Men,TrendyWear,485.29,740.95,52.7,41.59,399,29,SUP025,False,2020-01-01
+PROD00444,ModernHome Garden Product 444,Home & Garden,Garden,ModernHome,187.03,322.84,72.6,42.97,166,84,SUP042,False,2023-06-16
+PROD00445,FashionPlus Accessories Product 445,Clothing,Accessories,FashionPlus,383.3,600.76,56.7,13.46,937,34,SUP020,True,2023-06-21
+PROD00446,ElectroPro Audio Product 446,Electronics,Audio,ElectroPro,445.85,713.99,60.1,3.83,375,82,SUP040,False,2020-01-13
+PROD00447,CozyLiving Decor Product 447,Home & Garden,Decor,CozyLiving,27.04,38.55,42.6,38.69,935,20,SUP011,True,2024-11-08
+PROD00448,SmartTech Computers Product 448,Electronics,Computers,SmartTech,85.72,130.71,52.5,6.3,475,44,SUP035,True,2023-01-03
+PROD00449,ComfortFit Kids Product 449,Clothing,Kids,ComfortFit,279.32,390.71,39.9,36.78,306,72,SUP019,True,2021-02-23
+PROD00450,GardenPro Storage Product 450,Home & Garden,Storage,GardenPro,136.02,225.68,65.9,6.12,884,95,SUP048,False,2020-07-07
+PROD00451,NaturalStyle Decor Product 451,Home & Garden,Decor,NaturalStyle,214.55,312.13,45.5,18.3,892,64,SUP026,True,2022-06-28
+PROD00452,ElectroPro Video Product 452,Electronics,Video,ElectroPro,319.07,510.79,60.1,21.53,358,97,SUP030,False,2021-03-11
+PROD00453,TrendyWear Kids Product 453,Clothing,Kids,TrendyWear,56.59,86.07,52.1,11.72,288,91,SUP043,True,2020-01-05
+PROD00454,SmartTech Video Product 454,Electronics,Video,SmartTech,189.85,291.12,53.3,27.06,748,22,SUP014,True,2021-07-27
+PROD00455,ElectroPro Accessories Product 455,Electronics,Accessories,ElectroPro,284.34,463.56,63.0,19.74,974,86,SUP004,False,2020-04-14
+PROD00456,ComfortFit Women Product 456,Clothing,Women,ComfortFit,172.16,290.05,68.5,5.05,387,20,SUP042,True,2022-01-11
+PROD00457,ComfortFit Women Product 457,Clothing,Women,ComfortFit,175.54,306.6,74.7,0.32,689,33,SUP029,True,2021-03-26
+PROD00458,GardenPro Storage Product 458,Home & Garden,Storage,GardenPro,310.42,467.28,50.5,44.53,464,54,SUP002,True,2023-05-28
+PROD00459,ElectroPro Audio Product 459,Electronics,Audio,ElectroPro,416.48,545.26,30.9,1.28,51,27,SUP021,True,2022-05-30
+PROD00460,FashionPlus Women Product 460,Clothing,Women,FashionPlus,112.02,196.72,75.6,19.9,527,96,SUP045,False,2022-10-29
+PROD00461,ModernHome Kitchen Product 461,Home & Garden,Kitchen,ModernHome,433.39,612.79,41.4,40.38,410,44,SUP046,True,2020-01-29
+PROD00462,ModernHome Storage Product 462,Home & Garden,Storage,ModernHome,369.38,624.58,69.1,19.53,615,97,SUP012,True,2023-10-05
+PROD00463,ElectroPro Accessories Product 463,Electronics,Accessories,ElectroPro,137.53,188.83,37.3,9.95,448,32,SUP036,True,2024-06-27
+PROD00464,HomeEssentials Garden Product 464,Home & Garden,Garden,HomeEssentials,303.86,466.36,53.5,17.27,163,20,SUP032,False,2022-02-18
+PROD00465,SmartTech Audio Product 465,Electronics,Audio,SmartTech,483.32,684.81,41.7,42.33,300,14,SUP027,True,2021-02-14
+PROD00466,SmartTech Computers Product 466,Electronics,Computers,SmartTech,498.24,650.16,30.5,47.61,686,40,SUP018,True,2022-04-23
+PROD00467,TechCorp Mobile Product 467,Electronics,Mobile,TechCorp,152.85,248.75,62.7,21.02,376,44,SUP006,True,2022-07-30
+PROD00468,DigiWorld Mobile Product 468,Electronics,Mobile,DigiWorld,224.12,360.9,61.0,27.77,760,10,SUP043,True,2024-11-26
+PROD00469,TechCorp Audio Product 469,Electronics,Audio,TechCorp,125.0,194.84,55.9,12.91,383,16,SUP024,True,2021-06-18
+PROD00470,UrbanStyle Sports Product 470,Clothing,Sports,UrbanStyle,493.02,786.18,59.5,27.28,497,43,SUP002,True,2021-11-13
+PROD00471,TrendyWear Men Product 471,Clothing,Men,TrendyWear,59.03,94.51,60.1,20.31,883,75,SUP008,True,2022-02-08
+PROD00472,UrbanStyle Accessories Product 472,Clothing,Accessories,UrbanStyle,485.58,853.29,75.7,36.91,451,37,SUP014,False,2022-01-13
+PROD00473,ModernHome Furniture Product 473,Home & Garden,Furniture,ModernHome,406.84,720.02,77.0,16.87,388,45,SUP006,False,2023-10-16
+PROD00474,GardenPro Garden Product 474,Home & Garden,Garden,GardenPro,160.69,231.84,44.3,2.27,720,23,SUP023,True,2021-12-20
+PROD00475,GardenPro Storage Product 475,Home & Garden,Storage,GardenPro,271.03,356.67,31.6,13.41,660,47,SUP036,True,2023-12-17
+PROD00476,DigiWorld Computers Product 476,Electronics,Computers,DigiWorld,479.21,752.86,57.1,28.54,714,93,SUP039,False,2024-04-22
+PROD00477,StyleHub Kids Product 477,Clothing,Kids,StyleHub,224.86,373.65,66.2,30.68,609,60,SUP048,True,2024-05-04
+PROD00478,FashionPlus Men Product 478,Clothing,Men,FashionPlus,142.06,245.57,72.9,11.11,26,21,SUP040,True,2024-05-04
+PROD00479,FashionPlus Kids Product 479,Clothing,Kids,FashionPlus,104.24,185.89,78.3,23.63,102,87,SUP025,True,2021-08-06
+PROD00480,DigiWorld Computers Product 480,Electronics,Computers,DigiWorld,184.04,268.1,45.7,45.55,407,85,SUP042,False,2021-05-12
+PROD00481,ModernHome Decor Product 481,Home & Garden,Decor,ModernHome,391.29,650.65,66.3,49.72,638,81,SUP033,False,2024-05-13
+PROD00482,ElectroPro Audio Product 482,Electronics,Audio,ElectroPro,60.5,93.88,55.2,43.2,487,37,SUP008,True,2022-10-16
+PROD00483,TrendyWear Men Product 483,Clothing,Men,TrendyWear,275.16,449.16,63.2,29.71,964,61,SUP012,False,2022-12-06
+PROD00484,GadgetMax Mobile Product 484,Electronics,Mobile,GadgetMax,289.47,424.41,46.6,15.68,545,73,SUP013,True,2020-04-20
+PROD00485,TrendyWear Men Product 485,Clothing,Men,TrendyWear,268.62,450.02,67.5,37.25,866,92,SUP044,True,2020-09-24
+PROD00486,GadgetMax Video Product 486,Electronics,Video,GadgetMax,361.94,475.6,31.4,22.56,34,42,SUP040,True,2022-11-09
+PROD00487,StyleHub Accessories Product 487,Clothing,Accessories,StyleHub,184.66,260.37,41.0,15.96,581,80,SUP005,True,2024-10-22
+PROD00488,ModernHome Decor Product 488,Home & Garden,Decor,ModernHome,223.62,300.49,34.4,43.53,409,63,SUP003,True,2023-04-29
+PROD00489,CozyLiving Storage Product 489,Home & Garden,Storage,CozyLiving,35.37,51.18,44.7,32.27,530,34,SUP046,False,2022-03-29
+PROD00490,CozyLiving Kitchen Product 490,Home & Garden,Kitchen,CozyLiving,246.07,325.02,32.1,23.45,749,31,SUP021,True,2020-03-19
+PROD00491,StyleHub Accessories Product 491,Clothing,Accessories,StyleHub,344.36,493.29,43.2,3.37,985,19,SUP001,True,2020-09-17
+PROD00492,FashionPlus Kids Product 492,Clothing,Kids,FashionPlus,178.5,262.24,46.9,14.32,963,55,SUP050,True,2022-07-04
+PROD00493,ComfortFit Accessories Product 493,Clothing,Accessories,ComfortFit,366.35,636.93,73.9,48.13,908,20,SUP004,False,2022-01-25
+PROD00494,GardenPro Storage Product 494,Home & Garden,Storage,GardenPro,321.05,544.52,69.6,2.3,36,72,SUP012,True,2021-07-01
+PROD00495,DigiWorld Computers Product 495,Electronics,Computers,DigiWorld,132.43,217.38,64.1,27.62,358,13,SUP013,True,2022-11-02
+PROD00496,NaturalStyle Storage Product 496,Home & Garden,Storage,NaturalStyle,235.2,401.88,70.9,1.48,110,36,SUP041,False,2022-05-22
+PROD00497,ElectroPro Video Product 497,Electronics,Video,ElectroPro,420.45,615.62,46.4,48.17,968,65,SUP019,True,2023-07-18
+PROD00498,HomeEssentials Furniture Product 498,Home & Garden,Furniture,HomeEssentials,279.3,474.86,70.0,26.09,734,57,SUP027,True,2021-05-08
+PROD00499,StyleHub Accessories Product 499,Clothing,Accessories,StyleHub,474.57,734.4,54.8,5.91,546,59,SUP004,True,2023-02-17
+PROD00500,TrendyWear Women Product 500,Clothing,Women,TrendyWear,124.74,197.01,57.9,23.82,335,49,SUP011,True,2021-10-27

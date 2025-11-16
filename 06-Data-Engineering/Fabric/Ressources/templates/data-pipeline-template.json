@@ -1,0 +1,263 @@
+{
+  "name": "ETL_Pipeline_Template",
+  "description": "Template for Fabric Data Pipeline - Incremental Load Pattern",
+  "properties": {
+    "activities": [
+      {
+        "name": "Get_Watermark",
+        "type": "Lookup",
+        "description": "Get last processed watermark for incremental load",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "00:10:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30
+        },
+        "typeProperties": {
+          "source": {
+            "type": "LakehouseTableSource",
+            "sqlReaderQuery": "SELECT MAX(last_watermark) as watermark FROM etl_watermarks WHERE pipeline_name = '@{pipeline().Pipeline}'"
+          },
+          "dataset": {
+            "referenceName": "Lakehouse_Watermark_Table",
+            "type": "DatasetReference"
+          },
+          "firstRowOnly": true
+        }
+      },
+      {
+        "name": "Copy_Incremental_Data",
+        "type": "Copy",
+        "description": "Copy data from source system incrementally",
+        "dependsOn": [
+          {
+            "activity": "Get_Watermark",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "01:00:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 60
+        },
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderQuery": {
+              "value": "SELECT * FROM SourceTable WHERE ModifiedDate > '@{activity('Get_Watermark').output.firstRow.watermark}' AND ModifiedDate <= '@{pipeline().parameters.MaxWatermark}'",
+              "type": "Expression"
+            }
+          },
+          "sink": {
+            "type": "LakehouseTableSink",
+            "tableActionOption": "Append",
+            "partitionOption": "None"
+          },
+          "enableStaging": false
+        },
+        "inputs": [
+          {
+            "referenceName": "Source_Azure_SQL",
+            "type": "DatasetReference"
+          }
+        ],
+        "outputs": [
+          {
+            "referenceName": "Lakehouse_Staging_Table",
+            "type": "DatasetReference"
+          }
+        ]
+      },
+      {
+        "name": "Transform_Data_Notebook",
+        "type": "SparkNotebook",
+        "description": "Run transformation logic in Spark notebook",
+        "dependsOn": [
+          {
+            "activity": "Copy_Incremental_Data",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "02:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 120
+        },
+        "typeProperties": {
+          "notebook": {
+            "referenceName": "Transform_Data_Notebook",
+            "type": "NotebookReference"
+          },
+          "parameters": {
+            "source_table": {
+              "value": "@pipeline().parameters.SourceTable",
+              "type": "string"
+            },
+            "target_table": {
+              "value": "@pipeline().parameters.TargetTable",
+              "type": "string"
+            },
+            "watermark": {
+              "value": "@activity('Get_Watermark').output.firstRow.watermark",
+              "type": "string"
+            },
+            "run_id": {
+              "value": "@pipeline().RunId",
+              "type": "string"
+            }
+          },
+          "sparkPool": {
+            "referenceName": "defaultSparkPool",
+            "type": "BigDataPoolReference"
+          }
+        }
+      },
+      {
+        "name": "Update_Watermark",
+        "type": "Script",
+        "description": "Update watermark after successful processing",
+        "dependsOn": [
+          {
+            "activity": "Transform_Data_Notebook",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "00:10:00",
+          "retry": 3,
+          "retryIntervalInSeconds": 30
+        },
+        "typeProperties": {
+          "scripts": [
+            {
+              "type": "Query",
+              "text": {
+                "value": "MERGE INTO etl_watermarks AS target\nUSING (SELECT '@{pipeline().Pipeline}' as pipeline_name, '@{pipeline().parameters.MaxWatermark}' as last_watermark, '@{utcnow()}' as updated_at) AS source\nON target.pipeline_name = source.pipeline_name\nWHEN MATCHED THEN UPDATE SET target.last_watermark = source.last_watermark, target.updated_at = source.updated_at\nWHEN NOT MATCHED THEN INSERT (pipeline_name, last_watermark, updated_at) VALUES (source.pipeline_name, source.last_watermark, source.updated_at)",
+                "type": "Expression"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Data_Quality_Check",
+        "type": "Lookup",
+        "description": "Validate data quality metrics",
+        "dependsOn": [
+          {
+            "activity": "Transform_Data_Notebook",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "source": {
+            "type": "LakehouseTableSource",
+            "sqlReaderQuery": {
+              "value": "SELECT \n  COUNT(*) as total_rows,\n  SUM(CASE WHEN key_column IS NULL THEN 1 ELSE 0 END) as null_keys,\n  COUNT(DISTINCT key_column) as unique_keys\nFROM @{pipeline().parameters.TargetTable}\nWHERE _ingestion_time >= '@{pipeline().TriggerTime}'",
+              "type": "Expression"
+            }
+          },
+          "firstRowOnly": true
+        }
+      },
+      {
+        "name": "Quality_Gate",
+        "type": "IfCondition",
+        "description": "Check if data quality meets thresholds",
+        "dependsOn": [
+          {
+            "activity": "Data_Quality_Check",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "expression": {
+            "value": "@greater(activity('Data_Quality_Check').output.firstRow.null_keys, 0)",
+            "type": "Expression"
+          },
+          "ifTrueActivities": [
+            {
+              "name": "Send_Quality_Alert",
+              "type": "WebActivity",
+              "description": "Send alert for data quality issues",
+              "typeProperties": {
+                "url": "@pipeline().parameters.AlertWebhookUrl",
+                "method": "POST",
+                "headers": {
+                  "Content-Type": "application/json"
+                },
+                "body": {
+                  "value": "{\n  \"pipeline\": \"@{pipeline().Pipeline}\",\n  \"run_id\": \"@{pipeline().RunId}\",\n  \"alert_type\": \"DATA_QUALITY\",\n  \"message\": \"Null keys detected: @{activity('Data_Quality_Check').output.firstRow.null_keys}\",\n  \"timestamp\": \"@{utcnow()}\"\n}",
+                  "type": "Expression"
+                }
+              }
+            }
+          ],
+          "ifFalseActivities": []
+        }
+      },
+      {
+        "name": "Log_Success",
+        "type": "Script",
+        "description": "Log successful pipeline execution",
+        "dependsOn": [
+          {
+            "activity": "Update_Watermark",
+            "dependencyConditions": ["Succeeded"]
+          },
+          {
+            "activity": "Quality_Gate",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "typeProperties": {
+          "scripts": [
+            {
+              "type": "Query",
+              "text": {
+                "value": "INSERT INTO etl_logs (pipeline_name, run_id, status, rows_processed, start_time, end_time, details)\nVALUES (\n  '@{pipeline().Pipeline}',\n  '@{pipeline().RunId}',\n  'SUCCESS',\n  @{activity('Data_Quality_Check').output.firstRow.total_rows},\n  '@{pipeline().TriggerTime}',\n  '@{utcnow()}',\n  '{\"watermark\": \"@{pipeline().parameters.MaxWatermark}\", \"unique_keys\": @{activity('Data_Quality_Check').output.firstRow.unique_keys}}'\n)",
+                "type": "Expression"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "parameters": {
+      "SourceTable": {
+        "type": "string",
+        "defaultValue": "dbo.SourceData"
+      },
+      "TargetTable": {
+        "type": "string",
+        "defaultValue": "lakehouse.target_table"
+      },
+      "MaxWatermark": {
+        "type": "string",
+        "defaultValue": "@utcnow()"
+      },
+      "AlertWebhookUrl": {
+        "type": "string",
+        "defaultValue": "https://your-webhook-url.com/alert"
+      }
+    },
+    "variables": {
+      "ProcessedRows": {
+        "type": "Integer",
+        "defaultValue": 0
+      },
+      "ErrorMessage": {
+        "type": "String",
+        "defaultValue": ""
+      }
+    },
+    "annotations": [
+      "ETL",
+      "Incremental",
+      "Production"
+    ],
+    "folder": {
+      "name": "DataIngestion"
+    }
+  }
+}
